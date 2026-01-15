@@ -95,44 +95,6 @@ SVG_3D_RELIEF = """
 </svg>
 """
 
-# --- AVTENTIKACIJA (LOGIN SISTEM) ---
-if 'authenticated' not in st.session_state:
-    st.session_state['authenticated'] = False
-
-def login_gate():
-    col1, col2, col3 = st.columns([1, 2, 1])
-    with col2:
-        st.markdown(f'<div style="text-align:center"><img src="data:image/svg+xml;base64,{get_svg_base64(SVG_3D_RELIEF)}" width="200"></div>', unsafe_allow_html=True)
-        st.title("🔐 SIS Access Control")
-        st.info("Authorized access for user: GKKP")
-        
-        tab1, tab2 = st.tabs(["Login", "Register"])
-        
-        with tab1:
-            username_input = st.text_input("Username", key="login_user_input")
-            password_input = st.text_input("Password", type="password", key="login_pw_input")
-            remember_me = st.checkbox("Remember me", key="remember_me_check")
-            
-            if st.button("Log In", use_container_width=True):
-                if username_input.strip() == "GKKP":
-                    st.session_state['authenticated'] = True
-                    st.rerun()
-                else:
-                    st.error("Invalid username. Only GKKP is authorized.")
-        
-        with tab2:
-            st.markdown("### Account Registration")
-            st.write("Authorized users (GKKP) should ensure they have their own Groq API Key.")
-            st.markdown("[Get your Groq API Key here](https://console.groq.com/keys)")
-            st.text_input("New Username", key="reg_user_disp")
-            st.text_input("New Password", type="password", key="reg_pw_disp")
-            if st.button("Register Account", use_container_width=True):
-                st.warning("Manual registration is currently disabled. Please contact admin for GKKP access.")
-
-if not st.session_state['authenticated']:
-    login_gate()
-    st.stop()
-
 # --- CYTOSCAPE RENDERER Z HIERARHIJO IN INTERAKTIVNOSTJO ---
 def render_cytoscape_network(elements, container_id="cy"):
     """
@@ -250,8 +212,8 @@ KNOWLEDGE_BASE = {
         "Psychology": {"cat": "Social", "methods": ["Trials", "Psychometrics"], "tools": ["fMRI", "Testing Kits"], "facets": ["Behavioral", "Cognitive"]},
         "Sociology": {"cat": "Social", "methods": ["Ethnography", "Surveys"], "tools": ["Data Analytics", "Archives"], "facets": ["Stratification", "Dynamics"]},
         "Computer Science": {"cat": "Formal", "methods": ["Algorithm Design", "Verification"], "tools": ["LLMGraphTransformer", "GPU Clusters", "Git"], "facets": ["AI", "Cybersecurity"]},
-        "Medicine": {"cat": "Applied", "methods": ["Trials", "Epidemiology"], "tools": ["MRI/CT", "Bio-Markers"], "facets": ["Immunology", "Pharmacology"]},
-        "Engineering": {"cat": "Applied", "methods": ["Prototyping", "FEA Analysis"], "tools": ["3D Printers", "CAD Software"], "facets": ["Robotics", "Nanotech"]},
+        "Medicine": {"cat": "Applied", "methods": ["Clinical Trials", "Epidemiology"], "tools": ["MRI/CT", "Bio-Markers"], "facets": ["Immunology", "Pharmacology"]},
+        "Engineering": {"cat": "Applied", "methods": ["Prototyping", "FEA"], "tools": ["3D Printers", "CAD Software"], "facets": ["Robotics", "Nanotech"]},
         "Library Science": {"cat": "Applied", "methods": ["Taxonomy", "Appraisal"], "tools": ["OPAC", "Metadata"], "facets": ["Retrieval", "Knowledge Org"]},
         "Philosophy": {"cat": "Humanities", "methods": ["Socratic", "Phenomenology"], "tools": ["Logic Mapping", "Critical Analysis"], "facets": ["Epistemology", "Metaphysics"]},
         "Linguistics": {"cat": "Humanities", "methods": ["Corpus Analysis", "Syntactic Parsing"], "tools": ["Praat", "NLTK Toolkit"], "facets": ["Socioling", "CompLing"]},
@@ -308,25 +270,12 @@ with st.sidebar:
     st.divider()
     # GUMB ZA RESETIRANJE (BREZ ODJAVE)
     if st.button("♻️ Reset Session", use_container_width=True):
-        auth_state = st.session_state.get('authenticated', False)
-        # Pobrišemo vse, vendar prepišemo določene ključe na prazno
-        for key in list(st.session_state.keys()):
-            if key != 'authenticated':
-                del st.session_state[key]
-        st.session_state['authenticated'] = auth_state
-        # Ročno čiščenje polj povezanih s ključi
-        st.session_state['target_authors_key'] = ""
-        st.session_state['user_query_key'] = ""
+        st.session_state.clear()
         st.rerun()
     
     st.link_button("🌐 GitHub Repository", "https://github.com/", use_container_width=True)
     st.link_button("🆔 ORCID Registry", "https://orcid.org/", use_container_width=True)
     st.link_button("🎓 Google Scholar Search", "https://scholar.google.com/", use_container_width=True)
-    
-    # GUMB ZA ODJAVO
-    if st.button("🚪 Log Out", use_container_width=True):
-        st.session_state['authenticated'] = False
-        st.rerun()
 
 st.title("🧱 SIS Universal Knowledge Synthesizer")
 st.markdown("Advanced Multi-dimensional synthesis with **Organic Polyhierarchical Integration**.")
@@ -403,6 +352,10 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
             1. Integrate dimensions into a cohesive dissertation focusing purely on the inquiry: {user_query}.
             2. Connect nodes semantically and with high density to create ONE LARGE CONNECTED NETWORK.
 
+            UML CLASS DIAGRAM TASK:
+            - If a subsystem is highly structured, represent it as a Class Node.
+            - Relate classes using: Inheritance, Composition, Aggregation, or Dependency.
+
             STRICT FORMATTING & SPACE ALLOCATION:
             - Focus 100% of the textual content on deep research, causal analysis, and innovative problem-solving synergy.
             - DO NOT include descriptions of the map or lists of node definitions in the text. 
@@ -453,7 +406,7 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
                     try:
                         g_json = json.loads(re.search(r'\{.*\}', parts[1], re.DOTALL).group())
                         st.subheader("🕸️ LLMGraphTransformer: Unified Interdisciplinary Network")
-                        st.caption("Colorful nodes represent hierarchical concepts. Dimensions are associatively connected in one large network.")
+                        st.caption("Colorful nodes represent hierarchical concepts and UML classes. Dimensions are associatively connected.")
                         
                         elements = []
                         for n in g_json.get("nodes", []):
@@ -479,7 +432,8 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
             st.error(f"Synthesis failed: {e}")
 
 st.divider()
-st.caption("SIS Universal Knowledge Synthesizer | v12.1 Refined Reset & Auth Logic | 2026")
+st.caption("SIS Universal Knowledge Synthesizer | v13.5 Organic Polyhierarchical Integration | 2026")
+
 
 
 
