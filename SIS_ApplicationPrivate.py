@@ -259,9 +259,9 @@ with st.sidebar:
     if st.session_state.show_user_guide:
         st.info("""
         1. **API Key**: Enter your key to connect the AI engine.
-        2. **Minimal Config**: Defaults are Physics, CS, and Linguistics.
+        2. **Config**: Physics, CS, and Linguistics are pre-selected.
         3. **Authors**: Provide author names to fetch ORCID metadata.
-        4. **Inquiry**: Ask a complex question for an exhaustive dissertation.
+        4. **Inquiry**: Submit a complex query for an exhaustive dissertation.
         5. **Shapes**: Request triangles, rectangles or 3D bodies in your inquiry.
         6. **Author Links**: Researcher names link directly to Google Search.
         7. **Export**: Use the 💾 button to save the graph as a PNG image.
@@ -325,11 +325,11 @@ with r3_c3:
 
 st.divider()
 user_query = st.text_area("❓ Your Synthesis Inquiry:", 
-                         placeholder="Create a synergy for global poverty using triangle shapes for causes and 3D geometric bodies for solutions.",
+                         placeholder="e.g. Create a synergy for global poverty using triangle shapes for causes and 3D geometric bodies for solutions.",
                          height=150, key="user_query_key")
 
 # =========================================================
-# 3. JEDRO SINTEZE: GROQ AI + INTERCONNECTED 12D GRAPH
+# 3. JEDRO SINTEZE: GROQ AI + DYNAMIC INTERACTIVE GRAPH
 # =========================================================
 if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=True):
     if not api_key: st.error("Missing Groq API Key. Please provide your own key in the sidebar.")
@@ -339,7 +339,7 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
             biblio = fetch_author_bibliographies(target_authors) if target_authors else ""
             client = OpenAI(api_key=api_key, base_url="https://api.groq.com/openai/v1")
             
-            # SISTEMSKO NAVODILO (Z novo prepovedjo redundance)
+            # SISTEMSKO NAVODILO
             sys_prompt = f"""
             You are the SIS Synthesizer. Perform an exhaustive dissertation (1500+ words).
             FIELDS: {", ".join(sel_sciences)}. CONTEXT AUTHORS: {biblio}.
@@ -347,13 +347,14 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
             THESAURUS ALGORITHM (TT, BT, NT, AS, RT, EQ) & UML LOGIC.
 
             GEOMETRICAL TASK:
-            - Analyze inquiry for shape preferences (triangle, rectangle, hexagon, 3D/diamond).
+            - Analyze user inquiry for shape preferences (triangle, rectangle, hexagon, 3D/diamond).
+            - Default shape is 'ellipse'.
             
             STRICT FORMATTING & SPACE ALLOCATION:
-            - Focus 100% on deep research and innovative synergy.
-            - DO NOT include ASCII diagrams, pseudo-code boxes, or text-based UML.
-            - DO NOT include node lists (Root Node: ...) in text.
-            - DO NOT describe the JSON schema or include sentences like "The resulting network can be represented in JSON format..."
+            - Focus 100% on deep research, exhaustive causal analysis, and synergy.
+            - ABSOLUTELY PROHIBITED: Do not list nodes, edges, properties, shapes, or colors in text (e.g. 'Node 1: ...', 'Edge 1: ...').
+            - DO NOT write phrases like "The network can be structured as follows:".
+            - DO NOT include ASCII diagrams or pseudo-code boxes. 
             - End with '### SEMANTIC_GRAPH_JSON' followed by valid JSON only.
             - JSON schema: {{"nodes": [{{"id": "n1", "label": "Text", "type": "Root|Class", "color": "#hex", "shape": "triangle"}}], "edges": [{{"source": "n1", "target": "n2", "rel_type": "BT|AS"}}]}}
             """
@@ -373,16 +374,23 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
                 if len(parts) > 1:
                     try:
                         g_json = json.loads(re.search(r'\{.*\}', parts[1], re.DOTALL).group())
+                        # 1. Koncepti -> Google Search + ID značka
                         for n in g_json.get("nodes", []):
                             lbl, nid = n["label"], n["id"]
                             g_url = urllib.parse.quote(lbl)
                             pattern = re.compile(re.escape(lbl), re.IGNORECASE)
                             replacement = f'<span id="{nid}"><a href="https://www.google.com/search?q={g_url}" target="_blank" class="semantic-node-highlight">{lbl}<i class="google-icon">↗</i></a></span>'
                             main_markdown = pattern.sub(replacement, main_markdown, count=1)
+                        
+                        # 2. Avtorji -> Google Search Link
                         if target_authors:
                             for auth_name in target_authors.split(","):
-                                a_url = urllib.parse.quote(auth_name.strip())
-                                main_markdown = re.sub(re.escape(auth_name.strip()), f'<a href="https://www.google.com/search?q={a_url}" target="_blank" class="author-search-link">{auth_name.strip()}<i class="google-icon">↗</i></a>', main_markdown)
+                                auth_stripped = auth_name.strip()
+                                if auth_stripped:
+                                    a_url = urllib.parse.quote(auth_stripped)
+                                    a_pattern = re.compile(re.escape(auth_stripped), re.IGNORECASE)
+                                    a_rep = f'<a href="https://www.google.com/search?q={a_url}" target="_blank" class="author-search-link">{auth_stripped}<i class="google-icon">↗</i></a>'
+                                    main_markdown = a_pattern.sub(a_rep, main_markdown)
                     except: pass
 
                 st.subheader("📊 Synthesis Output")
@@ -392,13 +400,13 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
                 if len(parts) > 1:
                     try:
                         g_json = json.loads(re.search(r'\{.*\}', parts[1], re.DOTALL).group())
-                        st.subheader("🕸️ LLMGraphTransformer: Interdisciplinary Semantic Network")
+                        st.subheader("🕸️ LLMGraphTransformer: Unified Interdisciplinary Network")
                         st.caption("Custom shapes and colors apply. Tap concepts to scroll. Use the 💾 button to export.")
                         
                         elements = []
                         for n in g_json.get("nodes", []):
                             level = n.get("type", "Branch")
-                            size = 100 if level == "Class" else (90 if level == "Root" else 70)
+                            size = 100 if level == "Class" else (90 if level == "Root" else (70 if level == "Branch" else 50))
                             color = n.get("color", "#2a9d8f")
                             shape = n.get("shape", "ellipse")
                             elements.append({"data": {
@@ -420,7 +428,8 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
             st.error(f"Synthesis failed: {e}")
 
 st.divider()
-st.caption("SIS Universal Knowledge Synthesizer | v15.5 Pure Analysis & Geometrical Export | 2026")
+st.caption("SIS Universal Knowledge Synthesizer | v16.0 Comprehensive Dissertation & Geometrical Export | 2026")
+
 
 
 
