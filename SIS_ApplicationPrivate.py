@@ -95,10 +95,10 @@ SVG_3D_RELIEF = """
 </svg>
 """
 
-# --- CYTOSCAPE RENDERER Z HIERARHIJO, UML IN INTERAKTIVNOSTJO ---
+# --- CYTOSCAPE RENDERER Z DINAMIČNIMI OBLIKAMI (Krogi, Pravokotniki, Trikotniki, 3D) ---
 def render_cytoscape_network(elements, container_id="cy"):
     """
-    Izriše interaktivno omrežje Cytoscape.js s podporo za organske, Class in Deployment diagrame.
+    Izriše interaktivno omrežje Cytoscape.js s podporo za več oblik vozlišč.
     """
     cyto_html = f"""
     <div id="{container_id}" style="width: 100%; height: 650px; background: #ffffff; border-radius: 15px; border: 1px solid #eee; box-shadow: 2px 2px 12px rgba(0,0,0,0.05);"></div>
@@ -114,22 +114,12 @@ def render_cytoscape_network(elements, container_id="cy"):
                         style: {{
                             'label': 'data(label)', 'text-valign': 'center', 'color': '#333',
                             'background-color': 'data(color)', 'width': 'data(size)', 'height': 'data(size)',
+                            'shape': 'data(shape)', // Dinamična oblika iz JSON podatkov
                             'font-size': '11px', 'font-weight': 'bold', 'text-outline-width': 2,
                             'text-outline-color': '#fff', 'cursor': 'pointer', 'z-index': 'data(z_index)',
-                            'box-shadow': '0px 4px 6px rgba(0,0,0,0.1)'
+                            'box-shadow': '0px 4px 6px rgba(0,0,0,0.1)',
+                            'border-width': 1, 'border-color': '#999'
                         }}
-                    }},
-                    {{
-                        selector: 'node[type="Class"]',
-                        style: {{ 'shape': 'rectangle', 'border-width': 2, 'border-color': '#2a9d8f', 'background-color': '#f8f9fa' }}
-                    }},
-                    {{
-                        selector: 'node[type="Device"]',
-                        style: {{ 'shape': 'hexagon', 'border-width': 3, 'border-color': '#1d3557', 'background-color': '#a8dadc' }}
-                    }},
-                    {{
-                        selector: 'node[type="ExecutionEnvironment"]',
-                        style: {{ 'shape': 'diamond', 'border-width': 2, 'border-color': '#457b9d', 'background-color': '#f1faee' }}
                     }},
                     {{
                         selector: 'edge',
@@ -139,19 +129,11 @@ def render_cytoscape_network(elements, container_id="cy"):
                             'target-arrow-color': '#adb5bd', 'target-arrow-shape': 'triangle',
                             'curve-style': 'bezier', 'text-rotation': 'autorotate',
                             'text-background-opacity': 1, 'text-background-color': '#ffffff',
-                            'text-background-padding': '2px'
+                            'text-background-padding': '2px', 'text-background-shape': 'roundrectangle'
                         }}
-                    }},
-                    {{
-                        selector: 'edge[rel_type="Inheritance"]',
-                        style: {{ 'target-arrow-shape': 'triangle', 'target-arrow-fill': 'hollow' }}
-                    }},
-                    {{
-                        selector: 'edge[rel_type="Composition"]',
-                        style: {{ 'source-arrow-shape': 'diamond', 'source-arrow-fill': 'filled' }}
                     }}
                 ],
-                layout: {{ name: 'cose', padding: 60, animate: true, nodeRepulsion: 30000, idealEdgeLength: 130 }}
+                layout: {{ name: 'cose', padding: 60, animate: true, nodeRepulsion: 25000, idealEdgeLength: 130 }}
             }});
             
             cy.on('tap', 'node', function(evt){{
@@ -225,13 +207,13 @@ KNOWLEDGE_BASE = {
         "Chemistry": {"cat": "Natural", "methods": ["Synthesis", "Spectroscopy"], "tools": ["NMR", "Chromatography"], "facets": ["Organic", "Molecular"]},
         "Biology": {"cat": "Natural", "methods": ["Sequencing", "CRISPR"], "tools": ["Microscope", "Bio-Incubator"], "facets": ["Genetics", "Ecology"]},
         "Neuroscience": {"cat": "Natural", "methods": ["Neuroimaging", "Electrophys"], "tools": ["fMRI", "EEG"], "facets": ["Plasticity", "Synaptic"]},
-        "Psychology": {"cat": "Social", "methods": ["Double-Blind Trials", "Psychometrics"], "tools": ["fMRI", "Testing Kits"], "facets": ["Behavioral", "Cognitive"]},
+        "Psychology": {"cat": "Social", "methods": ["Trials", "Psychometrics"], "tools": ["fMRI", "Testing Kits"], "facets": ["Behavioral", "Cognitive"]},
         "Sociology": {"cat": "Social", "methods": ["Ethnography", "Surveys"], "tools": ["Data Analytics", "Archives"], "facets": ["Stratification", "Dynamics"]},
         "Computer Science": {"cat": "Formal", "methods": ["Algorithm Design", "Verification"], "tools": ["LLMGraphTransformer", "GPU Clusters", "Git"], "facets": ["AI", "Cybersecurity"]},
         "Medicine": {"cat": "Applied", "methods": ["Clinical Trials", "Epidemiology"], "tools": ["MRI/CT", "Bio-Markers"], "facets": ["Immunology", "Pharmacology"]},
-        "Engineering": {"cat": "Applied", "methods": ["Prototyping", "FEA Analysis"], "tools": ["3D Printers", "CAD Software"], "facets": ["Robotics", "Nanotech"]},
+        "Engineering": {"cat": "Applied", "methods": ["Prototyping", "FEA"], "tools": ["3D Printers", "CAD Software"], "facets": ["Robotics", "Nanotech"]},
         "Library Science": {"cat": "Applied", "methods": ["Taxonomy", "Appraisal"], "tools": ["OPAC", "Metadata"], "facets": ["Retrieval", "Knowledge Org"]},
-        "Philosophy": {"cat": "Humanities", "methods": ["Socratic Method", "Phenomenology"], "tools": ["Logic Mapping", "Critical Analysis"], "facets": ["Epistemology", "Metaphysics"]},
+        "Philosophy": {"cat": "Humanities", "methods": ["Socratic", "Phenomenology"], "tools": ["Logic Mapping", "Critical Analysis"], "facets": ["Epistemology", "Metaphysics"]},
         "Linguistics": {"cat": "Humanities", "methods": ["Corpus Analysis", "Syntactic Parsing"], "tools": ["Praat", "NLTK Toolkit"], "facets": ["Socioling", "CompLing"]},
         "Geography": {"cat": "Natural/Social", "methods": ["Spatial Analysis", "GIS"], "tools": ["ArcGIS"], "facets": ["Human Geo", "Physical Geo"]},
         "Geology": {"cat": "Natural", "methods": ["Stratigraphy", "Mineralogy"], "tools": ["Seismograph"], "facets": ["Tectonics", "Petrology"]},
@@ -264,13 +246,13 @@ with st.sidebar:
         st.rerun()
     if st.session_state.show_user_guide:
         st.info("""
-        1. **API Key**: Enter your key to connect the AI engine. It is NOT stored on the server.
+        1. **API Key**: Enter your key to connect the AI engine.
         2. **Minimal Config**: Physics, CS, and Linguistics are pre-selected.
         3. **Authors**: Provide author names to fetch ORCID metadata.
         4. **Inquiry**: Submit a query for an exhaustive dissertation.
         5. **Semantic Graph**: Explore colorful nodes interconnected via TT, BT, NT logic.
-        6. **Author Links**: All researcher names in text link directly to Google Search.
-        7. **Google Concept Links**: Click keywords in text to trigger external searches.
+        6. **Custom Shapes**: Request triangles, rectangles, or 3D bodies in your inquiry.
+        7. **Author Links**: All researcher names link directly to Google Search.
         """)
         if st.button("Close Guide ✖️"): st.session_state.show_user_guide = False; st.rerun()
 
@@ -290,6 +272,7 @@ with st.sidebar:
     st.divider()
     # GUMB ZA RESETIRANJE (BREZ ODJAVE)
     if st.button("♻️ Reset Session", use_container_width=True):
+        auth_state = st.session_state.get('authenticated', False)
         for key in list(st.session_state.keys()):
             if key != 'authenticated':
                 del st.session_state[key]
@@ -302,7 +285,7 @@ with st.sidebar:
     st.link_button("🎓 Google Scholar Search", "https://scholar.google.com/", use_container_width=True)
 
 st.title("🧱 SIS Universal Knowledge Synthesizer")
-st.markdown("Advanced Multi-dimensional synthesis with **UML Class & Deployment Integration**.")
+st.markdown("Advanced Multi-dimensional synthesis with **Dynamic Shape Interconnected Architecture**.")
 
 st.markdown("### 🛠️ Configure Your Multi-Dimensional Cognitive Build")
 
@@ -318,12 +301,11 @@ with r2_c1:
     sel_profiles = st.multiselect("1. User Profiles:", list(KNOWLEDGE_BASE["profiles"].keys()), default=["Adventurers"])
 with r2_c2:
     all_sciences = sorted(list(KNOWLEDGE_BASE["subject_details"].keys()))
-    # PRIVZETO: Physics, Computer science in Linguistics
     sel_sciences = st.multiselect("2. Science Fields:", all_sciences, default=["Physics", "Computer Science", "Linguistics"])
 with r2_c3:
     expertise = st.select_slider("3. Expertise Level:", options=["Novice", "Intermediate", "Expert"], value=st.session_state.expertise_val)
 
-# ROW 3: PARADIGMS & MODELS (Minimal settings)
+# ROW 3: PARADIGMS & MODELS
 r3_c1, r3_c2, r3_c3 = st.columns(3)
 with r3_c1:
     sel_models = st.multiselect("4. Structural Models:", list(KNOWLEDGE_BASE["knowledge_models"].keys()), default=["Concepts"])
@@ -332,32 +314,16 @@ with r3_c2:
 with r3_c3:
     goal_context = st.selectbox("6. Context / Goal:", ["Scientific Research", "Problem Solving", "Educational", "Policy Making"])
 
-# ROW 4: APPROACHES, METHODS, TOOLS (Minimal settings)
-r4_c1, r4_c2, r4_c3 = st.columns(3)
-with r4_c1:
-    sel_approaches = st.multiselect("7. Mental Approaches:", KNOWLEDGE_BASE["mental_approaches"], default=["Perspective shifting"])
-
-agg_meth, agg_tool = [], []
-for s in sel_sciences:
-    if s in KNOWLEDGE_BASE["subject_details"]:
-        agg_meth.extend(KNOWLEDGE_BASE["subject_details"][s]["methods"])
-        agg_tool.extend(KNOWLEDGE_BASE["subject_details"][s]["tools"])
-
-with r4_c2:
-    sel_methods = st.multiselect("8. Methodologies:", sorted(list(set(agg_meth))), default=[])
-with r4_c3:
-    sel_tools = st.multiselect("9. Specific Tools:", sorted(list(set(agg_tool))), default=[])
-
 st.divider()
 user_query = st.text_area("❓ Your Synthesis Inquiry:", 
-                         placeholder="Create a synergy and synthesized knowledge for better resolving global problems like crime, distress, mass migration and poverty",
+                         placeholder="e.g. Create a synergy for global crime prevention. Use triangle shapes for concepts and hexagons for results.",
                          height=150, key="user_query_key")
 
 # =========================================================
-# 3. JEDRO SINTEZE: GROQ AI + INTERCONNECTED 12D GRAPH
+# 3. JEDRO SINTEZE: GROQ AI + INTERCONNECTED DYNAMIC GRAPH
 # =========================================================
 if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=True):
-    if not api_key: st.error("Missing Groq API Key. Please provide your own key in the sidebar.")
+    if not api_key: st.error("Missing Groq API Key.")
     elif not user_query: st.warning("Please provide an inquiry.")
     else:
         try:
@@ -368,21 +334,23 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
             You are the SIS Synthesizer. Perform an exhaustive dissertation (1500+ words).
             FIELDS: {", ".join(sel_sciences)}. CONTEXT AUTHORS: {biblio}.
             
-            THESAURUS ALGORITHM (TT, BT, NT, AS, RT, EQ):
-            Organize knowledge using super-ordinate (TT), broader (BT), narrower (NT), associative (AS), relative (RT), and equivalent (EQ) links.
-            
-            UML CLASS & DEPLOYMENT TASK:
-            - If inquiry mentions 'UML Class', use Class logic (Inheritance, Composition).
-            - If inquiry mentions 'UML Deployment', use Device logic (Communication Paths).
+            DYNAMIC VISUALIZATION TASK:
+            - Analyze the user inquiry for shape preferences (triangle, rectangle, hexagon, 3D).
+            - Default shape is 'ellipse'.
+            - If '3D' or '3D bodies' is requested, use shape: 'diamond' for a volumetric effect.
+
+            THESAURUS ALGORITHM: Use TT, BT, NT, AS, RT, EQ links.
+            UML TASK: Use Class/Device logic if requested.
 
             STRICT FORMATTING:
-            - Focus 100% on deep research, causal analysis, and synergy.
-            - DO NOT include descriptions of the map or node lists in text. 
-            - End with '### SEMANTIC_GRAPH_JSON' then valid JSON.
-            - JSON schema: {{"nodes": [{{"id": "n1", "label": "Text", "type": "Root|Branch|Leaf|Class|Device", "color": "#hex"}}], "edges": [{{"source": "n1", "target": "n2", "rel_type": "BT|NT|Inheritance|..."}}]}}
+            - LONG MARKDOWN dissertation only.
+            - End with '### SEMANTIC_GRAPH_JSON' followed by valid JSON only.
+            - JSON schema MUST include "shape" field for each node.
+            - Node shapes available: ellipse, triangle, rectangle, diamond, hexagon, vee.
+            - JSON: {{"nodes": [{{"id": "n1", "label": "Text", "type": "Root", "color": "#hex", "shape": "triangle"}}], "edges": [{{"source": "n1", "target": "n2", "rel_type": "AS"}}]}}
             """
             
-            with st.spinner('Synthesizing exhaustive interdisciplinary synergy (8–40s)...'):
+            with st.spinner('Synthesizing interdisciplinary synergy with dynamic shapes (8–40s)...'):
                 response = client.chat.completions.create(
                     model="llama-3.3-70b-versatile",
                     messages=[{"role": "system", "content": sys_prompt}, {"role": "user", "content": user_query}],
@@ -408,9 +376,7 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
                                 auth_stripped = auth_name.strip()
                                 if auth_stripped:
                                     a_url = urllib.parse.quote(auth_stripped)
-                                    a_pattern = re.compile(re.escape(auth_stripped), re.IGNORECASE)
-                                    a_rep = f'<a href="https://www.google.com/search?q={a_url}" target="_blank" class="author-search-link">{auth_stripped}<i class="google-icon">↗</i></a>'
-                                    main_markdown = a_pattern.sub(a_rep, main_markdown)
+                                    main_markdown = re.sub(re.escape(auth_stripped), f'<a href="https://www.google.com/search?q={a_url}" target="_blank" class="author-search-link">{auth_stripped}<i class="google-icon">↗</i></a>', main_markdown)
                     except: pass
 
                 st.subheader("📊 Synthesis Output")
@@ -420,15 +386,17 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
                 if len(parts) > 1:
                     try:
                         g_json = json.loads(re.search(r'\{.*\}', parts[1], re.DOTALL).group())
-                        st.subheader("🕸️ LLMGraphTransformer: Unified Interdisciplinary Network")
+                        st.subheader("🕸️ LLMGraphTransformer: Interdisciplinary Network with Dynamic Shapes")
+                        st.caption("Node shapes and colors vary by discipline and hierarchy. Click nodes to scroll.")
+                        
                         elements = []
                         for n in g_json.get("nodes", []):
                             level = n.get("type", "Branch")
-                            size = 110 if level in ["Class", "Device"] else (90 if level == "Root" else 70)
-                            color = n.get("color", "#2a9d8f")
+                            size = 100 if level in ["Class", "Device", "Root"] else 70
+                            shape = n.get("shape", "ellipse")
                             elements.append({"data": {
-                                "id": n["id"], "label": n["label"], "color": color,
-                                "size": size, "z_index": 10 if level in ["Root", "Class", "Device"] else 1
+                                "id": n["id"], "label": n["label"], "color": n.get("color", "#2a9d8f"),
+                                "size": size, "shape": shape, "z_index": 10 if level == "Root" else 1
                             }})
                         for e in g_json.get("edges", []):
                             elements.append({"data": {
@@ -445,7 +413,8 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
             st.error(f"Synthesis failed: {e}")
 
 st.divider()
-st.caption("SIS Universal Knowledge Synthesizer | v14.0 Multi-UML & Organic 16D Integration | 2026")
+st.caption("SIS Universal Knowledge Synthesizer | v14.5 Dynamic Shape Polyhierarchical Integration | 2026")
+
 
 
 
