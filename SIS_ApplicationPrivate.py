@@ -95,13 +95,51 @@ SVG_3D_RELIEF = """
 </svg>
 """
 
-# --- CYTOSCAPE RENDERER Z DINAMIČNIMI OBLIKAMI (Krogi, Pravokotniki, Trikotniki, 3D) ---
+# --- AVTENTIKACIJA (LOGIN SISTEM) ---
+if 'authenticated' not in st.session_state:
+    st.session_state['authenticated'] = False
+
+def login_gate():
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        st.markdown(f'<div style="text-align:center"><img src="data:image/svg+xml;base64,{get_svg_base64(SVG_3D_RELIEF)}" width="200"></div>', unsafe_allow_html=True)
+        st.title("🔐 SIS Access Control")
+        st.info("Authorized access for user: GKKP")
+        
+        tab1, tab2 = st.tabs(["Login", "Register"])
+        
+        with tab1:
+            username_input = st.text_input("Username", key="login_user_input")
+            password_input = st.text_input("Password", type="password", key="login_pw_input")
+            remember_me = st.checkbox("Remember me", key="remember_me_check")
+            
+            if st.button("Log In", use_container_width=True):
+                if username_input.strip() == "GKKP":
+                    st.session_state['authenticated'] = True
+                    st.rerun()
+                else:
+                    st.error("Invalid username. Only GKKP is authorized.")
+        
+        with tab2:
+            st.markdown("### Account Registration")
+            st.write("Authorized users (GKKP) should ensure they have their own Groq API Key.")
+            st.markdown("[Get your Groq API Key here](https://console.groq.com/keys)")
+            st.text_input("New Username", key="reg_user_disp")
+            st.text_input("New Password", type="password", key="reg_pw_disp")
+            if st.button("Register Account", use_container_width=True):
+                st.warning("Manual registration is currently disabled. Please contact admin for GKKP access.")
+
+if not st.session_state['authenticated']:
+    login_gate()
+    st.stop()
+
+# --- CYTOSCAPE RENDERER Z HIERARHIJO IN INTERAKTIVNOSTJO ---
 def render_cytoscape_network(elements, container_id="cy"):
     """
-    Izriše interaktivno omrežje Cytoscape.js s podporo za več oblik vozlišč.
+    Izriše interaktivno omrežje Cytoscape.js.
     """
     cyto_html = f"""
-    <div id="{container_id}" style="width: 100%; height: 650px; background: #ffffff; border-radius: 15px; border: 1px solid #eee; box-shadow: 2px 2px 12px rgba(0,0,0,0.05);"></div>
+    <div id="{container_id}" style="width: 100%; height: 600px; background: #ffffff; border-radius: 15px; border: 1px solid #eee; box-shadow: 2px 2px 12px rgba(0,0,0,0.05);"></div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.26.0/cytoscape.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {{
@@ -114,12 +152,14 @@ def render_cytoscape_network(elements, container_id="cy"):
                         style: {{
                             'label': 'data(label)', 'text-valign': 'center', 'color': '#333',
                             'background-color': 'data(color)', 'width': 'data(size)', 'height': 'data(size)',
-                            'shape': 'data(shape)', // Dinamična oblika iz JSON podatkov
-                            'font-size': '11px', 'font-weight': 'bold', 'text-outline-width': 2,
+                            'font-size': '12px', 'font-weight': 'bold', 'text-outline-width': 2,
                             'text-outline-color': '#fff', 'cursor': 'pointer', 'z-index': 'data(z_index)',
-                            'box-shadow': '0px 4px 6px rgba(0,0,0,0.1)',
-                            'border-width': 1, 'border-color': '#999'
+                            'box-shadow': '0px 4px 6px rgba(0,0,0,0.1)'
                         }}
+                    }},
+                    {{
+                        selector: 'node[type="Class"]',
+                        style: {{ 'shape': 'rectangle', 'border-width': 2, 'border-color': '#2a9d8f', 'background-color': '#f8f9fa' }}
                     }},
                     {{
                         selector: 'edge',
@@ -133,7 +173,7 @@ def render_cytoscape_network(elements, container_id="cy"):
                         }}
                     }}
                 ],
-                layout: {{ name: 'cose', padding: 60, animate: true, nodeRepulsion: 25000, idealEdgeLength: 130 }}
+                layout: {{ name: 'cose', padding: 50, animate: true, nodeRepulsion: 25000, idealEdgeLength: 120 }}
             }});
             
             cy.on('tap', 'node', function(evt){{
@@ -148,7 +188,7 @@ def render_cytoscape_network(elements, container_id="cy"):
         }});
     </script>
     """
-    components.html(cyto_html, height=680)
+    components.html(cyto_html, height=630)
 
 # --- PRIDOBIVANJE BIBLIOGRAFIJ Z LETNICAMI ---
 def fetch_author_bibliographies(author_input):
@@ -207,13 +247,13 @@ KNOWLEDGE_BASE = {
         "Chemistry": {"cat": "Natural", "methods": ["Synthesis", "Spectroscopy"], "tools": ["NMR", "Chromatography"], "facets": ["Organic", "Molecular"]},
         "Biology": {"cat": "Natural", "methods": ["Sequencing", "CRISPR"], "tools": ["Microscope", "Bio-Incubator"], "facets": ["Genetics", "Ecology"]},
         "Neuroscience": {"cat": "Natural", "methods": ["Neuroimaging", "Electrophys"], "tools": ["fMRI", "EEG"], "facets": ["Plasticity", "Synaptic"]},
-        "Psychology": {"cat": "Social", "methods": ["Trials", "Psychometrics"], "tools": ["fMRI", "Testing Kits"], "facets": ["Behavioral", "Cognitive"]},
+        "Psychology": {"cat": "Social", "methods": ["Double-Blind Trials", "Psychometrics"], "tools": ["fMRI", "Testing Kits"], "facets": ["Behavioral", "Cognitive"]},
         "Sociology": {"cat": "Social", "methods": ["Ethnography", "Surveys"], "tools": ["Data Analytics", "Archives"], "facets": ["Stratification", "Dynamics"]},
         "Computer Science": {"cat": "Formal", "methods": ["Algorithm Design", "Verification"], "tools": ["LLMGraphTransformer", "GPU Clusters", "Git"], "facets": ["AI", "Cybersecurity"]},
         "Medicine": {"cat": "Applied", "methods": ["Clinical Trials", "Epidemiology"], "tools": ["MRI/CT", "Bio-Markers"], "facets": ["Immunology", "Pharmacology"]},
-        "Engineering": {"cat": "Applied", "methods": ["Prototyping", "FEA"], "tools": ["3D Printers", "CAD Software"], "facets": ["Robotics", "Nanotech"]},
+        "Engineering": {"cat": "Applied", "methods": ["Prototyping", "FEA Analysis"], "tools": ["3D Printers", "CAD Software"], "facets": ["Robotics", "Nanotech"]},
         "Library Science": {"cat": "Applied", "methods": ["Taxonomy", "Appraisal"], "tools": ["OPAC", "Metadata"], "facets": ["Retrieval", "Knowledge Org"]},
-        "Philosophy": {"cat": "Humanities", "methods": ["Socratic", "Phenomenology"], "tools": ["Logic Mapping", "Critical Analysis"], "facets": ["Epistemology", "Metaphysics"]},
+        "Philosophy": {"cat": "Humanities", "methods": ["Socratic Method", "Phenomenology"], "tools": ["Logic Mapping", "Critical Analysis"], "facets": ["Epistemology", "Metaphysics"]},
         "Linguistics": {"cat": "Humanities", "methods": ["Corpus Analysis", "Syntactic Parsing"], "tools": ["Praat", "NLTK Toolkit"], "facets": ["Socioling", "CompLing"]},
         "Geography": {"cat": "Natural/Social", "methods": ["Spatial Analysis", "GIS"], "tools": ["ArcGIS"], "facets": ["Human Geo", "Physical Geo"]},
         "Geology": {"cat": "Natural", "methods": ["Stratigraphy", "Mineralogy"], "tools": ["Seismograph"], "facets": ["Tectonics", "Petrology"]},
@@ -233,13 +273,7 @@ if 'show_user_guide' not in st.session_state: st.session_state.show_user_guide =
 with st.sidebar:
     st.markdown(f'<div style="text-align:center"><img src="data:image/svg+xml;base64,{get_svg_base64(SVG_3D_RELIEF)}" width="220"></div>', unsafe_allow_html=True)
     st.header("⚙️ Control Panel")
-    
-    # VARNOST: Ključ se ne shranjuje na strežniku
-    api_key = st.text_input(
-        "Groq API Key:", 
-        type="password", 
-        help="Your key is held in session memory only."
-    )
+    api_key = st.text_input("Groq API Key:", type="password", help="Users must provide their own key from console.groq.com")
     
     if st.button("📖 User Guide"):
         st.session_state.show_user_guide = not st.session_state.show_user_guide
@@ -247,15 +281,17 @@ with st.sidebar:
     if st.session_state.show_user_guide:
         st.info("""
         1. **API Key**: Enter your key to connect the AI engine.
-        2. **Minimal Config**: Physics, CS, and Linguistics are pre-selected.
+        2. **Auto-Complete**: All dimensions are pre-filled; remove what you don't need.
         3. **Authors**: Provide author names to fetch ORCID metadata.
-        4. **Inquiry**: Submit a query for an exhaustive dissertation.
-        5. **Semantic Graph**: Explore colorful nodes interconnected via TT, BT, NT logic.
-        6. **Custom Shapes**: Request triangles, rectangles, or 3D bodies in your inquiry.
-        7. **Author Links**: All researcher names link directly to Google Search.
+        4. **Inquiry**: Submit a complex query for an exhaustive dissertation.
+        5. **Semantic Graph**: Explore the colorful interconnected network of concepts.
+        6. **Author Links**: All researcher names in text link directly to Google Search.
+        7. **Scroll-to-Text**: Click graph nodes to find their definition in the text.
         """)
         if st.button("Close Guide ✖️"): st.session_state.show_user_guide = False; st.rerun()
 
+    if not api_key and "GROQ_API_KEY" in st.secrets: api_key = st.secrets["GROQ_API_KEY"]
+    
     st.divider()
     st.subheader("📚 Knowledge Explorer")
     with st.expander("👤 User Profiles"):
@@ -273,9 +309,12 @@ with st.sidebar:
     # GUMB ZA RESETIRANJE (BREZ ODJAVE)
     if st.button("♻️ Reset Session", use_container_width=True):
         auth_state = st.session_state.get('authenticated', False)
+        # Pobrišemo vse, vendar prepišemo določene ključe na prazno
         for key in list(st.session_state.keys()):
             if key != 'authenticated':
                 del st.session_state[key]
+        st.session_state['authenticated'] = auth_state
+        # Ročno čiščenje polj povezanih s ključi
         st.session_state['target_authors_key'] = ""
         st.session_state['user_query_key'] = ""
         st.rerun()
@@ -283,9 +322,14 @@ with st.sidebar:
     st.link_button("🌐 GitHub Repository", "https://github.com/", use_container_width=True)
     st.link_button("🆔 ORCID Registry", "https://orcid.org/", use_container_width=True)
     st.link_button("🎓 Google Scholar Search", "https://scholar.google.com/", use_container_width=True)
+    
+    # GUMB ZA ODJAVO
+    if st.button("🚪 Log Out", use_container_width=True):
+        st.session_state['authenticated'] = False
+        st.rerun()
 
 st.title("🧱 SIS Universal Knowledge Synthesizer")
-st.markdown("Advanced Multi-dimensional synthesis with **Dynamic Shape Interconnected Architecture**.")
+st.markdown("Advanced Multi-dimensional synthesis with **Interconnected Semantic Architecture**.")
 
 st.markdown("### 🛠️ Configure Your Multi-Dimensional Cognitive Build")
 
@@ -295,17 +339,18 @@ with r1_c2:
     target_authors = st.text_input("👤 Research Authors:", placeholder="Karl Petrič, Samo Kralj, Teodor Petrič", key="target_authors_key")
     st.caption("Active bibliographic analysis via ORCID (includes publication years).")
 
-# ROW 2: CORE CONFIG (Minimal settings, specific fields)
+# ROW 2: CORE CONFIG (MINIMAL SETTINGS)
 r2_c1, r2_c2, r2_c3 = st.columns(3)
 with r2_c1:
     sel_profiles = st.multiselect("1. User Profiles:", list(KNOWLEDGE_BASE["profiles"].keys()), default=["Adventurers"])
 with r2_c2:
     all_sciences = sorted(list(KNOWLEDGE_BASE["subject_details"].keys()))
+    # PRIVZETO: Physics, Computer science in Linguistics
     sel_sciences = st.multiselect("2. Science Fields:", all_sciences, default=["Physics", "Computer Science", "Linguistics"])
 with r2_c3:
     expertise = st.select_slider("3. Expertise Level:", options=["Novice", "Intermediate", "Expert"], value=st.session_state.expertise_val)
 
-# ROW 3: PARADIGMS & MODELS
+# ROW 3: PARADIGMS & MODELS (Minimal settings)
 r3_c1, r3_c2, r3_c3 = st.columns(3)
 with r3_c1:
     sel_models = st.multiselect("4. Structural Models:", list(KNOWLEDGE_BASE["knowledge_models"].keys()), default=["Concepts"])
@@ -314,43 +359,60 @@ with r3_c2:
 with r3_c3:
     goal_context = st.selectbox("6. Context / Goal:", ["Scientific Research", "Problem Solving", "Educational", "Policy Making"])
 
+# ROW 4: APPROACHES, METHODS, TOOLS (Minimal settings)
+r4_c1, r4_c2, r4_c3 = st.columns(3)
+with r4_c1:
+    sel_approaches = st.multiselect("7. Mental Approaches:", KNOWLEDGE_BASE["mental_approaches"], default=["Perspective shifting"])
+
+agg_meth, agg_tool = [], []
+for s in sel_sciences:
+    if s in KNOWLEDGE_BASE["subject_details"]:
+        agg_meth.extend(KNOWLEDGE_BASE["subject_details"][s]["methods"])
+        agg_tool.extend(KNOWLEDGE_BASE["subject_details"][s]["tools"])
+
+with r4_c2:
+    sel_methods = st.multiselect("8. Methodologies:", sorted(list(set(agg_meth))), default=[])
+with r4_c3:
+    sel_tools = st.multiselect("9. Specific Tools:", sorted(list(set(agg_tool))), default=[])
+
 st.divider()
 user_query = st.text_area("❓ Your Synthesis Inquiry:", 
-                         placeholder="e.g. Create a synergy for global crime prevention. Use triangle shapes for concepts and hexagons for results.",
+                         placeholder="Create a synergy and synthesized knowledge for better resolving global problems like crime, distress, mass migration and poverty",
                          height=150, key="user_query_key")
 
 # =========================================================
-# 3. JEDRO SINTEZE: GROQ AI + INTERCONNECTED DYNAMIC GRAPH
+# 3. JEDRO SINTEZE: GROQ AI + INTERCONNECTED 12D GRAPH
 # =========================================================
 if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=True):
-    if not api_key: st.error("Missing Groq API Key.")
+    if not api_key: st.error("Missing Groq API Key. Please provide your own key in the sidebar.")
     elif not user_query: st.warning("Please provide an inquiry.")
     else:
         try:
             biblio = fetch_author_bibliographies(target_authors) if target_authors else ""
             client = OpenAI(api_key=api_key, base_url="https://api.groq.com/openai/v1")
             
+            # SISTEMSKO NAVODILO
             sys_prompt = f"""
             You are the SIS Synthesizer. Perform an exhaustive dissertation (1500+ words).
             FIELDS: {", ".join(sel_sciences)}. CONTEXT AUTHORS: {biblio}.
             
-            DYNAMIC VISUALIZATION TASK:
-            - Analyze the user inquiry for shape preferences (triangle, rectangle, hexagon, 3D).
-            - Default shape is 'ellipse'.
-            - If '3D' or '3D bodies' is requested, use shape: 'diamond' for a volumetric effect.
+            THESAURUS ALGORITHM (TT, BT, NT, AS, RT, EQ):
+            Organize knowledge using super-ordinate (TT), broader (BT), narrower (NT), associative (AS), relative (RT), and equivalent (EQ) links.
+            
+            HIERARCHY & INTERCONNECTIVITY:
+            1. Integrate dimensions into a cohesive dissertation focusing purely on the inquiry: {user_query}.
+            2. Connect nodes semantically and with high density to create ONE LARGE CONNECTED NETWORK.
 
-            THESAURUS ALGORITHM: Use TT, BT, NT, AS, RT, EQ links.
-            UML TASK: Use Class/Device logic if requested.
-
-            STRICT FORMATTING:
-            - LONG MARKDOWN dissertation only.
+            STRICT FORMATTING & SPACE ALLOCATION:
+            - Focus 100% of the textual content on deep research, causal analysis, and innovative problem-solving synergy.
+            - DO NOT include ASCII diagrams, pseudo-code boxes, or text-based UML diagrams using '+---+', '|', and arrows.
+            - DO NOT include descriptions of the map or lists of node definitions in the text. 
+            - DO NOT explain the visualization in the text.
             - End with '### SEMANTIC_GRAPH_JSON' followed by valid JSON only.
-            - JSON schema MUST include "shape" field for each node.
-            - Node shapes available: ellipse, triangle, rectangle, diamond, hexagon, vee.
-            - JSON: {{"nodes": [{{"id": "n1", "label": "Text", "type": "Root", "color": "#hex", "shape": "triangle"}}], "edges": [{{"source": "n1", "target": "n2", "rel_type": "AS"}}]}}
+            - JSON schema: {{"nodes": [{{"id": "n1", "label": "Text", "type": "Root|Branch|Leaf|Class", "color": "#hex"}}], "edges": [{{"source": "n1", "target": "n2", "rel_type": "BT|NT|AS|Inheritance|..."}}]}}
             """
             
-            with st.spinner('Synthesizing interdisciplinary synergy with dynamic shapes (8–40s)...'):
+            with st.spinner('Synthesizing exhaustive interdisciplinary synergy (8–40s)...'):
                 response = client.chat.completions.create(
                     model="llama-3.3-70b-versatile",
                     messages=[{"role": "system", "content": sys_prompt}, {"role": "user", "content": user_query}],
@@ -365,18 +427,23 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
                 if len(parts) > 1:
                     try:
                         g_json = json.loads(re.search(r'\{.*\}', parts[1], re.DOTALL).group())
+                        # 1. Koncepti -> Google Search + ID značka
                         for n in g_json.get("nodes", []):
                             lbl, nid = n["label"], n["id"]
                             g_url = urllib.parse.quote(lbl)
                             pattern = re.compile(re.escape(lbl), re.IGNORECASE)
                             replacement = f'<span id="{nid}"><a href="https://www.google.com/search?q={g_url}" target="_blank" class="semantic-node-highlight">{lbl}<i class="google-icon">↗</i></a></span>'
                             main_markdown = pattern.sub(replacement, main_markdown, count=1)
+                        
+                        # 2. Avtorji -> Google Search Link
                         if target_authors:
                             for auth_name in target_authors.split(","):
                                 auth_stripped = auth_name.strip()
                                 if auth_stripped:
                                     a_url = urllib.parse.quote(auth_stripped)
-                                    main_markdown = re.sub(re.escape(auth_stripped), f'<a href="https://www.google.com/search?q={a_url}" target="_blank" class="author-search-link">{auth_stripped}<i class="google-icon">↗</i></a>', main_markdown)
+                                    a_pattern = re.compile(re.escape(auth_stripped), re.IGNORECASE)
+                                    a_rep = f'<a href="https://www.google.com/search?q={a_url}" target="_blank" class="author-search-link">{auth_stripped}<i class="google-icon">↗</i></a>'
+                                    main_markdown = a_pattern.sub(a_rep, main_markdown)
                     except: pass
 
                 st.subheader("📊 Synthesis Output")
@@ -386,17 +453,17 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
                 if len(parts) > 1:
                     try:
                         g_json = json.loads(re.search(r'\{.*\}', parts[1], re.DOTALL).group())
-                        st.subheader("🕸️ LLMGraphTransformer: Interdisciplinary Network with Dynamic Shapes")
-                        st.caption("Node shapes and colors vary by discipline and hierarchy. Click nodes to scroll.")
+                        st.subheader("🕸️ LLMGraphTransformer: Unified Interdisciplinary Network")
+                        st.caption("Colorful nodes represent hierarchical concepts. Dimensions are associatively connected in one large network.")
                         
                         elements = []
                         for n in g_json.get("nodes", []):
                             level = n.get("type", "Branch")
-                            size = 100 if level in ["Class", "Device", "Root"] else 70
-                            shape = n.get("shape", "ellipse")
+                            size = 100 if level == "Class" else (90 if level == "Root" else (70 if level == "Branch" else 50))
+                            color = n.get("color", "#2a9d8f")
                             elements.append({"data": {
-                                "id": n["id"], "label": n["label"], "color": n.get("color", "#2a9d8f"),
-                                "size": size, "shape": shape, "z_index": 10 if level == "Root" else 1
+                                "id": n["id"], "label": n["label"], "color": color,
+                                "size": size, "z_index": 10 if level in ["Root", "Class"] else 1
                             }})
                         for e in g_json.get("edges", []):
                             elements.append({"data": {
@@ -413,7 +480,8 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
             st.error(f"Synthesis failed: {e}")
 
 st.divider()
-st.caption("SIS Universal Knowledge Synthesizer | v14.5 Dynamic Shape Polyhierarchical Integration | 2026")
+st.caption("SIS Universal Knowledge Synthesizer | v12.1 Organic Polyhierarchical Integration | 2026")
+
 
 
 
