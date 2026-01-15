@@ -95,11 +95,13 @@ SVG_3D_RELIEF = """
 </svg>
 """
 
-# --- CYTOSCAPE RENDERER Z HIERARHIJO IN INTERAKTIVNOSTJO ---
+# --- CYTOSCAPE RENDERER Z HIERARHIJO, UML IN INTERAKTIVNOSTJO ---
 def render_cytoscape_network(elements, container_id="cy"):
-    """Izriše interaktivno omrežje Cytoscape.js."""
+    """
+    Izriše interaktivno omrežje Cytoscape.js s podporo za organske, Class in Deployment diagrame.
+    """
     cyto_html = f"""
-    <div id="{container_id}" style="width: 100%; height: 600px; background: #ffffff; border-radius: 15px; border: 1px solid #eee; box-shadow: 2px 2px 12px rgba(0,0,0,0.05);"></div>
+    <div id="{container_id}" style="width: 100%; height: 650px; background: #ffffff; border-radius: 15px; border: 1px solid #eee; box-shadow: 2px 2px 12px rgba(0,0,0,0.05);"></div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.26.0/cytoscape.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {{
@@ -112,7 +114,7 @@ def render_cytoscape_network(elements, container_id="cy"):
                         style: {{
                             'label': 'data(label)', 'text-valign': 'center', 'color': '#333',
                             'background-color': 'data(color)', 'width': 'data(size)', 'height': 'data(size)',
-                            'font-size': '12px', 'font-weight': 'bold', 'text-outline-width': 2,
+                            'font-size': '11px', 'font-weight': 'bold', 'text-outline-width': 2,
                             'text-outline-color': '#fff', 'cursor': 'pointer', 'z-index': 'data(z_index)',
                             'box-shadow': '0px 4px 6px rgba(0,0,0,0.1)'
                         }}
@@ -122,6 +124,14 @@ def render_cytoscape_network(elements, container_id="cy"):
                         style: {{ 'shape': 'rectangle', 'border-width': 2, 'border-color': '#2a9d8f', 'background-color': '#f8f9fa' }}
                     }},
                     {{
+                        selector: 'node[type="Device"]',
+                        style: {{ 'shape': 'hexagon', 'border-width': 3, 'border-color': '#1d3557', 'background-color': '#a8dadc' }}
+                    }},
+                    {{
+                        selector: 'node[type="ExecutionEnvironment"]',
+                        style: {{ 'shape': 'diamond', 'border-width': 2, 'border-color': '#457b9d', 'background-color': '#f1faee' }}
+                    }},
+                    {{
                         selector: 'edge',
                         style: {{
                             'width': 3, 'line-color': '#adb5bd', 'label': 'data(rel_type)',
@@ -129,11 +139,19 @@ def render_cytoscape_network(elements, container_id="cy"):
                             'target-arrow-color': '#adb5bd', 'target-arrow-shape': 'triangle',
                             'curve-style': 'bezier', 'text-rotation': 'autorotate',
                             'text-background-opacity': 1, 'text-background-color': '#ffffff',
-                            'text-background-padding': '2px', 'text-background-shape': 'roundrectangle'
+                            'text-background-padding': '2px'
                         }}
+                    }},
+                    {{
+                        selector: 'edge[rel_type="Inheritance"]',
+                        style: {{ 'target-arrow-shape': 'triangle', 'target-arrow-fill': 'hollow' }}
+                    }},
+                    {{
+                        selector: 'edge[rel_type="Composition"]',
+                        style: {{ 'source-arrow-shape': 'diamond', 'source-arrow-fill': 'filled' }}
                     }}
                 ],
-                layout: {{ name: 'cose', padding: 50, animate: true, nodeRepulsion: 25000, idealEdgeLength: 120 }}
+                layout: {{ name: 'cose', padding: 60, animate: true, nodeRepulsion: 30000, idealEdgeLength: 130 }}
             }});
             
             cy.on('tap', 'node', function(evt){{
@@ -148,7 +166,7 @@ def render_cytoscape_network(elements, container_id="cy"):
         }});
     </script>
     """
-    components.html(cyto_html, height=630)
+    components.html(cyto_html, height=680)
 
 # --- PRIDOBIVANJE BIBLIOGRAFIJ Z LETNICAMI ---
 def fetch_author_bibliographies(author_input):
@@ -207,13 +225,13 @@ KNOWLEDGE_BASE = {
         "Chemistry": {"cat": "Natural", "methods": ["Synthesis", "Spectroscopy"], "tools": ["NMR", "Chromatography"], "facets": ["Organic", "Molecular"]},
         "Biology": {"cat": "Natural", "methods": ["Sequencing", "CRISPR"], "tools": ["Microscope", "Bio-Incubator"], "facets": ["Genetics", "Ecology"]},
         "Neuroscience": {"cat": "Natural", "methods": ["Neuroimaging", "Electrophys"], "tools": ["fMRI", "EEG"], "facets": ["Plasticity", "Synaptic"]},
-        "Psychology": {"cat": "Social", "methods": ["Trials", "Psychometrics"], "tools": ["fMRI", "Testing Kits"], "facets": ["Behavioral", "Cognitive"]},
+        "Psychology": {"cat": "Social", "methods": ["Double-Blind Trials", "Psychometrics"], "tools": ["fMRI", "Testing Kits"], "facets": ["Behavioral", "Cognitive"]},
         "Sociology": {"cat": "Social", "methods": ["Ethnography", "Surveys"], "tools": ["Data Analytics", "Archives"], "facets": ["Stratification", "Dynamics"]},
         "Computer Science": {"cat": "Formal", "methods": ["Algorithm Design", "Verification"], "tools": ["LLMGraphTransformer", "GPU Clusters", "Git"], "facets": ["AI", "Cybersecurity"]},
         "Medicine": {"cat": "Applied", "methods": ["Clinical Trials", "Epidemiology"], "tools": ["MRI/CT", "Bio-Markers"], "facets": ["Immunology", "Pharmacology"]},
-        "Engineering": {"cat": "Applied", "methods": ["Prototyping", "FEA"], "tools": ["3D Printers", "CAD Software"], "facets": ["Robotics", "Nanotech"]},
+        "Engineering": {"cat": "Applied", "methods": ["Prototyping", "FEA Analysis"], "tools": ["3D Printers", "CAD Software"], "facets": ["Robotics", "Nanotech"]},
         "Library Science": {"cat": "Applied", "methods": ["Taxonomy", "Appraisal"], "tools": ["OPAC", "Metadata"], "facets": ["Retrieval", "Knowledge Org"]},
-        "Philosophy": {"cat": "Humanities", "methods": ["Socratic", "Phenomenology"], "tools": ["Logic Mapping", "Critical Analysis"], "facets": ["Epistemology", "Metaphysics"]},
+        "Philosophy": {"cat": "Humanities", "methods": ["Socratic Method", "Phenomenology"], "tools": ["Logic Mapping", "Critical Analysis"], "facets": ["Epistemology", "Metaphysics"]},
         "Linguistics": {"cat": "Humanities", "methods": ["Corpus Analysis", "Syntactic Parsing"], "tools": ["Praat", "NLTK Toolkit"], "facets": ["Socioling", "CompLing"]},
         "Geography": {"cat": "Natural/Social", "methods": ["Spatial Analysis", "GIS"], "tools": ["ArcGIS"], "facets": ["Human Geo", "Physical Geo"]},
         "Geology": {"cat": "Natural", "methods": ["Stratigraphy", "Mineralogy"], "tools": ["Seismograph"], "facets": ["Tectonics", "Petrology"]},
@@ -273,7 +291,10 @@ with st.sidebar:
     # GUMB ZA RESETIRANJE (BREZ ODJAVE)
     if st.button("♻️ Reset Session", use_container_width=True):
         for key in list(st.session_state.keys()):
-            del st.session_state[key]
+            if key != 'authenticated':
+                del st.session_state[key]
+        st.session_state['target_authors_key'] = ""
+        st.session_state['user_query_key'] = ""
         st.rerun()
     
     st.link_button("🌐 GitHub Repository", "https://github.com/", use_container_width=True)
@@ -281,7 +302,7 @@ with st.sidebar:
     st.link_button("🎓 Google Scholar Search", "https://scholar.google.com/", use_container_width=True)
 
 st.title("🧱 SIS Universal Knowledge Synthesizer")
-st.markdown("Advanced Multi-dimensional synthesis with **Interconnected Semantic Architecture**.")
+st.markdown("Advanced Multi-dimensional synthesis with **UML Class & Deployment Integration**.")
 
 st.markdown("### 🛠️ Configure Your Multi-Dimensional Cognitive Build")
 
@@ -343,7 +364,6 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
             biblio = fetch_author_bibliographies(target_authors) if target_authors else ""
             client = OpenAI(api_key=api_key, base_url="https://api.groq.com/openai/v1")
             
-            # SISTEMSKO NAVODILO
             sys_prompt = f"""
             You are the SIS Synthesizer. Perform an exhaustive dissertation (1500+ words).
             FIELDS: {", ".join(sel_sciences)}. CONTEXT AUTHORS: {biblio}.
@@ -351,20 +371,15 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
             THESAURUS ALGORITHM (TT, BT, NT, AS, RT, EQ):
             Organize knowledge using super-ordinate (TT), broader (BT), narrower (NT), associative (AS), relative (RT), and equivalent (EQ) links.
             
-            UML CLASS DIAGRAM TASK:
-            - If a subsystem is highly structured, represent it as a Class Node.
-            - Relate classes using: Inheritance, Composition, Aggregation, or Dependency.
+            UML CLASS & DEPLOYMENT TASK:
+            - If inquiry mentions 'UML Class', use Class logic (Inheritance, Composition).
+            - If inquiry mentions 'UML Deployment', use Device logic (Communication Paths).
 
-            HIERARCHY & INTERCONNECTIVITY:
-            1. Integrate dimensions into a cohesive dissertation focusing purely on the inquiry: {user_query}.
-            2. Connect nodes semantically and with high density to create ONE LARGE CONNECTED NETWORK.
-
-            STRICT FORMATTING & SPACE ALLOCATION:
-            - Focus 100% of the textual content on deep research, causal analysis, and innovative problem-solving synergy.
-            - DO NOT include descriptions of the map or lists of node definitions in the text. 
-            - DO NOT explain the visualization in the text.
-            - End with '### SEMANTIC_GRAPH_JSON' followed by valid JSON only.
-            - JSON schema: {{"nodes": [{{"id": "n1", "label": "Text", "type": "Root|Branch|Leaf|Class", "color": "#hex"}}], "edges": [{{"source": "n1", "target": "n2", "rel_type": "BT|NT|AS|Inheritance|..."}}]}}
+            STRICT FORMATTING:
+            - Focus 100% on deep research, causal analysis, and synergy.
+            - DO NOT include descriptions of the map or node lists in text. 
+            - End with '### SEMANTIC_GRAPH_JSON' then valid JSON.
+            - JSON schema: {{"nodes": [{{"id": "n1", "label": "Text", "type": "Root|Branch|Leaf|Class|Device", "color": "#hex"}}], "edges": [{{"source": "n1", "target": "n2", "rel_type": "BT|NT|Inheritance|..."}}]}}
             """
             
             with st.spinner('Synthesizing exhaustive interdisciplinary synergy (8–40s)...'):
@@ -382,15 +397,12 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
                 if len(parts) > 1:
                     try:
                         g_json = json.loads(re.search(r'\{.*\}', parts[1], re.DOTALL).group())
-                        # 1. Koncepti -> Google Search + ID značka
                         for n in g_json.get("nodes", []):
                             lbl, nid = n["label"], n["id"]
                             g_url = urllib.parse.quote(lbl)
                             pattern = re.compile(re.escape(lbl), re.IGNORECASE)
                             replacement = f'<span id="{nid}"><a href="https://www.google.com/search?q={g_url}" target="_blank" class="semantic-node-highlight">{lbl}<i class="google-icon">↗</i></a></span>'
                             main_markdown = pattern.sub(replacement, main_markdown, count=1)
-                        
-                        # 2. Avtorji -> Google Search Link
                         if target_authors:
                             for auth_name in target_authors.split(","):
                                 auth_stripped = auth_name.strip()
@@ -409,16 +421,14 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
                     try:
                         g_json = json.loads(re.search(r'\{.*\}', parts[1], re.DOTALL).group())
                         st.subheader("🕸️ LLMGraphTransformer: Unified Interdisciplinary Network")
-                        st.caption("Colorful nodes represent hierarchical concepts and UML classes. Dimensions are associatively connected.")
-                        
                         elements = []
                         for n in g_json.get("nodes", []):
                             level = n.get("type", "Branch")
-                            size = 100 if level == "Class" else (90 if level == "Root" else (70 if level == "Branch" else 50))
+                            size = 110 if level in ["Class", "Device"] else (90 if level == "Root" else 70)
                             color = n.get("color", "#2a9d8f")
                             elements.append({"data": {
                                 "id": n["id"], "label": n["label"], "color": color,
-                                "size": size, "z_index": 10 if level in ["Root", "Class"] else 1
+                                "size": size, "z_index": 10 if level in ["Root", "Class", "Device"] else 1
                             }})
                         for e in g_json.get("edges", []):
                             elements.append({"data": {
@@ -435,7 +445,8 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
             st.error(f"Synthesis failed: {e}")
 
 st.divider()
-st.caption("SIS Universal Knowledge Synthesizer | v13.5 UML & Organic Polyhierarchical Integration | 2026")
+st.caption("SIS Universal Knowledge Synthesizer | v14.0 Multi-UML & Organic 16D Integration | 2026")
+
 
 
 
