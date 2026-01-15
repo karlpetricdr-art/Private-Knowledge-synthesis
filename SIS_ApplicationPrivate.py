@@ -95,48 +95,10 @@ SVG_3D_RELIEF = """
 </svg>
 """
 
-# --- AVTENTIKACIJA (LOGIN SISTEM) ---
-if 'authenticated' not in st.session_state:
-    st.session_state['authenticated'] = False
-
-def login_gate():
-    col1, col2, col3 = st.columns([1, 2, 1])
-    with col2:
-        st.markdown(f'<div style="text-align:center"><img src="data:image/svg+xml;base64,{get_svg_base64(SVG_3D_RELIEF)}" width="200"></div>', unsafe_allow_html=True)
-        st.title("🔐 SIS Access Control")
-        st.info("Authorized access for user: GKKP")
-        
-        tab1, tab2 = st.tabs(["Login", "Register"])
-        
-        with tab1:
-            username_input = st.text_input("Username", key="login_user_input")
-            password_input = st.text_input("Password", type="password", key="login_pw_input")
-            remember_me = st.checkbox("Remember me", key="remember_me_check")
-            
-            if st.button("Log In", use_container_width=True):
-                if username_input.strip() == "GKKP":
-                    st.session_state['authenticated'] = True
-                    st.rerun()
-                else:
-                    st.error("Invalid username. Only GKKP is authorized.")
-        
-        with tab2:
-            st.markdown("### Account Registration")
-            st.write("Authorized users (GKKP) should ensure they have their own Groq API Key.")
-            st.markdown("[Get your Groq API Key here](https://console.groq.com/keys)")
-            st.text_input("New Username", key="reg_user_disp")
-            st.text_input("New Password", type="password", key="reg_pw_disp")
-            if st.button("Register Account", use_container_width=True):
-                st.warning("Manual registration is currently disabled. Please contact admin for GKKP access.")
-
-if not st.session_state['authenticated']:
-    login_gate()
-    st.stop()
-
 # --- CYTOSCAPE RENDERER Z HIERARHIJO IN INTERAKTIVNOSTJO ---
 def render_cytoscape_network(elements, container_id="cy"):
     """
-    Izriše interaktivno omrežje Cytoscape.js.
+    Izriše interaktivno omrežje Cytoscape.js s podporo za navigacijo in UML vizualizacijo.
     """
     cyto_html = f"""
     <div id="{container_id}" style="width: 100%; height: 600px; background: #ffffff; border-radius: 15px; border: 1px solid #eee; box-shadow: 2px 2px 12px rgba(0,0,0,0.05);"></div>
@@ -160,6 +122,10 @@ def render_cytoscape_network(elements, container_id="cy"):
                     {{
                         selector: 'node[type="Class"]',
                         style: {{ 'shape': 'rectangle', 'border-width': 2, 'border-color': '#2a9d8f', 'background-color': '#f8f9fa' }}
+                    }},
+                    {{
+                        selector: 'node[type="Device"]',
+                        style: {{ 'shape': 'hexagon', 'border-width': 3, 'border-color': '#1d3557', 'background-color': '#a8dadc' }}
                     }},
                     {{
                         selector: 'edge',
@@ -247,13 +213,13 @@ KNOWLEDGE_BASE = {
         "Chemistry": {"cat": "Natural", "methods": ["Synthesis", "Spectroscopy"], "tools": ["NMR", "Chromatography"], "facets": ["Organic", "Molecular"]},
         "Biology": {"cat": "Natural", "methods": ["Sequencing", "CRISPR"], "tools": ["Microscope", "Bio-Incubator"], "facets": ["Genetics", "Ecology"]},
         "Neuroscience": {"cat": "Natural", "methods": ["Neuroimaging", "Electrophys"], "tools": ["fMRI", "EEG"], "facets": ["Plasticity", "Synaptic"]},
-        "Psychology": {"cat": "Social", "methods": ["Double-Blind Trials", "Psychometrics"], "tools": ["fMRI", "Testing Kits"], "facets": ["Behavioral", "Cognitive"]},
+        "Psychology": {"cat": "Social", "methods": ["Trials", "Psychometrics"], "tools": ["fMRI", "Testing Kits"], "facets": ["Behavioral", "Cognitive"]},
         "Sociology": {"cat": "Social", "methods": ["Ethnography", "Surveys"], "tools": ["Data Analytics", "Archives"], "facets": ["Stratification", "Dynamics"]},
         "Computer Science": {"cat": "Formal", "methods": ["Algorithm Design", "Verification"], "tools": ["LLMGraphTransformer", "GPU Clusters", "Git"], "facets": ["AI", "Cybersecurity"]},
         "Medicine": {"cat": "Applied", "methods": ["Clinical Trials", "Epidemiology"], "tools": ["MRI/CT", "Bio-Markers"], "facets": ["Immunology", "Pharmacology"]},
-        "Engineering": {"cat": "Applied", "methods": ["Prototyping", "FEA Analysis"], "tools": ["3D Printers", "CAD Software"], "facets": ["Robotics", "Nanotech"]},
+        "Engineering": {"cat": "Applied", "methods": ["Prototyping", "FEA"], "tools": ["3D Printers", "CAD Software"], "facets": ["Robotics", "Nanotech"]},
         "Library Science": {"cat": "Applied", "methods": ["Taxonomy", "Appraisal"], "tools": ["OPAC", "Metadata"], "facets": ["Retrieval", "Knowledge Org"]},
-        "Philosophy": {"cat": "Humanities", "methods": ["Socratic Method", "Phenomenology"], "tools": ["Logic Mapping", "Critical Analysis"], "facets": ["Epistemology", "Metaphysics"]},
+        "Philosophy": {"cat": "Humanities", "methods": ["Socratic", "Phenomenology"], "tools": ["Logic Mapping", "Critical Analysis"], "facets": ["Epistemology", "Metaphysics"]},
         "Linguistics": {"cat": "Humanities", "methods": ["Corpus Analysis", "Syntactic Parsing"], "tools": ["Praat", "NLTK Toolkit"], "facets": ["Socioling", "CompLing"]},
         "Geography": {"cat": "Natural/Social", "methods": ["Spatial Analysis", "GIS"], "tools": ["ArcGIS"], "facets": ["Human Geo", "Physical Geo"]},
         "Geology": {"cat": "Natural", "methods": ["Stratigraphy", "Mineralogy"], "tools": ["Seismograph"], "facets": ["Tectonics", "Petrology"]},
@@ -273,25 +239,29 @@ if 'show_user_guide' not in st.session_state: st.session_state.show_user_guide =
 with st.sidebar:
     st.markdown(f'<div style="text-align:center"><img src="data:image/svg+xml;base64,{get_svg_base64(SVG_3D_RELIEF)}" width="220"></div>', unsafe_allow_html=True)
     st.header("⚙️ Control Panel")
-    api_key = st.text_input("Groq API Key:", type="password", help="Users must provide their own key from console.groq.com")
+    
+    # VARNOST: Ključ se ne shranjuje na strežniku
+    api_key = st.text_input(
+        "Groq API Key:", 
+        type="password", 
+        help="Your key is held in session memory only."
+    )
     
     if st.button("📖 User Guide"):
         st.session_state.show_user_guide = not st.session_state.show_user_guide
         st.rerun()
     if st.session_state.show_user_guide:
         st.info("""
-        1. **API Key**: Enter your key to connect the AI engine.
-        2. **Auto-Complete**: All dimensions are pre-filled; remove what you don't need.
+        1. **API Key**: Enter your key to connect the AI engine. It is NOT stored on the server.
+        2. **Minimal Config**: Physics, CS, and Linguistics are pre-selected.
         3. **Authors**: Provide author names to fetch ORCID metadata.
         4. **Inquiry**: Submit a complex query for an exhaustive dissertation.
-        5. **Semantic Graph**: Explore the colorful interconnected network of concepts.
-        6. **Author Links**: All researcher names in text link directly to Google Search.
-        7. **Scroll-to-Text**: Click graph nodes to find their definition in the text.
+        5. **Semantic Graph**: Explore colorful nodes interconnected via TT, BT, NT logic.
+        6. **Author Links**: All researcher names link directly to Google Search.
+        7. **Google Concept Links**: Click keywords in text to trigger external searches.
         """)
         if st.button("Close Guide ✖️"): st.session_state.show_user_guide = False; st.rerun()
 
-    if not api_key and "GROQ_API_KEY" in st.secrets: api_key = st.secrets["GROQ_API_KEY"]
-    
     st.divider()
     st.subheader("📚 Knowledge Explorer")
     with st.expander("👤 User Profiles"):
@@ -308,28 +278,16 @@ with st.sidebar:
     st.divider()
     # GUMB ZA RESETIRANJE (BREZ ODJAVE)
     if st.button("♻️ Reset Session", use_container_width=True):
-        auth_state = st.session_state.get('authenticated', False)
-        # Pobrišemo vse, vendar prepišemo določene ključe na prazno
         for key in list(st.session_state.keys()):
-            if key != 'authenticated':
-                del st.session_state[key]
-        st.session_state['authenticated'] = auth_state
-        # Ročno čiščenje polj povezanih s ključi
-        st.session_state['target_authors_key'] = ""
-        st.session_state['user_query_key'] = ""
+            del st.session_state[key]
         st.rerun()
     
     st.link_button("🌐 GitHub Repository", "https://github.com/", use_container_width=True)
     st.link_button("🆔 ORCID Registry", "https://orcid.org/", use_container_width=True)
     st.link_button("🎓 Google Scholar Search", "https://scholar.google.com/", use_container_width=True)
-    
-    # GUMB ZA ODJAVO
-    if st.button("🚪 Log Out", use_container_width=True):
-        st.session_state['authenticated'] = False
-        st.rerun()
 
 st.title("🧱 SIS Universal Knowledge Synthesizer")
-st.markdown("Advanced Multi-dimensional synthesis with **Interconnected Semantic Architecture**.")
+st.markdown("Advanced Multi-dimensional synthesis with **Organic Polyhierarchical Integration**.")
 
 st.markdown("### 🛠️ Configure Your Multi-Dimensional Cognitive Build")
 
@@ -339,7 +297,7 @@ with r1_c2:
     target_authors = st.text_input("👤 Research Authors:", placeholder="Karl Petrič, Samo Kralj, Teodor Petrič", key="target_authors_key")
     st.caption("Active bibliographic analysis via ORCID (includes publication years).")
 
-# ROW 2: CORE CONFIG (MINIMAL SETTINGS)
+# ROW 2: CORE CONFIG (Minimal settings, specific fields)
 r2_c1, r2_c2, r2_c3 = st.columns(3)
 with r2_c1:
     sel_profiles = st.multiselect("1. User Profiles:", list(KNOWLEDGE_BASE["profiles"].keys()), default=["Adventurers"])
@@ -405,7 +363,6 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
 
             STRICT FORMATTING & SPACE ALLOCATION:
             - Focus 100% of the textual content on deep research, causal analysis, and innovative problem-solving synergy.
-            - DO NOT include ASCII diagrams, pseudo-code boxes, or text-based UML diagrams using '+---+', '|', and arrows.
             - DO NOT include descriptions of the map or lists of node definitions in the text. 
             - DO NOT explain the visualization in the text.
             - End with '### SEMANTIC_GRAPH_JSON' followed by valid JSON only.
@@ -480,7 +437,8 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
             st.error(f"Synthesis failed: {e}")
 
 st.divider()
-st.caption("SIS Universal Knowledge Synthesizer | v12.1 Organic Polyhierarchical Integration | 2026")
+st.caption("SIS Universal Knowledge Synthesizer | v12.1 Refined Navigation & Polyhierarchical Integration | 2026")
+
 
 
 
