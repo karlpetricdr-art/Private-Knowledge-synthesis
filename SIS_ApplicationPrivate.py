@@ -135,9 +135,7 @@ if not st.session_state['authenticated']:
 
 # --- CYTOSCAPE RENDERER Z HIERARHIJO IN INTERAKTIVNOSTJO ---
 def render_cytoscape_network(elements, container_id="cy"):
-    """
-    Izriše interaktivno omrežje Cytoscape.js.
-    """
+    """Izriše interaktivno omrežje Cytoscape.js."""
     cyto_html = f"""
     <div id="{container_id}" style="width: 100%; height: 600px; background: #ffffff; border-radius: 15px; border: 1px solid #eee; box-shadow: 2px 2px 12px rgba(0,0,0,0.05);"></div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.26.0/cytoscape.min.js"></script>
@@ -247,15 +245,15 @@ KNOWLEDGE_BASE = {
         "Chemistry": {"cat": "Natural", "methods": ["Synthesis", "Spectroscopy"], "tools": ["NMR", "Chromatography"], "facets": ["Organic", "Molecular"]},
         "Biology": {"cat": "Natural", "methods": ["Sequencing", "CRISPR"], "tools": ["Microscope", "Bio-Incubator"], "facets": ["Genetics", "Ecology"]},
         "Neuroscience": {"cat": "Natural", "methods": ["Neuroimaging", "Electrophys"], "tools": ["fMRI", "EEG"], "facets": ["Plasticity", "Synaptic"]},
-        "Psychology": {"cat": "Social", "methods": ["Trials", "Psychometrics"], "tools": ["fMRI", "Testing Kits"], "facets": ["Behavioral", "Cognitive"]},
+        "Psychology": {"cat": "Social", "methods": ["Double-Blind Trials", "Psychometrics"], "tools": ["fMRI", "Testing Kits"], "facets": ["Behavioral", "Cognitive"]},
         "Sociology": {"cat": "Social", "methods": ["Ethnography", "Surveys"], "tools": ["Data Analytics", "Archives"], "facets": ["Stratification", "Dynamics"]},
         "Computer Science": {"cat": "Formal", "methods": ["Algorithm Design", "Verification"], "tools": ["LLMGraphTransformer", "GPU Clusters", "Git"], "facets": ["AI", "Cybersecurity"]},
         "Medicine": {"cat": "Applied", "methods": ["Clinical Trials", "Epidemiology"], "tools": ["MRI/CT", "Bio-Markers"], "facets": ["Immunology", "Pharmacology"]},
         "Engineering": {"cat": "Applied", "methods": ["Prototyping", "FEA Analysis"], "tools": ["3D Printers", "CAD Software"], "facets": ["Robotics", "Nanotech"]},
         "Library Science": {"cat": "Applied", "methods": ["Taxonomy", "Appraisal"], "tools": ["OPAC", "Metadata"], "facets": ["Retrieval", "Knowledge Org"]},
-        "Philosophy": {"cat": "Humanities", "methods": ["Socratic", "Phenomenology"], "tools": ["Logic Mapping", "Critical Analysis"], "facets": ["Epistemology", "Metaphysics"]},
+        "Philosophy": {"cat": "Humanities", "methods": ["Socratic Method", "Phenomenology"], "tools": ["Logic Mapping", "Critical Analysis"], "facets": ["Epistemology", "Metaphysics"]},
         "Linguistics": {"cat": "Humanities", "methods": ["Corpus Analysis", "Syntactic Parsing"], "tools": ["Praat", "NLTK Toolkit"], "facets": ["Socioling", "CompLing"]},
-        "Geography": {"cat": "Natural/Social", "methods": ["Spatial Analysis", "GIS"], "tools": ["ArcGIS"], "facets": ["Human Geo", "Physical Geo"]},
+        "Geography": {"cat": "Mixed", "methods": ["Spatial Analysis", "GIS"], "tools": ["ArcGIS"], "facets": ["Human Geo", "Physical Geo"]},
         "Geology": {"cat": "Natural", "methods": ["Stratigraphy", "Mineralogy"], "tools": ["Seismograph"], "facets": ["Tectonics", "Petrology"]},
         "Climatology": {"cat": "Natural", "methods": ["Climate Modeling"], "tools": ["Weather Stations"], "facets": ["Change Analysis"]},
         "History": {"cat": "Humanities", "methods": ["Archival Research", "Historiography"], "tools": ["Archives"], "facets": ["Social History"]}
@@ -274,11 +272,11 @@ with st.sidebar:
     st.markdown(f'<div style="text-align:center"><img src="data:image/svg+xml;base64,{get_svg_base64(SVG_3D_RELIEF)}" width="220"></div>', unsafe_allow_html=True)
     st.header("⚙️ Control Panel")
     
-    # VARNOST: Ključ se ne shranjuje v serverske secrets
+    # VARNOST: Ključ se ne shranjuje na strežniku
     api_key = st.text_input(
         "Groq API Key:", 
         type="password", 
-        help="Security: Your key is held only in the volatile memory of this session and is never stored on our servers."
+        help="Your key is held in session memory only."
     )
     
     if st.button("📖 User Guide"):
@@ -286,13 +284,13 @@ with st.sidebar:
         st.rerun()
     if st.session_state.show_user_guide:
         st.info("""
-        1. **API Key**: Enter your key to connect the AI engine. It is NOT stored on the server.
-        2. **Minimal Config**: Defaults are set to Physics, CS, and Linguistics.
-        3. **Authors**: Provide author names to fetch ORCID metadata.
-        4. **Inquiry**: Submit a complex query for an exhaustive dissertation.
-        5. **Semantic Graph**: Explore colorful nodes interconnected via TT, BT, NT logic.
-        6. **Author Links**: All researcher names link directly to Google Search.
-        7. **Google Concept Links**: Click keywords in text to trigger external searches.
+        1. **API Key**: Enter your key to connect the AI engine.
+        2. **Minimal Config**: Physics, CS, and Linguistics are pre-selected.
+        3. **Authors**: Provide names to fetch ORCID metadata.
+        4. **Inquiry**: Submit a query for a 1500+ word dissertation.
+        5. **Interconnected Graph**: Explore hierarchical concepts and UML classes.
+        6. **Google Author Links**: Researcher names link directly to Google Search.
+        7. **Scroll-to-Text**: Click graph nodes to find their definition in the text.
         """)
         if st.button("Close Guide ✖️"): st.session_state.show_user_guide = False; st.rerun()
 
@@ -310,16 +308,14 @@ with st.sidebar:
         for m, d in KNOWLEDGE_BASE["knowledge_models"].items(): st.write(f"**{m}**: {d}")
     
     st.divider()
-    # POPRAVLJEN GUMB ZA RESETIRANJE (BREZ ODJAVE)
+    # GUMB ZA RESETIRANJE (POPRAVLJEN: BREZ ODJAVE)
     if st.button("♻️ Reset Session", use_container_width=True):
-        # Shranimo status avtentikacije
         auth_state = st.session_state.get('authenticated', False)
-        # Pobrišemo vse ključe
         for key in list(st.session_state.keys()):
-            del st.session_state[key]
-        # Ponovno vzpostavimo samo avtentikacijo
+            if key != 'authenticated':
+                del st.session_state[key]
         st.session_state['authenticated'] = auth_state
-        # Ročno počistimo ključe gradnikov
+        # Ročna ponastavitev vnosnih ključev
         st.session_state['target_authors_key'] = ""
         st.session_state['user_query_key'] = ""
         st.rerun()
@@ -328,29 +324,29 @@ with st.sidebar:
     st.link_button("🆔 ORCID Registry", "https://orcid.org/", use_container_width=True)
     st.link_button("🎓 Google Scholar Search", "https://scholar.google.com/", use_container_width=True)
     
-    # GUMB ZA ODJAVO (POD SCHOLAR GUMBOM)
+    # GUMB ZA ODJAVO (POD GOOGLE SCHOLAR)
     if st.button("🚪 Log Out", use_container_width=True):
         st.session_state['authenticated'] = False
         st.rerun()
 
 st.title("🧱 SIS Universal Knowledge Synthesizer")
-st.markdown("Advanced Multi-dimensional synthesis with **Organic Polyhierarchical Integration**.")
+st.markdown("Advanced Multi-dimensional synthesis with **UML Class & Organic Polyhierarchical Mapping**.")
 
 st.markdown("### 🛠️ Configure Your Multi-Dimensional Cognitive Build")
 
 # ROW 1: AUTHORS
 r1_c1, r1_c2, r1_c3 = st.columns([1, 2, 1])
 with r1_c2:
+    # Uporaba ključa za resetiranje
     target_authors = st.text_input("👤 Research Authors:", placeholder="Karl Petrič, Samo Kralj, Teodor Petrič", key="target_authors_key")
     st.caption("Active bibliographic analysis via ORCID (includes publication years).")
 
-# ROW 2: CORE CONFIG (MINIMAL SETTINGS)
+# ROW 2: CORE CONFIG (Minimal settings, specific fields)
 r2_c1, r2_c2, r2_c3 = st.columns(3)
 with r2_c1:
     sel_profiles = st.multiselect("1. User Profiles:", list(KNOWLEDGE_BASE["profiles"].keys()), default=["Adventurers"])
 with r2_c2:
     all_sciences = sorted(list(KNOWLEDGE_BASE["subject_details"].keys()))
-    # PRIVZETO: Physics, Computer science in Linguistics
     sel_sciences = st.multiselect("2. Science Fields:", all_sciences, default=["Physics", "Computer Science", "Linguistics"])
 with r2_c3:
     expertise = st.select_slider("3. Expertise Level:", options=["Novice", "Intermediate", "Expert"], value=st.session_state.expertise_val)
@@ -389,14 +385,13 @@ user_query = st.text_area("❓ Your Synthesis Inquiry:",
 # 3. JEDRO SINTEZE: GROQ AI + INTERCONNECTED 12D GRAPH
 # =========================================================
 if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=True):
-    if not api_key: st.error("Missing Groq API Key. Please provide your own key in the sidebar.")
+    if not api_key: st.error("Missing Groq API Key.")
     elif not user_query: st.warning("Please provide an inquiry.")
     else:
         try:
             biblio = fetch_author_bibliographies(target_authors) if target_authors else ""
             client = OpenAI(api_key=api_key, base_url="https://api.groq.com/openai/v1")
             
-            # SISTEMSKO NAVODILO
             sys_prompt = f"""
             You are the SIS Synthesizer. Perform an exhaustive dissertation (1500+ words).
             FIELDS: {", ".join(sel_sciences)}. CONTEXT AUTHORS: {biblio}.
@@ -404,19 +399,19 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
             THESAURUS ALGORITHM (TT, BT, NT, AS, RT, EQ):
             Organize knowledge using super-ordinate (TT), broader (BT), narrower (NT), associative (AS), relative (RT), and equivalent (EQ) links.
             
-            HIERARCHY & INTERCONNECTIVITY:
-            1. Integrate dimensions into a cohesive dissertation focusing purely on the inquiry: {user_query}.
-            2. Connect nodes semantically and with high density to create ONE LARGE CONNECTED NETWORK.
-
             UML CLASS DIAGRAM TASK:
-            - If a subsystem is highly structured, represent it as a Class Node.
-            - Relate classes using: Inheritance, Composition, Aggregation, or Dependency.
+            Represent structured systems as Class Nodes. Relate via Inheritance, Composition, Aggregation, or Dependency.
+
+            HIERARCHY & INTERCONNECTIVITY:
+            1. Integrate dimensions into a cohesive dissertation for the inquiry: {user_query}.
+            2. Connect nodes semantically and high-density to create ONE LARGE CONNECTED NETWORK.
 
             STRICT FORMATTING & SPACE ALLOCATION:
-            - Focus 100% of the textual content on deep research, causal analysis, and innovative problem-solving synergy.
-            - DO NOT include descriptions of the map or lists of node definitions in the text. 
-            - End with '### SEMANTIC_GRAPH_JSON' followed by valid JSON only.
-            - JSON schema: {{"nodes": [{{"id": "n1", "label": "Text", "type": "Root|Branch|Leaf|Class", "color": "#hex"}}], "edges": [{{"source": "n1", "target": "n2", "rel_type": "BT|NT|AS|Inheritance|..."}}]}}
+            - Focus 100% on deep research, causal analysis, and innovative synergy.
+            - DO NOT include descriptions of the map or node lists in markdown. 
+            - End with '### SEMANTIC_GRAPH_JSON' then valid JSON only.
+            - Assign colorful hex codes to nodes by discipline.
+            - JSON schema: {{"nodes": [{{"id": "n1", "label": "Text", "type": "Root|Branch|Leaf|Class", "color": "#hex"}}], "edges": [{{"source": "n1", "target": "n2", "rel_type": "AS|Inheritance|..."}}]}}
             """
             
             with st.spinner('Synthesizing exhaustive interdisciplinary synergy (8–40s)...'):
@@ -434,7 +429,6 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
                 if len(parts) > 1:
                     try:
                         g_json = json.loads(re.search(r'\{.*\}', parts[1], re.DOTALL).group())
-                        # 1. Koncepti -> Google Search + ID značka
                         for n in g_json.get("nodes", []):
                             lbl, nid = n["label"], n["id"]
                             g_url = urllib.parse.quote(lbl)
@@ -442,7 +436,6 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
                             replacement = f'<span id="{nid}"><a href="https://www.google.com/search?q={g_url}" target="_blank" class="semantic-node-highlight">{lbl}<i class="google-icon">↗</i></a></span>'
                             main_markdown = pattern.sub(replacement, main_markdown, count=1)
                         
-                        # 2. Avtorji -> Google Search Link
                         if target_authors:
                             for auth_name in target_authors.split(","):
                                 auth_stripped = auth_name.strip()
@@ -461,8 +454,6 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
                     try:
                         g_json = json.loads(re.search(r'\{.*\}', parts[1], re.DOTALL).group())
                         st.subheader("🕸️ LLMGraphTransformer: Unified Interdisciplinary Network")
-                        st.caption("Colorful nodes represent hierarchical concepts and UML classes. Dimensions are associatively connected.")
-                        
                         elements = []
                         for n in g_json.get("nodes", []):
                             level = n.get("type", "Branch")
@@ -477,7 +468,7 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
                                 "source": e["source"], "target": e["target"], "rel_type": e.get("rel_type", "AS")
                             }})
                         render_cytoscape_network(elements, "semantic_viz_full")
-                    except: st.warning("Graph data could not be parsed.")
+                    except: st.warning("Graph parsing error.")
 
                 if biblio:
                     with st.expander("📚 View Metadata Fetched from Research Databases"):
@@ -487,7 +478,8 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
             st.error(f"Synthesis failed: {e}")
 
 st.divider()
-st.caption("SIS Universal Knowledge Synthesizer | v13.5 Organic Polyhierarchical Integration | 2026")
+st.caption("SIS Universal Knowledge Synthesizer | v13.5 UML & Polyhierarchical Dissertation Edition | 2026")
+
 
 
 
