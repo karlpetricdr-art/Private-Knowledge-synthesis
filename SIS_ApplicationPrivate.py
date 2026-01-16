@@ -427,10 +427,32 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
                             size = 100 if level == "Class" else (90 if level == "Root" else (70 if level == "Branch" else 50))
                             color = n.get("color", "#2a9d8f")
                             shape = n.get("shape", "ellipse")
+                            
+                            # --- DODAJANJE IKONIC IZ KNOWLEDGE EXPLORERJA ---
+                            node_label = n["label"]
+                            icon_prefix = ""
+                            
+                            # Preverjanje po kategorijah
+                            if any(s.lower() in node_label.lower() for s in KNOWLEDGE_BASE["subject_details"].keys()):
+                                icon_prefix = "🔬 "
+                            elif any(a.lower() in node_label.lower() for a in KNOWLEDGE_BASE["mental_approaches"]):
+                                icon_prefix = "🧠 "
+                            elif any(p.lower() in node_label.lower() for p in KNOWLEDGE_BASE["paradigms"].keys()):
+                                icon_prefix = "🌍 "
+                            elif any(m.lower() in node_label.lower() for m in KNOWLEDGE_BASE["knowledge_models"].keys()):
+                                icon_prefix = "🏗️ "
+                            elif any(pr.lower() in node_label.lower() for pr in KNOWLEDGE_BASE["profiles"].keys()):
+                                icon_prefix = "👤 "
+                            
                             elements.append({"data": {
-                                "id": n["id"], "label": n["label"], "color": color,
-                                "size": size, "shape": shape, "z_index": 10 if level in ["Root", "Class"] else 1
+                                "id": n["id"], 
+                                "label": f"{icon_prefix}{node_label}", 
+                                "color": color,
+                                "size": size, 
+                                "shape": shape, 
+                                "z_index": 10 if level in ["Root", "Class"] else 1
                             }})
+                            
                         for e in g_json.get("edges", []):
                             elements.append({"data": {
                                 "source": e["source"], "target": e["target"], "rel_type": e.get("rel_type", "AS")
@@ -447,6 +469,7 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
 
 st.divider()
 st.caption("SIS Universal Knowledge Synthesizer | v18.0 Comprehensive 18D Geometrical Export Edition | 2026")
+
 
 
 
