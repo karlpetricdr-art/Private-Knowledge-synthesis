@@ -1,3 +1,5 @@
+--- START OF FILE Paste January 16, 2026 - 5:14PM ---
+
 import streamlit as st
 import json
 import base64
@@ -207,7 +209,7 @@ def fetch_author_bibliographies(author_input):
     return comprehensive_biblio
 
 # =========================================================
-# 1. POPOLNA MULTIDIMENZIONALNA ONTOLOGIJA (VSEH 16 DISCIPLIN)
+# 1. POPOLNA MULTIDIMENZIONALNA ONTOLOGIJA (VSEH 18 DISCIPLIN)
 # =========================================================
 KNOWLEDGE_BASE = {
     "mental_approaches": ["Perspective shifting", "Induction", "Deduction", "Hierarchy", "Mini-max", "Whole and part", "Addition and composition", "Balance", "Abstraction and elimination", "Openness and closedness", "Bipolarity and dialectics", "Framework and foundation", "Pleasure and displeasure", "Similarity and difference", "Core (Attraction & Repulsion)", "Condensation", "Constant", "Associativity"],
@@ -230,7 +232,9 @@ KNOWLEDGE_BASE = {
         "Geography": {"cat": "Natural/Social", "methods": ["Spatial Analysis", "GIS"], "tools": ["ArcGIS"], "facets": ["Human Geo", "Physical Geo"]},
         "Geology": {"cat": "Natural", "methods": ["Stratigraphy", "Mineralogy"], "tools": ["Seismograph"], "facets": ["Tectonics", "Petrology"]},
         "Climatology": {"cat": "Natural", "methods": ["Climate Modeling"], "tools": ["Weather Stations"], "facets": ["Change Analysis"]},
-        "History": {"cat": "Humanities", "methods": ["Archival Research", "Historiography"], "tools": ["Archives"], "facets": ["Social History"]}
+        "History": {"cat": "Humanities", "methods": ["Archival Research", "Historiography"], "tools": ["Archives"], "facets": ["Social History"]},
+        "Economics": {"cat": "Social", "methods": ["Econometrics", "Game Theory", "Cost-Benefit Analysis"], "tools": ["Stata", "R", "Bloomberg Terminal"], "facets": ["Macroeconomics", "Microeconomics", "Behavioral Economics"]},
+        "Politics": {"cat": "Social", "methods": ["Comparative Analysis", "Policy Analysis", "Content Analysis"], "tools": ["Polls", "Legislative Databases", "GDELT"], "facets": ["International Relations", "Political Theory", "Governance"]}
     }
 }
 
@@ -345,7 +349,7 @@ user_query = st.text_area("❓ Your Synthesis Inquiry:",
                          height=150, key="user_query_key")
 
 # =========================================================
-# 3. JEDRO SINTEZE: GROQ AI + INTERCONNECTED 16D GRAPH
+# 3. JEDRO SINTEZE: GROQ AI + INTERCONNECTED 18D GRAPH
 # =========================================================
 if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=True):
     if not api_key: st.error("Missing Groq API Key. Please provide your own key in the sidebar.")
@@ -444,7 +448,8 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
             st.error(f"Synthesis failed: {e}")
 
 st.divider()
-st.caption("SIS Universal Knowledge Synthesizer | v16.5 Comprehensive 16D Geometrical Export Edition | 2026")
+st.caption("SIS Universal Knowledge Synthesizer | v18.0 Comprehensive 18D Geometrical Export Edition | 2026")
+
 
 
 
