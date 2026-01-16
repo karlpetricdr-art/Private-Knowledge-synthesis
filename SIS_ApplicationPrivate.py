@@ -23,11 +23,14 @@ st.set_page_config(
 # Scoped specifically to avoid breaking Streamlit's internal icons (Double Arrow fix)
 st.markdown("""
 <style>
+    /* Content Styling */
     .stMarkdown, .stMarkdown p {
         line-height: 1.9 !important;
         font-size: 1.05em !important;
         text-align: justify;
     }
+    
+    /* Semantic Highlighting and Link Styling */
     .semantic-node-highlight {
         color: #2a9d8f;
         font-weight: 700;
@@ -35,7 +38,7 @@ st.markdown("""
         padding: 0 4px;
         background-color: #f0fdfa;
         border-radius: 6px;
-        transition: all 0.3s ease;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         text-decoration: none !important;
         display: inline-block;
         margin-top: 2px;
@@ -44,6 +47,7 @@ st.markdown("""
         background-color: #264653;
         color: #ffffff;
         border-bottom: 2.5px solid #e76f51;
+        transform: translateY(-2px);
         cursor: pointer;
     }
     .author-search-link {
@@ -64,7 +68,8 @@ st.markdown("""
         color: #457b9d;
         opacity: 0.7;
     }
-    /* Aesthetic Knowledge Explorer Cards */
+
+    /* Aesthetic Knowledge Explorer Cards (Fixing the "zmazek") */
     .explorer-card {
         padding: 15px;
         border-radius: 12px;
@@ -86,11 +91,21 @@ st.markdown("""
         color: #444;
         line-height: 1.5;
     }
+    
+    /* Lego Section Headers */
+    .lego-main-title {
+        font-size: 1.6em;
+        font-weight: 900;
+        color: #264653;
+        margin-bottom: 15px;
+        border-left: 10px solid #e76f51;
+        padding-left: 15px;
+    }
 </style>
 """, unsafe_allow_html=True)
 
 def get_svg_base64(svg_str):
-    """Converts SVG string to base64 for image display."""
+    """Converts SVG string to base64 format for image display."""
     return base64.b64encode(svg_str.encode('utf-8')).decode('utf-8')
 
 # --- LOGO: 3D RELIEF LEGO VERSION (Embedded SVG) ---
@@ -129,29 +144,24 @@ def render_cytoscape_network(elements, pure_icons=False, container_id="cy_canvas
     - Export graph as high-res PNG.
     """
     num_nodes = len([e for e in elements if 'source' not in e['data']])
+    # Complexity detection for font size adjustment
     f_size = "18px" if num_nodes > 15 else "26px"
     
     node_style = {
         'label': 'data(label)', 'text-valign': 'center', 'color': '#333',
         'font-weight': 'bold', 'text-outline-width': 2, 'text-outline-color': '#fff',
-        'cursor': 'pointer', 'z-index': 'data(z_index)', 'font-size': f_size
+        'cursor': 'pointer', 'z-index': 'data(z_index)', 'font-size': f_size,
+        'transition-property': 'background-color, line-color', 'transition-duration': '0.3s'
     }
 
     if pure_icons:
-        node_style.update({
-            'background-opacity': 0, 'border-width': 0,
-            'width': 45, 'height': 45, 'font-size': '38px'
-        })
+        node_style.update({'background-opacity': 0, 'border-width': 0, 'width': 45, 'height': 45, 'font-size': '38px'})
     else:
-        node_style.update({
-            'background-color': 'data(color)', 'width': 'data(size)',
-            'height': 'data(size)', 'shape': 'data(shape)',
-            'border-width': 2, 'border-color': '#fff'
-        })
+        node_style.update({'background-color': 'data(color)', 'width': 'data(size)', 'height': 'data(size)', 'shape': 'data(shape)', 'border-width': 2, 'border-color': '#fff'})
 
     cyto_html = f"""
     <div style="position: relative; font-family: sans-serif;">
-        <div style="position: absolute; top: 15px; right: 15px; z-index: 100; display: flex; gap: 10px;">
+        <div style="position: absolute; top: 15px; right: 15px; z-index: 100;">
             <button id="save_btn" style="padding: 10px 18px; background: #2a9d8f; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: 0.2s;">💾 Export PNG</button>
         </div>
         <div id="{container_id}" style="width: 100%; height: 720px; background: #ffffff; border-radius: 25px; border: 1px solid #ddd; box-shadow: 2px 2px 20px rgba(0,0,0,0.04);"></div>
@@ -199,7 +209,7 @@ def render_cytoscape_network(elements, pure_icons=False, container_id="cy_canvas
 
 # --- AUTHOR BIBLIOGRAPHY ENGINE ---
 def fetch_author_metadata_pro(author_input):
-    """Fetches researcher data from ORCID with year extraction."""
+    """Fetches researcher data from ORCID with multi-year extraction."""
     if not author_input: return ""
     author_list = [a.strip() for a in author_input.split(",")]
     comprehensive_biblio = ""
@@ -228,7 +238,7 @@ KNOWLEDGE_BASE = {
         "Adventurers": {"desc": "Explorers of hidden patterns, boundary-pushing ideas and non-linear systems.", "icon": "👤"},
         "Applicators": {"desc": "Pragmatic thinkers focused on efficient execution and practical utility.", "icon": "👤"},
         "Know-it-alls": {"desc": "Seekers of systemic clarity and absolute universal laws.", "icon": "👤"},
-        "Observers": {"desc": "System monitors focused on data streams and objective tracking.", "icon": "👤"}
+        "Observers": {"desc": "System monitors focused on data streams, tracking and objective reporting.", "icon": "👤"}
     },
     "mental_approaches": {
         "Perspective shifting": "Analyzing systems from multiple vantage points.",
@@ -301,7 +311,7 @@ with st.sidebar:
         if st.button("Close Guide"): st.session_state.show_guide_en = False; st.rerun()
 
     st.divider()
-    st.markdown('<div style="font-weight:700; color:#264653; font-size:1.2em;">Knowledge Explorer</div>', unsafe_allow_html=True)
+    st.markdown('<div style="font-weight:700; color:#264653; font-size:1.2em; margin-bottom:10px;">Knowledge Explorer</div>', unsafe_allow_html=True)
     
     with st.expander("👤 User Profiles"):
         for p, d in KNOWLEDGE_BASE["profiles"].items():
@@ -332,7 +342,7 @@ with st.sidebar:
 st.title("🧱 SIS Universal Knowledge Synthesizer")
 st.markdown("Advanced Multi-dimensional synthesis with **Interdisciplinary Lego Architecture**.")
 
-st.markdown("### 🏗️ Build Your 9D Cognitive Lego Structure")
+st.markdown('<div class="lego-main-title">🏗️ Build Your 9D Cognitive Lego Structure</div>', unsafe_allow_html=True)
 
 # ROW 1: AUTHORS & EXPERTISE
 r1_c1, r1_c2 = st.columns([2, 1])
@@ -347,7 +357,7 @@ with c3: sel_models = st.multiselect("4. Models:", list(KNOWLEDGE_BASE["knowledg
 
 c4, c5, c6 = st.columns(3)
 with c4: sel_paradigms = st.multiselect("5. Paradigms:", list(KNOWLEDGE_BASE["paradigms"].keys()), default=["Rationalism"])
-with c5: goal_context = st.selectbox("6. Context:", ["Scientific Research", "Problem Solving", "Policy Making", "Educational"])
+with c5: goal_context = st.selectbox("6. Context / Goal:", ["Scientific Research", "Problem Solving", "Policy Making", "Educational"])
 with c6: sel_approaches = st.multiselect("7. Approaches:", list(KNOWLEDGE_BASE["mental_approaches"].keys()), default=["Perspective shifting"])
 
 c7, c8, c9 = st.columns(3)
@@ -359,7 +369,7 @@ with c8: sel_tools = st.multiselect("9. Specific Tools:", ["LLMGraphTransformer"
 with c9: viz_mode = st.radio("Lego Visualization Mode:", ["Standard Shapes", "Pure Large Icons"])
 
 st.divider()
-user_query = st.text_area("❓ Your Synthesis Inquiry:", placeholder="Synergy between geopolitical forces and economics. Use icons and varied geometry for nodes.", height=150)
+user_query = st.text_area("❓ Your Synthesis Inquiry:", placeholder="Create a synergy between geopolitics and economics. Use icons and varied geometry.", height=150)
 
 # ==============================================================================
 # 4. CORE SYNTHESIS ENGINE: GROQ AI + LEGO GRAPH LOGIC
@@ -375,6 +385,7 @@ if st.button("🚀 Execute Multi-Dimensional Lego Synthesis", use_container_widt
             sys_prompt = f"""
             You are the SIS Synthesizer. Perform an exhaustive dissertation (1500+ words).
             LEGO ARCHITECTURE: 9-Dimensions active. FIELDS: {sel_sciences}. CONTEXT: {bib_data}.
+            
             STRICT RULES:
             1. FOCUS 100% on deep research. NEVER include node lists in dissertation text.
             2. Apply THESAURUS logic (TT, BT, NT, AS, RT, EQ) and Lego Interdisciplinary modeling.
@@ -445,3 +456,4 @@ if st.button("🚀 Execute Multi-Dimensional Lego Synthesis", use_container_widt
 
 st.divider()
 st.caption("SIS Universal Knowledge Synthesizer | v18.5 | Interdisciplinary Lego Architecture | 2026")
+
