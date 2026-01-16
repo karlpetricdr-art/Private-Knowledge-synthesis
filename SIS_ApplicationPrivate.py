@@ -19,7 +19,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Integration of CSS for visual highlights, Google links, and smooth navigation
+# Advanced CSS for Semantic Highlights and Google Link Integration
 st.markdown("""
 <style>
     .semantic-node-highlight {
@@ -36,13 +36,13 @@ st.markdown("""
         background-color: #ccfbf1;
         color: #264653;
         border-bottom: 2px solid #e76f51;
+        cursor: pointer;
     }
     .author-search-link {
         color: #1d3557;
         font-weight: bold;
         text-decoration: none;
         border-bottom: 1px double #457b9d;
-        padding: 0 1px;
     }
     .author-search-link:hover {
         color: #e63946;
@@ -63,7 +63,6 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 def get_svg_base64(svg_str):
-    """Converts SVG string to base64 format for image display."""
     return base64.b64encode(svg_str.encode('utf-8')).decode('utf-8')
 
 # --- LOGO: 3D RELIEF (Embedded SVG) ---
@@ -95,15 +94,15 @@ SVG_3D_RELIEF = """
 </svg>
 """
 
-# --- CYTOSCAPE RENDERER WITH EXPORT & OPTIMIZED FONT SCALING ---
+# --- CYTOSCAPE RENDERER WITH DYNAMIC FONT & SHAPES ---
 def render_cytoscape_network(elements, pure_icons=False, container_id="cy"):
     """
-    Renders an interactive Cytoscape.js network. 
-    Dynamic font scaling: 14pt (complex) to 20pt (simple).
+    Renders interactive Cytoscape.js network.
+    Font size logic: 14pt (complex), 16-20pt (simple).
     """
     num_nodes = len([e for e in elements if 'source' not in e['data']])
-    # Complexity threshold: 14pt (~18px) if complex, up to 20pt (~26px) if simple
-    font_size_val = "18px" if num_nodes > 15 else ("26px" if num_nodes < 8 else "22px")
+    # Complexity scaling
+    font_size = "14px" if num_nodes > 15 else "18px"
     
     node_style = {
         'label': 'data(label)',
@@ -114,15 +113,16 @@ def render_cytoscape_network(elements, pure_icons=False, container_id="cy"):
         'text-outline-color': '#fff',
         'cursor': 'pointer',
         'z-index': 'data(z_index)',
-        'font-size': font_size_val
+        'font-size': font_size
     }
 
     if pure_icons:
         node_style.update({
             'background-opacity': 0,
             'border-width': 0,
-            'width': 40, 
-            'height': 40
+            'width': 40,
+            'height': 40,
+            'font-size': '24px'
         })
     else:
         node_style.update({
@@ -134,7 +134,7 @@ def render_cytoscape_network(elements, pure_icons=False, container_id="cy"):
 
     cyto_html = f"""
     <div style="position: relative;">
-        <button id="save_btn" style="position: absolute; top: 10px; right: 10px; z-index: 100; padding: 8px 12px; background: #2a9d8f; color: white; border: none; border-radius: 5px; cursor: pointer; font-family: sans-serif; font-size: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">💾 Export Graph as PNG</button>
+        <button id="save_btn" style="position: absolute; top: 10px; right: 10px; z-index: 100; padding: 8px 12px; background: #2a9d8f; color: white; border: none; border-radius: 5px; cursor: pointer; font-family: sans-serif; font-size: 12px;">💾 Export Graph as PNG</button>
         <div id="{container_id}" style="width: 100%; height: 600px; background: #ffffff; border-radius: 15px; border: 1px solid #eee; box-shadow: 2px 2px 12px rgba(0,0,0,0.05);"></div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.26.0/cytoscape.min.js"></script>
@@ -144,143 +144,111 @@ def render_cytoscape_network(elements, pure_icons=False, container_id="cy"):
                 container: document.getElementById('{container_id}'),
                 elements: {json.dumps(elements)},
                 style: [
-                    {{
-                        selector: 'node',
-                        style: {json.dumps(node_style)}
-                    }},
-                    {{
-                        selector: 'edge',
-                        style: {{
-                            'width': 3, 'line-color': '#adb5bd', 'label': 'data(rel_type)',
-                            'font-size': '10px', 'font-weight': 'bold', 'color': '#2a9d8f',
-                            'target-arrow-color': '#adb5bd', 'target-arrow-shape': 'triangle',
-                            'curve-style': 'bezier', 'text-rotation': 'autorotate',
-                            'text-background-opacity': 1, 'text-background-color': '#ffffff',
-                            'text-background-padding': '2px', 'text-background-shape': 'roundrectangle'
-                        }}
-                    }}
+                    {{ selector: 'node', style: {json.dumps(node_style)} }},
+                    {{ selector: 'edge', style: {{
+                        'width': 3, 'line-color': '#adb5bd', 'label': 'data(rel_type)',
+                        'font-size': '10px', 'font-weight': 'bold', 'color': '#2a9d8f',
+                        'target-arrow-color': '#adb5bd', 'target-arrow-shape': 'triangle',
+                        'curve-style': 'bezier', 'text-rotation': 'autorotate',
+                        'text-background-opacity': 1, 'text-background-color': '#ffffff'
+                    }} }}
                 ],
-                layout: {{ name: 'cose', padding: 50, animate: true, nodeRepulsion: 25000, idealEdgeLength: 120 }}
+                layout: {{ name: 'cose', padding: 50, animate: true, nodeRepulsion: 35000, idealEdgeLength: 120 }}
             }});
-            
             cy.on('tap', 'node', function(evt){{
-                var elementId = evt.target.id();
-                var target = window.parent.document.getElementById(elementId);
+                var target = window.parent.document.getElementById(evt.target.id());
                 if (target) {{
                     target.scrollIntoView({{behavior: "smooth", block: "center"}});
                     target.style.backgroundColor = "#ffffcc";
                     setTimeout(function(){{ target.style.backgroundColor = "transparent"; }}, 2500);
                 }}
             }});
-
-            document.getElementById('save_btn').addEventListener('click', function() {{
-                var png64 = cy.png({{full: true, bg: 'white', scale: 2}});
+            document.getElementById('save_btn').onclick = function() {{
                 var link = document.createElement('a');
-                link.href = png64;
+                link.href = cy.png({{full: true, bg: 'white', scale: 2}});
                 link.download = 'sis_knowledge_graph.png';
-                document.body.appendChild(link);
                 link.click();
-                document.body.removeChild(link);
-            }});
+            }};
         }});
     </script>
     """
     components.html(cyto_html, height=650)
 
-# --- AUTHOR BIBLIOGRAPHY FETCHING ---
+# --- BIBLIOGRAPHY FETCHING ---
 def fetch_author_bibliographies(author_input):
     if not author_input: return ""
     author_list = [a.strip() for a in author_input.split(",")]
-    comprehensive_biblio = ""
-    headers = {"Accept": "application/json"}
+    biblio = ""
     for auth in author_list:
-        orcid_id = None
         try:
-            search_url = f"https://pub.orcid.org/v3.0/search/?q={auth}"
-            s_res = requests.get(search_url, headers=headers, timeout=5).json()
-            if s_res.get('result'):
-                orcid_id = s_res['result'][0]['orcid-identifier']['path']
-        except: pass
-        if orcid_id:
-            try:
-                record_url = f"https://pub.orcid.org/v3.0/{orcid_id}/record"
-                r_res = requests.get(record_url, headers=headers, timeout=5).json()
+            res = requests.get(f"https://pub.orcid.org/v3.0/search/?q={auth}", headers={"Accept": "application/json"}, timeout=5).json()
+            if res.get('result'):
+                oid = res['result'][0]['orcid-identifier']['path']
+                biblio += f"\n--- ORCID: {auth.upper()} ({oid}) ---\n"
+                r_res = requests.get(f"https://pub.orcid.org/v3.0/{oid}/record", headers={"Accept": "application/json"}, timeout=5).json()
                 works = r_res.get('activities-summary', {}).get('works', {}).get('group', [])
-                comprehensive_biblio += f"\n--- ORCID BIBLIOGRAPHY: {auth.upper()} ({orcid_id}) ---\n"
-                if works:
-                    for work in works[:5]:
-                        summary = work.get('work-summary', [{}])[0]
-                        title = summary.get('title', {}).get('title', {}).get('value', 'N/A')
-                        pub_date = summary.get('publication-date')
-                        year = pub_date.get('year').get('value', 'n.d.') if pub_date and pub_date.get('year') else "n.d."
-                        comprehensive_biblio += f"- [{year}] {title}\n"
-            except: pass
-        else:
-            try:
-                ss_url = f"https://api.semanticscholar.org/graph/v1/paper/search?query=author:\"{auth}\"&limit=3&fields=title,year"
-                ss_res = requests.get(ss_url, timeout=5).json()
-                papers = ss_res.get("data", [])
-                if papers:
-                    comprehensive_biblio += f"\n--- SCHOLAR BIBLIOGRAPHY: {auth.upper()} ---\n"
-                    for p in papers:
-                        comprehensive_biblio += f"- [{p.get('year','n.d.')}] {p['title']}\n"
-            except: pass
-    return comprehensive_biblio
+                for w in works[:3]:
+                    summ = w.get('work-summary', [{}])[0]
+                    year = summ.get('publication-date', {}).get('year', {}).get('value', 'n.d.') if summ.get('publication-date') else "n.d."
+                    biblio += f"- [{year}] {summ.get('title', {}).get('title', {}).get('value', 'N/A')}\n"
+        except: pass
+    return biblio
 
 # =========================================================
-# 1. FULL MULTIDIMENSIONAL ONTOLOGY (18 DISCIPLINES)
+# 1. FULL ONTOLOGY (18 DISCIPLINES)
 # =========================================================
 KNOWLEDGE_BASE = {
     "mental_approaches": ["Perspective shifting", "Induction", "Deduction", "Hierarchy", "Mini-max", "Whole and part", "Addition and composition", "Balance", "Abstraction and elimination", "Openness and closedness", "Bipolarity and dialectics", "Framework and foundation", "Pleasure and displeasure", "Similarity and difference", "Core (Attraction & Repulsion)", "Condensation", "Constant", "Associativity"],
     "profiles": {"Adventurers": {"description": "Explorers of hidden patterns."}, "Applicators": {"description": "Efficiency focused."}, "Know-it-alls": {"description": "Systemic clarity."}, "Observers": {"description": "System monitors."}},
-    "paradigms": {"Empiricism": "Sensory experience.", "Rationalism": "Deductive logic.", "Constructivism": "Social build.", "Positivism": "Strict facts.", "Pragmatism": "Practical utility."},
-    "knowledge_models": {"Causal Connections": "Causality.", "Principles & Relations": "Fundamental laws.", "Episodes & Sequences": "Time-flow.", "Facts & Characteristics": "Raw data.", "Generalizations": "Frameworks.", "Glossary": "Definitions.", "Concepts": "Abstract constructs."},
+    "paradigms": {"Empiricism": "Evidence based.", "Rationalism": "Logic based.", "Constructivism": "Social build.", "Positivism": "Strict facts.", "Pragmatism": "Practical utility."},
+    "knowledge_models": {"Causal Connections": "Causality.", "Principles & Relations": "Fundamental laws.", "Concepts": "Abstract constructs."},
     "subject_details": {
-        "Physics": {"cat": "Natural", "methods": ["Modeling", "Simulation"], "tools": ["Accelerator", "Spectrometer"], "facets": ["Quantum", "Relativity"]},
-        "Chemistry": {"cat": "Natural", "methods": ["Synthesis", "Spectroscopy"], "tools": ["NMR", "Chromatography"], "facets": ["Organic", "Molecular"]},
-        "Biology": {"cat": "Natural", "methods": ["Sequencing", "CRISPR"], "tools": ["Microscope", "Bio-Incubator"], "facets": ["Genetics", "Ecology"]},
-        "Neuroscience": {"cat": "Natural", "methods": ["Neuroimaging", "Electrophys"], "tools": ["fMRI", "EEG"], "facets": ["Plasticity", "Synaptic"]},
-        "Psychology": {"cat": "Social", "methods": ["Double-Blind Trials", "Psychometrics"], "tools": ["fMRI", "Testing Kits"], "facets": ["Behavioral", "Cognitive"]},
-        "Sociology": {"cat": "Social", "methods": ["Ethnography", "Surveys"], "tools": ["Data Analytics", "Archives"], "facets": ["Stratification", "Dynamics"]},
-        "Computer Science": {"cat": "Formal", "methods": ["Algorithm Design", "Verification"], "tools": ["LLMGraphTransformer", "GPU Clusters", "Git"], "facets": ["AI", "Cybersecurity"]},
-        "Medicine": {"cat": "Applied", "methods": ["Clinical Trials", "Epidemiology"], "tools": ["MRI/CT", "Bio-Markers"], "facets": ["Immunology", "Pharmacology"]},
-        "Engineering": {"cat": "Applied", "methods": ["Prototyping", "FEA Analysis"], "tools": ["3D Printers", "CAD Software"], "facets": ["Robotics", "Nanotech"]},
-        "Library Science": {"cat": "Applied", "methods": ["Taxonomy", "Appraisal"], "tools": ["OPAC", "Metadata"], "facets": ["Retrieval", "Knowledge Org"]},
-        "Philosophy": {"cat": "Humanities", "methods": ["Socratic Method", "Phenomenology"], "tools": ["Logic Mapping", "Critical Analysis"], "facets": ["Epistemology", "Metaphysics"]},
-        "Linguistics": {"cat": "Humanities", "methods": ["Corpus Analysis", "Syntactic Parsing"], "tools": ["Praat", "NLTK Toolkit"], "facets": ["Socioling", "CompLing"]},
-        "Geography": {"cat": "Natural/Social", "methods": ["Spatial Analysis", "GIS"], "tools": ["ArcGIS"], "facets": ["Human Geo", "Physical Geo"]},
-        "Geology": {"cat": "Natural", "methods": ["Stratigraphy", "Mineralogy"], "tools": ["Seismograph"], "facets": ["Tectonics", "Petrology"]},
-        "Climatology": {"cat": "Natural", "methods": ["Climate Modeling"], "tools": ["Weather Stations"], "facets": ["Change Analysis"]},
-        "History": {"cat": "Humanities", "methods": ["Archival Research", "Historiography"], "tools": ["Archives"], "facets": ["Social History"]},
-        "Economics": {"cat": "Social", "methods": ["Econometrics", "Game Theory", "Market Modeling"], "tools": ["Stata", "R Studio", "Bloomberg"], "facets": ["Macroeconomics", "Behavioral Econ"]},
-        "Politics": {"cat": "Social", "methods": ["Policy Analysis", "Comparative Politics"], "tools": ["Polls", "Legislative Databases", "GDELT"], "facets": ["IR", "Governance", "Political Theory"]}
+        "Physics": {"cat": "Natural", "methods": ["Modeling", "Simulation"], "tools": ["Accelerator", "Spectrometer"]},
+        "Chemistry": {"cat": "Natural", "methods": ["Synthesis", "Spectroscopy"], "tools": ["NMR", "Chromatography"]},
+        "Biology": {"cat": "Natural", "methods": ["Sequencing", "CRISPR"], "tools": ["Microscope"]},
+        "Neuroscience": {"cat": "Natural", "methods": ["Neuroimaging"], "tools": ["fMRI"]},
+        "Psychology": {"cat": "Social", "methods": ["Psychometrics"], "tools": ["Testing Kits"]},
+        "Sociology": {"cat": "Social", "methods": ["Ethnography"], "tools": ["Data Analytics"]},
+        "Computer Science": {"cat": "Formal", "methods": ["Algorithm Design"], "tools": ["GPU Clusters"]},
+        "Medicine": {"cat": "Applied", "methods": ["Clinical Trials"], "tools": ["MRI/CT"]},
+        "Engineering": {"cat": "Applied", "methods": ["Prototyping"], "tools": ["3D Printers"]},
+        "Library Science": {"cat": "Applied", "methods": ["Taxonomy"], "tools": ["Metadata Schema"]},
+        "Philosophy": {"cat": "Humanities", "methods": ["Dialectics"], "tools": ["Logic Mapping"]},
+        "Linguistics": {"cat": "Humanities", "methods": ["Corpus Analysis"], "tools": ["Praat"]},
+        "Geography": {"cat": "Natural/Social", "methods": ["GIS Analysis"], "tools": ["ArcGIS"]},
+        "Geology": {"cat": "Natural", "methods": ["Stratigraphy"], "tools": ["Seismograph"]},
+        "Climatology": {"cat": "Natural", "methods": ["Climate Modeling"], "tools": ["Weather Stations"]},
+        "History": {"cat": "Humanities", "methods": ["Archival Research"], "tools": ["Archives"]},
+        "Economics": {"cat": "Social", "methods": ["Econometrics", "Game Theory"], "tools": ["Stata", "Bloomberg"]},
+        "Politics": {"cat": "Social", "methods": ["Policy Analysis"], "tools": ["Polls", "GDELT"]}
     }
 }
 
 # =========================================================
-# 2. USER INTERFACE CONSTRUCTION
+# 2. UI CONSTRUCTION
 # =========================================================
 
 if 'expertise_val' not in st.session_state: st.session_state.expertise_val = "Expert"
 if 'show_user_guide' not in st.session_state: st.session_state.show_user_guide = False
 
-# --- SIDEBAR ---
 with st.sidebar:
     st.markdown(f'<div style="text-align:center"><img src="data:image/svg+xml;base64,{get_svg_base64(SVG_3D_RELIEF)}" width="220"></div>', unsafe_allow_html=True)
     st.header("⚙️ Control Panel")
-    api_key = st.text_input("Groq API Key:", type="password", help="Security: Held in volatile RAM.")
+    api_key = st.text_input("Groq API Key:", type="password")
     
     if st.button("📖 User Guide"):
         st.session_state.show_user_guide = not st.session_state.show_user_guide
         st.rerun()
     if st.session_state.show_user_guide:
         st.info("""
-        **1. API Key**: Enter key to connect AI.  
-        **2. Authors**: Use ORCID metadata sync.  
-        **3. Dynamic Icons**: In inquiry, use keywords: 'only icons' or 'large icons'.  
-        **4. Smart Shapes**: Science fields follow category logic (Natural=Triangle, Social=Rectangle, etc.). Other terms use varied shapes.
+        **User Guide (English)**:
+        1. **API Key**: Required to connect Groq LLM.
+        2. **Authors**: Enter names for ORCID research metadata.
+        3. **Icons**: Use 'icons' in inquiry for visual symbols.
+        4. **Shapes**: Science categories have unique shapes (Triangle=Natural, Rectangle=Social, etc.).
+        5. **Graph**: Click nodes to jump to relevant text analysis.
         """)
-        if st.button("Close Guide ✖️"): st.session_state.show_user_guide = False; st.rerun()
+        if st.button("Close ✖️"): st.session_state.show_user_guide = False; st.rerun()
 
     st.divider()
     st.subheader("📚 Knowledge Explorer")
@@ -292,26 +260,19 @@ with st.sidebar:
         for p, d in KNOWLEDGE_BASE["paradigms"].items(): st.write(f"**{p}**: {d}")
     with st.expander("🔬 Science Fields"):
         for s in sorted(KNOWLEDGE_BASE["subject_details"].keys()): st.write(f"• **{s}**")
-    with st.expander("🏗️ Structural Models"):
-        for m, d in KNOWLEDGE_BASE["knowledge_models"].items(): st.write(f"**{m}**: {d}")
     
-    st.divider()
-    if st.button("♻️ Reset Session", use_container_width=True):
-        for key in list(st.session_state.keys()): del st.session_state[key]
-        st.rerun()
-    
-    st.link_button("🌐 GitHub Repository", "https://github.com/", use_container_width=True)
-    st.link_button("🆔 ORCID Registry", "https://orcid.org/", use_container_width=True)
-    st.link_button("🎓 Google Scholar Search", "https://scholar.google.com/", use_container_width=True)
+    if st.button("♻️ Reset Session", use_container_width=True): st.rerun()
+    st.link_button("🌐 GitHub", "https://github.com/", use_container_width=True)
+    st.link_button("🆔 ORCID", "https://orcid.org/", use_container_width=True)
+    st.link_button("🎓 Scholar", "https://scholar.google.com/", use_container_width=True)
 
 st.title("🧱 SIS Universal Knowledge Synthesizer")
 st.markdown("Advanced Multi-dimensional synthesis with **Geometrical Exportable Interdisciplinary Architecture**.")
 
-# ROW 1: CORE CONFIG
-r1_c1, r1_c2, r1_c3 = st.columns([1, 2, 1])
-with r1_c2:
-    target_authors = st.text_input("👤 Research Authors:", placeholder="Karl Petrič, Samo Kralj, Teodor Petrič", key="target_authors_key")
+# ROW 1: AUTHORS
+target_authors = st.text_input("👤 Research Authors:", placeholder="Karl Petrič, Samo Kralj, Teodor Petrič")
 
+# ROW 2: CORE CONFIG
 r2_c1, r2_c2, r2_c3 = st.columns(3)
 with r2_c1:
     sel_profiles = st.multiselect("1. User Profiles:", list(KNOWLEDGE_BASE["profiles"].keys()), default=["Adventurers"])
@@ -319,18 +280,18 @@ with r2_c2:
     all_sciences = sorted(list(KNOWLEDGE_BASE["subject_details"].keys()))
     sel_sciences = st.multiselect("2. Science Fields:", all_sciences, default=["Physics", "Economics", "Politics"])
 with r2_c3:
-    expertise = st.select_slider("3. Expertise Level:", options=["Novice", "Intermediate", "Expert"], value=st.session_state.expertise_val)
+    expertise = st.select_slider("3. Expertise Level:", options=["Novice", "Intermediate", "Expert"], value="Expert")
 
 st.divider()
 user_query = st.text_area("❓ Your Synthesis Inquiry:", 
-                         placeholder="Create a synergy. Use only large icons in the graph for simplicity.",
-                         height=150, key="user_query_key")
+                         placeholder="Create a synergy between Economics and Physics. Use icons and varied shapes for other concepts.",
+                         height=150)
 
 # =========================================================
 # 3. SYNTHESIS ENGINE
 # =========================================================
 if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=True):
-    if not api_key: st.error("Missing Groq API Key.")
+    if not api_key: st.error("Missing API Key.")
     elif not user_query: st.warning("Please provide an inquiry.")
     else:
         try:
@@ -343,7 +304,7 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
             End with '### SEMANTIC_GRAPH_JSON' followed by valid JSON only.
             """
             
-            with st.spinner('Synthesizing...'):
+            with st.spinner('Synthesizing exhaustive synergy...'):
                 response = client.chat.completions.create(
                     model="llama-3.3-70b-versatile",
                     messages=[{"role": "system", "content": sys_prompt}, {"role": "user", "content": user_query}],
@@ -354,58 +315,63 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
                 parts = text_out.split("### SEMANTIC_GRAPH_JSON")
                 main_markdown = parts[0]
                 
+                # --- POST-PROCESSING: LINKS & ANCHORS ---
                 if len(parts) > 1:
                     try:
                         g_json = json.loads(re.search(r'\{.*\}', parts[1], re.DOTALL).group())
+                        # Generate Google Links and HTML ID spans for anchors
                         for n in g_json.get("nodes", []):
                             lbl, nid = n["label"], n["id"]
-                            g_url = urllib.parse.quote(lbl)
+                            url_lbl = urllib.parse.quote(lbl)
                             pattern = re.compile(rf'\b({re.escape(lbl)})\b', re.IGNORECASE)
-                            replacement = f'<span id="{nid}"><a href="https://www.google.com/search?q={g_url}" target="_blank" class="semantic-node-highlight">{lbl}<i class="google-icon">↗</i></a></span>'
+                            replacement = f'<span id="{nid}"><a href="https://www.google.com/search?q={url_lbl}" target="_blank" class="semantic-node-highlight">{lbl}<i class="google-icon">↗</i></a></span>'
                             main_markdown = pattern.sub(replacement, main_markdown, count=1)
                     except: pass
 
                 st.subheader("📊 Synthesis Output")
                 st.markdown(main_markdown, unsafe_allow_html=True)
 
+                # --- VISUALIZATION (Interconnected Graph) ---
                 if len(parts) > 1:
                     try:
                         g_json = json.loads(re.search(r'\{.*\}', parts[1], re.DOTALL).group())
-                        st.subheader("🕸️ LLMGraphTransformer: Unified Interdisciplinary Network")
+                        st.subheader("🕸️ Unified Interdisciplinary Network")
                         
                         use_icons = any(kw in user_query.lower() for kw in ["ikone", "ikonce", "emoji", "simbol", "icon", "symbols"])
                         pure_icons = any(kw in user_query.lower() for kw in ["only icons", "large icons", "no shapes", "brez likov"])
                         
                         elements = []
                         for n in g_json.get("nodes", []):
-                            node_label = n["label"]
+                            lbl = n["label"]
                             level = n.get("type", "Branch")
-                            size = 100 if level == "Class" else (90 if level == "Root" else 70)
-                            
-                            # DYNAMIC SHAPES LOGIC
-                            final_shape = "ellipse" # Default
+                            size = 100 if level == "Root" else 75
                             icon_prefix = ""
-                            
-                            # Check if Science Field
-                            found_field = next((s for s in KNOWLEDGE_BASE["subject_details"].keys() if s.lower() in node_label.lower()), None)
+                            final_shape = "ellipse"
+
+                            # 1. SHAPE LOGIC for Science Fields
+                            found_field = next((s for s in KNOWLEDGE_BASE["subject_details"].keys() if s.lower() in lbl.lower()), None)
                             if found_field:
                                 icon_prefix = "🔬 "
                                 cat = KNOWLEDGE_BASE["subject_details"][found_field]["cat"]
-                                if cat == "Natural": final_shape = "triangle"
-                                elif cat == "Social": final_shape = "rectangle"
-                                elif cat == "Formal": final_shape = "diamond"
-                                elif cat == "Applied": final_shape = "pentagon"
-                                elif cat == "Humanities": final_shape = "vee"
+                                if "Natural" in cat: final_shape = "triangle"
+                                elif "Social" in cat: final_shape = "rectangle"
+                                elif "Formal" in cat: final_shape = "diamond"
+                                elif "Applied" in cat: final_shape = "pentagon"
+                                elif "Humanities" in cat: final_shape = "vee"
                             else:
-                                # Varied shapes for others
-                                alt_shapes = ["hexagon", "rhomboid", "octagon", "star"]
-                                final_shape = alt_shapes[hash(node_label) % len(alt_shapes)]
-                                if any(a.lower() in node_label.lower() for a in KNOWLEDGE_BASE["mental_approaches"]): icon_prefix = "🧠 "
-                                elif any(p.lower() in node_label.lower() for p in KNOWLEDGE_BASE["paradigms"].keys()): icon_prefix = "🌍 "
+                                # 2. VARIED SHAPES for others
+                                alt_shapes = ["hexagon", "rhomboid", "octagon"]
+                                final_shape = alt_shapes[hash(lbl) % len(alt_shapes)]
+                                if any(a.lower() in lbl.lower() for a in KNOWLEDGE_BASE["mental_approaches"]): icon_prefix = "🧠 "
+                                elif any(p.lower() in lbl.lower() for p in KNOWLEDGE_BASE["paradigms"]): icon_prefix = "🌍 "
 
                             elements.append({"data": {
-                                "id": n["id"], "label": f"{icon_prefix}{node_label}", "color": n.get("color", "#2a9d8f"),
-                                "size": size, "shape": final_shape, "z_index": 10 if level == "Root" else 1
+                                "id": n["id"], 
+                                "label": f"{icon_prefix if use_icons or pure_icons else ''}{lbl}", 
+                                "color": n.get("color", "#2a9d8f"),
+                                "size": size, 
+                                "shape": final_shape, 
+                                "z_index": 10 if level == "Root" else 1
                             }})
                         
                         for e in g_json.get("edges", []):
@@ -419,6 +385,7 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
 
 st.divider()
 st.caption("SIS Universal Knowledge Synthesizer | v18.0 Full 18D Edition | 2026")
+
 
 
 
