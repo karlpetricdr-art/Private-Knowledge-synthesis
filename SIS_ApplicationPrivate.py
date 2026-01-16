@@ -19,6 +19,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# Integration of CSS for visual highlights, Google links, and smooth navigation
 st.markdown("""
 <style>
     .semantic-node-highlight {
@@ -62,7 +63,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 def get_svg_base64(svg_str):
-    """Converts SVG to base64 for image display."""
+    """Converts SVG string to base64 format for image display."""
     return base64.b64encode(svg_str.encode('utf-8')).decode('utf-8')
 
 # --- LOGO: 3D RELIEF (Embedded SVG) ---
@@ -94,9 +95,11 @@ SVG_3D_RELIEF = """
 </svg>
 """
 
-# --- CYTOSCAPE RENDERER WITH EXPORT ---
+# --- CYTOSCAPE RENDERER WITH EXPORT & ANCHOR SCROLLING ---
 def render_cytoscape_network(elements, container_id="cy"):
-    """Renders interactive Cytoscape.js network with PNG export and anchor scrolling."""
+    """
+    Renders an interactive Cytoscape.js network with shape support and PNG export.
+    """
     cyto_html = f"""
     <div style="position: relative;">
         <button id="save_btn" style="position: absolute; top: 10px; right: 10px; z-index: 100; padding: 8px 12px; background: #2a9d8f; color: white; border: none; border-radius: 5px; cursor: pointer; font-family: sans-serif; font-size: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">💾 Export Graph as PNG</button>
@@ -159,7 +162,7 @@ def render_cytoscape_network(elements, container_id="cy"):
     """
     components.html(cyto_html, height=650)
 
-# --- BIBLIOGRAPHY FETCHING ---
+# --- AUTHOR BIBLIOGRAPHY FETCHING ---
 def fetch_author_bibliographies(author_input):
     """Fetches bibliographic data with years via ORCID and Scholar APIs."""
     if not author_input: return ""
@@ -189,6 +192,7 @@ def fetch_author_bibliographies(author_input):
                         pub_date = summary.get('publication-date')
                         year = pub_date.get('year').get('value', 'n.d.') if pub_date and pub_date.get('year') else "n.d."
                         comprehensive_biblio += f"- [{year}] {title}\n"
+                else: comprehensive_biblio += "No public works found.\n"
             except: pass
         else:
             try:
@@ -203,7 +207,7 @@ def fetch_author_bibliographies(author_input):
     return comprehensive_biblio
 
 # =========================================================
-# 1. MULTIDIMENSIONAL ONTOLOGY (18 DISCIPLINES)
+# 1. FULL MULTIDIMENSIONAL ONTOLOGY (18 DISCIPLINES)
 # =========================================================
 KNOWLEDGE_BASE = {
     "mental_approaches": ["Perspective shifting", "Induction", "Deduction", "Hierarchy", "Mini-max", "Whole and part", "Addition and composition", "Balance", "Abstraction and elimination", "Openness and closedness", "Bipolarity and dialectics", "Framework and foundation", "Pleasure and displeasure", "Similarity and difference", "Core (Attraction & Repulsion)", "Condensation", "Constant", "Associativity"],
@@ -233,7 +237,7 @@ KNOWLEDGE_BASE = {
 }
 
 # =========================================================
-# 2. USER INTERFACE CONSTRUCTION
+# 2. STREAMLIT INTERFACE CONSTRUCTION
 # =========================================================
 
 if 'expertise_val' not in st.session_state: st.session_state.expertise_val = "Expert"
@@ -244,17 +248,21 @@ with st.sidebar:
     st.markdown(f'<div style="text-align:center"><img src="data:image/svg+xml;base64,{get_svg_base64(SVG_3D_RELIEF)}" width="220"></div>', unsafe_allow_html=True)
     st.header("⚙️ Control Panel")
     
-    api_key = st.text_input("Groq API Key:", type="password", help="Security: Your key is held only in volatile RAM.")
+    api_key = st.text_input(
+        "Groq API Key:", 
+        type="password", 
+        help="Security: Your key is held only in volatile RAM and is never stored on our servers."
+    )
     
     if st.button("📖 User Guide"):
         st.session_state.show_user_guide = not st.session_state.show_user_guide
         st.rerun()
     if st.session_state.show_user_guide:
         st.info("""
-        **1. API Key:** Enter your key to connect the AI engine.  
-        **2. Authors:** Enter researcher names for ORCID metadata analysis.  
-        **3. Inquiry:** Submit your research query. To enable icons in the graph, include the word 'icons' or 'emojis'.  
-        **4. Knowledge Graph:** Click nodes to scroll to text. Use 💾 to export as PNG.
+        **1. API Key**: Enter your key to connect the AI engine.  
+        **2. Authors**: Provide author names to fetch research metadata from ORCID.  
+        **3. Icons**: For a visual graph with symbols, include the word 'icons' in your inquiry.  
+        **4. Semantic Graph**: Click nodes to jump to relevant text. Use 💾 to export as PNG.
         """)
         if st.button("Close Guide ✖️"): st.session_state.show_user_guide = False; st.rerun()
 
@@ -348,13 +356,16 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
             FIELDS: {", ".join(sel_sciences)}. CONTEXT AUTHORS: {biblio}.
             
             THESAURUS ALGORITHM (TT, BT, NT, AS, RT, EQ) & UML LOGIC.
-            STRICT FORMATTING:
-            - Focus 100% of the text on deep research and interdisciplinary synergy.
-            - End with '### SEMANTIC_GRAPH_JSON' followed by valid JSON only.
-            - JSON schema: {{"nodes": [{{"id": "n1", "label": "Text", "type": "Root|Branch|Leaf|Class", "color": "#hex", "shape": "triangle|rectangle|ellipse|diamond"}}], "edges": [{{"source": "n1", "target": "n2", "rel_type": "BT|NT|AS|..."}}]}}
+            
+            STRICT OUTPUT RULES:
+            1. FOCUS 100% of the textual content on deep research, interdisciplinary synergy, and original synthesis.
+            2. NEVER include a redundant 'Visualization' section or lists of nodes and edges in plain text.
+            3. ABSOLUTELY PROHIBITED: Do not write lists like 'Node 1: Trump, Shape: triangle...' in the dissertation text.
+            4. ONLY output the text analysis followed by '### SEMANTIC_GRAPH_JSON' and the raw JSON block.
+            5. JSON schema: {{"nodes": [{{"id": "n1", "label": "Text", "type": "Root|Branch|Leaf|Class", "color": "#hex", "shape": "triangle|rectangle|ellipse|diamond"}}], "edges": [{{"source": "n1", "target": "n2", "rel_type": "BT|NT|AS|..."}}]}}
             """
             
-            with st.spinner('Synthesizing exhaustive interdisciplinary synergy...'):
+            with st.spinner('Synthesizing exhaustive interdisciplinary synergy (8–40s)...'):
                 response = client.chat.completions.create(
                     model="llama-3.3-70b-versatile",
                     messages=[{"role": "system", "content": sys_prompt}, {"role": "user", "content": user_query}],
@@ -372,7 +383,7 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
                         for n in g_json.get("nodes", []):
                             lbl, nid = n["label"], n["id"]
                             g_url = urllib.parse.quote(lbl)
-                            # Anchor for graph jump
+                            # Anchor link logic
                             pattern = re.compile(rf'\b({re.escape(lbl)})\b', re.IGNORECASE)
                             replacement = f'<span id="{nid}"><a href="https://www.google.com/search?q={g_url}" target="_blank" class="semantic-node-highlight">{lbl}<i class="google-icon">↗</i></a></span>'
                             main_markdown = pattern.sub(replacement, main_markdown, count=1)
@@ -395,7 +406,6 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
                         g_json = json.loads(re.search(r'\{.*\}', parts[1], re.DOTALL).group())
                         st.subheader("🕸️ LLMGraphTransformer: Unified Interdisciplinary Network")
                         
-                        # Robust check for icon request
                         use_icons = any(kw in user_query.lower() for kw in ["ikone", "ikonce", "emoji", "simbol", "slik", "vizual", "icon"])
                         
                         elements = []
@@ -407,17 +417,11 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
 
                             if use_icons:
                                 node_label_low = node_label.lower()
-                                # Enhanced Icon matching logic
-                                if any(s.lower() in node_label_low for s in KNOWLEDGE_BASE["subject_details"].keys()): 
-                                    icon_prefix = "🔬 "
-                                elif any(a.lower() in node_label_low for a in KNOWLEDGE_BASE["mental_approaches"]): 
-                                    icon_prefix = "🧠 "
-                                elif any(p.lower() in node_label_low for p in KNOWLEDGE_BASE["paradigms"].keys()): 
-                                    icon_prefix = "🌍 "
-                                elif any(m.lower() in node_label_low for m in KNOWLEDGE_BASE["knowledge_models"].keys()): 
-                                    icon_prefix = "🏗️ "
-                                elif any(pr.lower() in node_label_low for pr in KNOWLEDGE_BASE["profiles"].keys()): 
-                                    icon_prefix = "👤 "
+                                if any(s.lower() in node_label_low for s in KNOWLEDGE_BASE["subject_details"].keys()): icon_prefix = "🔬 "
+                                elif any(a.lower() in node_label_low for a in KNOWLEDGE_BASE["mental_approaches"]): icon_prefix = "🧠 "
+                                elif any(p.lower() in node_label_low for p in KNOWLEDGE_BASE["paradigms"].keys()): icon_prefix = "🌍 "
+                                elif any(m.lower() in node_label_low for m in KNOWLEDGE_BASE["knowledge_models"].keys()): icon_prefix = "🏗️ "
+                                elif any(pr.lower() in node_label_low for pr in KNOWLEDGE_BASE["profiles"].keys()): icon_prefix = "👤 "
 
                             elements.append({"data": {
                                 "id": n["id"], "label": f"{icon_prefix}{node_label}", "color": n.get("color", "#2a9d8f"),
@@ -439,6 +443,7 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
 
 st.divider()
 st.caption("SIS Universal Knowledge Synthesizer | v18.0 Full 18D Geometrical Export Edition | 2026")
+
 
 
 
