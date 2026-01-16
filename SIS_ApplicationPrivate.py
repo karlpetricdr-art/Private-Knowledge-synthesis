@@ -422,27 +422,30 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
                         st.caption("Colorful nodes represent hierarchical concepts. Dimensions are associatively connected. Click nodes to scroll.")
                         
                         elements = []
+                        # Preveri, če je uporabnik v inquiryju zahteval ikone
+                        use_icons = any(kw in user_query.lower() for kw in ["ikonce", "ikone", "icons", "emoji", "symbols"])
+                        
                         for n in g_json.get("nodes", []):
                             level = n.get("type", "Branch")
                             size = 100 if level == "Class" else (90 if level == "Root" else (70 if level == "Branch" else 50))
                             color = n.get("color", "#2a9d8f")
                             shape = n.get("shape", "ellipse")
                             
-                            # --- DODAJANJE IKONIC IZ KNOWLEDGE EXPLORERJA ---
                             node_label = n["label"]
                             icon_prefix = ""
                             
-                            # Preverjanje po kategorijah
-                            if any(s.lower() in node_label.lower() for s in KNOWLEDGE_BASE["subject_details"].keys()):
-                                icon_prefix = "🔬 "
-                            elif any(a.lower() in node_label.lower() for a in KNOWLEDGE_BASE["mental_approaches"]):
-                                icon_prefix = "🧠 "
-                            elif any(p.lower() in node_label.lower() for p in KNOWLEDGE_BASE["paradigms"].keys()):
-                                icon_prefix = "🌍 "
-                            elif any(m.lower() in node_label.lower() for m in KNOWLEDGE_BASE["knowledge_models"].keys()):
-                                icon_prefix = "🏗️ "
-                            elif any(pr.lower() in node_label.lower() for pr in KNOWLEDGE_BASE["profiles"].keys()):
-                                icon_prefix = "👤 "
+                            # Uporabi ikone le, če je tako zahtevano v inquiryju
+                            if use_icons:
+                                if any(s.lower() in node_label.lower() for s in KNOWLEDGE_BASE["subject_details"].keys()):
+                                    icon_prefix = "🔬 "
+                                elif any(a.lower() in node_label.lower() for a in KNOWLEDGE_BASE["mental_approaches"]):
+                                    icon_prefix = "🧠 "
+                                elif any(p.lower() in node_label.lower() for p in KNOWLEDGE_BASE["paradigms"].keys()):
+                                    icon_prefix = "🌍 "
+                                elif any(m.lower() in node_label.lower() for m in KNOWLEDGE_BASE["knowledge_models"].keys()):
+                                    icon_prefix = "🏗️ "
+                                elif any(pr.lower() in node_label.lower() for pr in KNOWLEDGE_BASE["profiles"].keys()):
+                                    icon_prefix = "👤 "
                             
                             elements.append({"data": {
                                 "id": n["id"], 
@@ -469,6 +472,7 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
 
 st.divider()
 st.caption("SIS Universal Knowledge Synthesizer | v18.0 Comprehensive 18D Geometrical Export Edition | 2026")
+
 
 
 
