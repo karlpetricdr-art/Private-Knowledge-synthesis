@@ -1,5 +1,3 @@
---- START OF FILE Paste January 16, 2026 - 5:14PM ---
-
 import streamlit as st
 import json
 import base64
@@ -233,8 +231,8 @@ KNOWLEDGE_BASE = {
         "Geology": {"cat": "Natural", "methods": ["Stratigraphy", "Mineralogy"], "tools": ["Seismograph"], "facets": ["Tectonics", "Petrology"]},
         "Climatology": {"cat": "Natural", "methods": ["Climate Modeling"], "tools": ["Weather Stations"], "facets": ["Change Analysis"]},
         "History": {"cat": "Humanities", "methods": ["Archival Research", "Historiography"], "tools": ["Archives"], "facets": ["Social History"]},
-        "Economics": {"cat": "Social", "methods": ["Econometrics", "Game Theory", "Cost-Benefit Analysis"], "tools": ["Stata", "R", "Bloomberg Terminal"], "facets": ["Macroeconomics", "Microeconomics", "Behavioral Economics"]},
-        "Politics": {"cat": "Social", "methods": ["Comparative Analysis", "Policy Analysis", "Content Analysis"], "tools": ["Polls", "Legislative Databases", "GDELT"], "facets": ["International Relations", "Political Theory", "Governance"]}
+        "Economics": {"cat": "Social", "methods": ["Econometrics", "Game Theory", "Market Modeling"], "tools": ["Stata", "R", "Bloomberg"], "facets": ["Macroeconomics", "Behavioral Economics"]},
+        "Politics": {"cat": "Social", "methods": ["Policy Analysis", "Comparative Politics"], "tools": ["Polls", "Legislative Databases"], "facets": ["International Relations", "Governance"]}
     }
 }
 
@@ -449,6 +447,7 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
 
 st.divider()
 st.caption("SIS Universal Knowledge Synthesizer | v18.0 Comprehensive 18D Geometrical Export Edition | 2026")
+
 
 
 
