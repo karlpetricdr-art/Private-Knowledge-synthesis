@@ -112,7 +112,7 @@ def get_svg_base64(svg_str):
     """Converts SVG string to base64 for cleaner image rendering."""
     return base64.b64encode(svg_str.encode('utf-8')).decode('utf-8')
 
-# --- LOGO: 3D RELIEF LEGO VERSION (Embedded SVG) ---
+# --- LOGOTIP: 3D RELIEF LEGO VERSION (Embedded SVG) ---
 SVG_3D_RELIEF = """
 <svg width="240" height="240" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
     <defs>
@@ -148,7 +148,6 @@ def render_cytoscape_network(elements, container_id="cy_canvas"):
     - Export graph as high-res PNG.
     """
     num_nodes = len([e for e in elements if 'source' not in e['data']])
-    # Complexity detection for font size adjustment
     f_size = "18px" if num_nodes > 15 else "26px"
     
     node_style = {
@@ -200,7 +199,7 @@ def render_cytoscape_network(elements, container_id="cy_canvas"):
             document.getElementById('save_btn').onclick = function() {{
                 var link = document.createElement('a');
                 link.href = cy.png({{full: true, bg: 'white', scale: 2}});
-                link.download = 'sis_lego_architecture_graph.png';
+                link.download = 'sis_interdisciplinary_lego_architecture_graph.png';
                 link.click();
             }};
         }});
@@ -239,7 +238,7 @@ KNOWLEDGE_BASE = {
         "Adventurers": {"desc": "Explorers of hidden patterns, boundary-pushing ideas and non-linear systems.", "icon": "👤", "col": "#264653"},
         "Applicators": {"desc": "Pragmatic thinkers focused on efficient execution and practical utility.", "icon": "👤", "col": "#2a9d8f"},
         "Know-it-alls": {"desc": "Seekers of systemic clarity and absolute universal laws.", "icon": "👤", "col": "#e9c46a"},
-        "Observers": {"desc": "System monitors focused on data streams and tracking.", "icon": "👤", "col": "#f4a261"}
+        "Observers": {"desc": "System monitors focused on data streams, tracking and objective reporting.", "icon": "👤", "col": "#f4a261"}
     },
     "mental_approaches": {
         "Perspective shifting": "Analyzing systems from multiple vantage points.",
@@ -304,7 +303,7 @@ with st.sidebar:
         st.info("""
         **English User Guide**:
         1. **Authors**: Enter names for metadata sync (ORCID).
-        2. **9-Dimensions**: Fully configure Profiles, Paradigms, Models, etc.
+        2. **9-Dimensions**: Fully configure Profiles, Paradigms, Models, Methods, etc.
         3. **Standard Shapes**: Colorful nodes based on scientific category.
         4. **Google Links**: Concepts in text link to search results and graph nodes.
         5. **Anchors**: Tapping nodes in the graph scrolls the page to relevant text.
@@ -338,7 +337,7 @@ with st.sidebar:
     st.divider()
     st.link_button("🌐 GitHub Repository", "https://github.com/", use_container_width=True)
     st.link_button("🆔 ORCID Registry", "https://orcid.org/", use_container_width=True)
-    st.link_button("🎓 Google Scholar Search", "https://scholar.google.com/", use_container_width=True)
+    st.link_button("🎓 Google Scholar", "https://scholar.google.com/", use_container_width=True)
 
 st.title("🧱 SIS Universal Knowledge Synthesizer")
 st.markdown("Advanced Multi-dimensional synthesis with **Interdisciplinary Lego Architecture**.")
@@ -389,7 +388,8 @@ if st.button("🚀 Execute Multi-Dimensional Lego Synthesis", use_container_widt
             STRICT RULES:
             1. FOCUS 100% on deep research. NEVER include node lists in dissertation text.
             2. Apply THESAURUS logic (TT, BT, NT, AS, RT, EQ).
-            3. End with '### SEMANTIC_GRAPH_JSON' followed by valid JSON nodes/edges.
+            3. End with '### SEMANTIC_GRAPH_JSON' followed by valid JSON.
+            JSON: {{"nodes": [{{"id": "n1", "label": "Text", "type": "Root|Branch", "color": "#hex", "shape": "triangle|rectangle|ellipse|diamond"}}], "edges": [{{"source": "n1", "target": "n2", "rel_type": "AS"}}]}}
             """
             
             with st.spinner('Building Interdisciplinary Lego Structure...'):
@@ -401,11 +401,13 @@ if st.button("🚀 Execute Multi-Dimensional Lego Synthesis", use_container_widt
                 # --- POST-PROCESSING: LINKS & ANCHORS ---
                 if len(parts) > 1:
                     try:
+                        # Improved JSON extraction from potential markdown blocks
                         json_str = re.search(r'\{.*\}', parts[1], re.DOTALL).group()
                         g_json = json.loads(json_str)
                         for n in g_json.get("nodes", []):
                             lbl, nid = n["label"], n["id"]
                             url_lbl = urllib.parse.quote(lbl)
+                            # Regex replacement for Google links and Anchor IDs
                             pattern = re.compile(rf'\b({re.escape(lbl)})\b', re.IGNORECASE)
                             replacement = f'<span id="{nid}"><a href="https://www.google.com/search?q={url_lbl}" target="_blank" class="semantic-node-highlight">{lbl}<i class="google-icon">↗</i></a></span>'
                             main_markdown = pattern.sub(replacement, main_markdown, count=1)
@@ -458,6 +460,7 @@ if st.button("🚀 Execute Multi-Dimensional Lego Synthesis", use_container_widt
 
 st.divider()
 st.caption("SIS Universal Knowledge Synthesizer | v18.5 | Interdisciplinary Lego Architecture | 2026")
+
 
 
 
