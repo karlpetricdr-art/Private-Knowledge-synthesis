@@ -95,12 +95,16 @@ SVG_3D_RELIEF = """
 </svg>
 """
 
-# --- CYTOSCAPE RENDERER WITH EXPORT, ANCHOR SCROLLING & OPTIMIZED ICON STYLING ---
+# --- CYTOSCAPE RENDERER WITH EXPORT & OPTIMIZED FONT SCALING ---
 def render_cytoscape_network(elements, pure_icons=False, container_id="cy"):
     """
     Renders an interactive Cytoscape.js network. 
-    If pure_icons is True, shapes are transparent and icons are optimized for visibility.
+    Dynamic font scaling: 14pt (complex) to 20pt (simple).
     """
+    num_nodes = len([e for e in elements if 'source' not in e['data']])
+    # Complexity threshold: 14pt (~18px) if complex, up to 20pt (~26px) if simple
+    font_size_val = "18px" if num_nodes > 15 else ("26px" if num_nodes < 8 else "22px")
+    
     node_style = {
         'label': 'data(label)',
         'text-valign': 'center',
@@ -109,24 +113,23 @@ def render_cytoscape_network(elements, pure_icons=False, container_id="cy"):
         'text-outline-width': 2,
         'text-outline-color': '#fff',
         'cursor': 'pointer',
-        'z-index': 'data(z_index)'
+        'z-index': 'data(z_index)',
+        'font-size': font_size_val
     }
 
     if pure_icons:
         node_style.update({
             'background-opacity': 0,
             'border-width': 0,
-            'font-size': '22px',  # Balanced large icon size
-            'width': 30,         # Minimum footprint for edge docking
-            'height': 30
+            'width': 40, 
+            'height': 40
         })
     else:
         node_style.update({
             'background-color': 'data(color)',
             'width': 'data(size)',
             'height': 'data(size)',
-            'shape': 'data(shape)',
-            'font-size': '12px'
+            'shape': 'data(shape)'
         })
 
     cyto_html = f"""
@@ -265,7 +268,6 @@ if 'show_user_guide' not in st.session_state: st.session_state.show_user_guide =
 with st.sidebar:
     st.markdown(f'<div style="text-align:center"><img src="data:image/svg+xml;base64,{get_svg_base64(SVG_3D_RELIEF)}" width="220"></div>', unsafe_allow_html=True)
     st.header("⚙️ Control Panel")
-    
     api_key = st.text_input("Groq API Key:", type="password", help="Security: Held in volatile RAM.")
     
     if st.button("📖 User Guide"):
@@ -273,10 +275,10 @@ with st.sidebar:
         st.rerun()
     if st.session_state.show_user_guide:
         st.info("""
-        **1. API Key**: Enter your key to connect the AI engine.  
-        **2. Authors**: Provide author names to fetch research metadata from ORCID.  
-        **3. Icons**: For a visual graph with symbols, include the word 'icons' in your inquiry. For large icons without shapes, use 'only icons'.  
-        **4. Semantic Graph**: Click nodes to jump to relevant text. Use 💾 to export as PNG.
+        **1. API Key**: Enter key to connect AI.  
+        **2. Authors**: Use ORCID metadata sync.  
+        **3. Dynamic Icons**: In inquiry, use keywords: 'only icons' or 'large icons'.  
+        **4. Smart Shapes**: Science fields follow category logic (Natural=Triangle, Social=Rectangle, etc.). Other terms use varied shapes.
         """)
         if st.button("Close Guide ✖️"): st.session_state.show_user_guide = False; st.rerun()
 
@@ -305,15 +307,11 @@ with st.sidebar:
 st.title("🧱 SIS Universal Knowledge Synthesizer")
 st.markdown("Advanced Multi-dimensional synthesis with **Geometrical Exportable Interdisciplinary Architecture**.")
 
-st.markdown("### 🛠️ Configure Your Multi-Dimensional Cognitive Build")
-
-# ROW 1: AUTHORS
+# ROW 1: CORE CONFIG
 r1_c1, r1_c2, r1_c3 = st.columns([1, 2, 1])
 with r1_c2:
     target_authors = st.text_input("👤 Research Authors:", placeholder="Karl Petrič, Samo Kralj, Teodor Petrič", key="target_authors_key")
-    st.caption("Active bibliographic analysis via ORCID (includes publication years).")
 
-# ROW 2: CORE CONFIG
 r2_c1, r2_c2, r2_c3 = st.columns(3)
 with r2_c1:
     sel_profiles = st.multiselect("1. User Profiles:", list(KNOWLEDGE_BASE["profiles"].keys()), default=["Adventurers"])
@@ -323,38 +321,13 @@ with r2_c2:
 with r2_c3:
     expertise = st.select_slider("3. Expertise Level:", options=["Novice", "Intermediate", "Expert"], value=st.session_state.expertise_val)
 
-# ROW 3: MODELS & PARADIGMS
-r3_c1, r3_c2, r3_c3 = st.columns(3)
-with r3_c1:
-    sel_models = st.multiselect("4. Structural Models:", list(KNOWLEDGE_BASE["knowledge_models"].keys()), default=["Concepts"])
-with r3_c2:
-    sel_paradigms = st.multiselect("5. Scientific Paradigms:", list(KNOWLEDGE_BASE["paradigms"].keys()), default=["Rationalism"])
-with r3_c3:
-    goal_context = st.selectbox("6. Context / Goal:", ["Scientific Research", "Problem Solving", "Policy Making"])
-
-# ROW 4: METHODS & TOOLS
-r4_c1, r4_c2, r4_c3 = st.columns(3)
-with r4_c1:
-    sel_approaches = st.multiselect("7. Mental Approaches:", KNOWLEDGE_BASE["mental_approaches"], default=["Perspective shifting"])
-
-agg_meth, agg_tool = [], []
-for s in sel_sciences:
-    if s in KNOWLEDGE_BASE["subject_details"]:
-        agg_meth.extend(KNOWLEDGE_BASE["subject_details"][s]["methods"])
-        agg_tool.extend(KNOWLEDGE_BASE["subject_details"][s]["tools"])
-
-with r4_c2:
-    sel_methods = st.multiselect("8. Methodologies:", sorted(list(set(agg_meth))), default=[])
-with r4_c3:
-    sel_tools = st.multiselect("9. Specific Tools:", sorted(list(set(agg_tool))), default=[])
-
 st.divider()
 user_query = st.text_area("❓ Your Synthesis Inquiry:", 
-                         placeholder="Create a synergy between Economics and Physics. Use only large icons in the graph without geometry shapes.",
+                         placeholder="Create a synergy. Use only large icons in the graph for simplicity.",
                          height=150, key="user_query_key")
 
 # =========================================================
-# 3. SYNTHESIS ENGINE: GROQ AI + INTERCONNECTED 18D GRAPH
+# 3. SYNTHESIS ENGINE
 # =========================================================
 if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=True):
     if not api_key: st.error("Missing Groq API Key.")
@@ -364,21 +337,13 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
             biblio = fetch_author_bibliographies(target_authors) if target_authors else ""
             client = OpenAI(api_key=api_key, base_url="https://api.groq.com/openai/v1")
             
-            # SYSTEM PROMPT
             sys_prompt = f"""
             You are the SIS Synthesizer. Perform an exhaustive dissertation (1500+ words).
             FIELDS: {", ".join(sel_sciences)}. CONTEXT AUTHORS: {biblio}.
-            
-            THESAURUS ALGORITHM (TT, BT, NT, AS, RT, EQ) & UML LOGIC.
-            
-            STRICT OUTPUT RULES:
-            1. FOCUS 100% of the textual content on deep research, interdisciplinary synergy, and original synthesis.
-            2. NEVER include a redundant 'Visualization' section or lists of nodes and edges in plain text.
-            3. End with '### SEMANTIC_GRAPH_JSON' followed by valid JSON only.
-            4. JSON schema: {{"nodes": [{{"id": "n1", "label": "Text", "type": "Root|Branch|Leaf|Class", "color": "#hex", "shape": "triangle|rectangle|ellipse|diamond"}}], "edges": [{{"source": "n1", "target": "n2", "rel_type": "BT|NT|AS|..."}}]}}
+            End with '### SEMANTIC_GRAPH_JSON' followed by valid JSON only.
             """
             
-            with st.spinner('Synthesizing exhaustive interdisciplinary synergy (8–40s)...'):
+            with st.spinner('Synthesizing...'):
                 response = client.chat.completions.create(
                     model="llama-3.3-70b-versatile",
                     messages=[{"role": "system", "content": sys_prompt}, {"role": "user", "content": user_query}],
@@ -389,7 +354,6 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
                 parts = text_out.split("### SEMANTIC_GRAPH_JSON")
                 main_markdown = parts[0]
                 
-                # --- POST-PROCESSING: GOOGLE LINKS & ANCHORS ---
                 if len(parts) > 1:
                     try:
                         g_json = json.loads(re.search(r'\{.*\}', parts[1], re.DOTALL).group())
@@ -399,46 +363,49 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
                             pattern = re.compile(rf'\b({re.escape(lbl)})\b', re.IGNORECASE)
                             replacement = f'<span id="{nid}"><a href="https://www.google.com/search?q={g_url}" target="_blank" class="semantic-node-highlight">{lbl}<i class="google-icon">↗</i></a></span>'
                             main_markdown = pattern.sub(replacement, main_markdown, count=1)
-                        
-                        if target_authors:
-                            for auth in target_authors.split(","):
-                                a_stripped = auth.strip()
-                                if a_stripped:
-                                    a_url = urllib.parse.quote(a_stripped)
-                                    a_rep = f'<a href="https://www.google.com/search?q={a_url}" target="_blank" class="author-search-link">{a_stripped}<i class="google-icon">↗</i></a>'
-                                    main_markdown = re.sub(re.escape(a_stripped), a_rep, main_markdown, flags=re.IGNORECASE)
                     except: pass
 
                 st.subheader("📊 Synthesis Output")
                 st.markdown(main_markdown, unsafe_allow_html=True)
 
-                # --- VISUALIZATION (Interconnected Graph) ---
                 if len(parts) > 1:
                     try:
                         g_json = json.loads(re.search(r'\{.*\}', parts[1], re.DOTALL).group())
                         st.subheader("🕸️ LLMGraphTransformer: Unified Interdisciplinary Network")
                         
-                        use_icons = any(kw in user_query.lower() for kw in ["ikone", "ikonce", "emoji", "simbol", "slik", "vizual", "icon", "symbols"])
-                        pure_icons = any(kw in user_query.lower() for kw in ["only icons", "large icons", "no shapes", "no geometry", "brez likov"])
+                        use_icons = any(kw in user_query.lower() for kw in ["ikone", "ikonce", "emoji", "simbol", "icon", "symbols"])
+                        pure_icons = any(kw in user_query.lower() for kw in ["only icons", "large icons", "no shapes", "brez likov"])
                         
                         elements = []
                         for n in g_json.get("nodes", []):
-                            level = n.get("type", "Branch")
-                            size = 100 if level == "Class" else (90 if level == "Root" else (70 if level == "Branch" else 50))
                             node_label = n["label"]
+                            level = n.get("type", "Branch")
+                            size = 100 if level == "Class" else (90 if level == "Root" else 70)
+                            
+                            # DYNAMIC SHAPES LOGIC
+                            final_shape = "ellipse" # Default
                             icon_prefix = ""
-
-                            if use_icons or pure_icons:
-                                node_label_low = node_label.lower()
-                                if any(s.lower() in node_label_low for s in KNOWLEDGE_BASE["subject_details"].keys()): icon_prefix = "🔬 "
-                                elif any(a.lower() in node_label_low for a in KNOWLEDGE_BASE["mental_approaches"]): icon_prefix = "🧠 "
-                                elif any(p.lower() in node_label_low for p in KNOWLEDGE_BASE["paradigms"].keys()): icon_prefix = "🌍 "
-                                elif any(m.lower() in node_label_low for m in KNOWLEDGE_BASE["knowledge_models"].keys()): icon_prefix = "🏗️ "
-                                elif any(pr.lower() in node_label_low for pr in KNOWLEDGE_BASE["profiles"].keys()): icon_prefix = "👤 "
+                            
+                            # Check if Science Field
+                            found_field = next((s for s in KNOWLEDGE_BASE["subject_details"].keys() if s.lower() in node_label.lower()), None)
+                            if found_field:
+                                icon_prefix = "🔬 "
+                                cat = KNOWLEDGE_BASE["subject_details"][found_field]["cat"]
+                                if cat == "Natural": final_shape = "triangle"
+                                elif cat == "Social": final_shape = "rectangle"
+                                elif cat == "Formal": final_shape = "diamond"
+                                elif cat == "Applied": final_shape = "pentagon"
+                                elif cat == "Humanities": final_shape = "vee"
+                            else:
+                                # Varied shapes for others
+                                alt_shapes = ["hexagon", "rhomboid", "octagon", "star"]
+                                final_shape = alt_shapes[hash(node_label) % len(alt_shapes)]
+                                if any(a.lower() in node_label.lower() for a in KNOWLEDGE_BASE["mental_approaches"]): icon_prefix = "🧠 "
+                                elif any(p.lower() in node_label.lower() for p in KNOWLEDGE_BASE["paradigms"].keys()): icon_prefix = "🌍 "
 
                             elements.append({"data": {
                                 "id": n["id"], "label": f"{icon_prefix}{node_label}", "color": n.get("color", "#2a9d8f"),
-                                "size": size, "shape": n.get("shape", "ellipse"), "z_index": 10 if level in ["Root", "Class"] else 1
+                                "size": size, "shape": final_shape, "z_index": 10 if level == "Root" else 1
                             }})
                         
                         for e in g_json.get("edges", []):
@@ -446,16 +413,13 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
                         
                         render_cytoscape_network(elements, pure_icons=pure_icons)
                     except: st.warning("Graph data could not be parsed.")
-
-                if biblio:
-                    with st.expander("📚 View Metadata Fetched from Research Databases"):
-                        st.text(biblio)
                 
         except Exception as e:
             st.error(f"Synthesis failed: {e}")
 
 st.divider()
-st.caption("SIS Universal Knowledge Synthesizer | v18.0 Full 18D Geometrical Export Edition | 2026")
+st.caption("SIS Universal Knowledge Synthesizer | v18.0 Full 18D Edition | 2026")
+
 
 
 
