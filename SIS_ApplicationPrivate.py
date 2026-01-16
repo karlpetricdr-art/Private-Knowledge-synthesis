@@ -10,7 +10,7 @@ from openai import OpenAI
 import streamlit.components.v1 as components
 
 # =========================================================
-# 0. KONFIGURACIJA IN NAPREDNI STILI (CSS)
+# 0. CONFIGURATION & ADVANCED STYLES (CSS)
 # =========================================================
 st.set_page_config(
     page_title="SIS Universal Knowledge Synthesizer",
@@ -19,7 +19,6 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Integracija CSS za vizualne poudarke, Google linke in gladko navigacijo
 st.markdown("""
 <style>
     .semantic-node-highlight {
@@ -63,10 +62,10 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 def get_svg_base64(svg_str):
-    """Pretvori SVG v base64 format za prikaz slike."""
+    """Converts SVG to base64 for image display."""
     return base64.b64encode(svg_str.encode('utf-8')).decode('utf-8')
 
-# --- LOGOTIP: 3D RELIEF (Embedded SVG) ---
+# --- LOGO: 3D RELIEF (Embedded SVG) ---
 SVG_3D_RELIEF = """
 <svg width="240" height="240" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
     <defs>
@@ -95,11 +94,9 @@ SVG_3D_RELIEF = """
 </svg>
 """
 
-# --- CYTOSCAPE RENDERER Z DINAMIČNIMI OBLIKAMI IN IZVOZOM ---
+# --- CYTOSCAPE RENDERER WITH EXPORT ---
 def render_cytoscape_network(elements, container_id="cy"):
-    """
-    Izriše interaktivno omrežje Cytoscape.js s podporo za oblike in shranjevanje slike.
-    """
+    """Renders interactive Cytoscape.js network with PNG export and anchor scrolling."""
     cyto_html = f"""
     <div style="position: relative;">
         <button id="save_btn" style="position: absolute; top: 10px; right: 10px; z-index: 100; padding: 8px 12px; background: #2a9d8f; color: white; border: none; border-radius: 5px; cursor: pointer; font-family: sans-serif; font-size: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">💾 Export Graph as PNG</button>
@@ -162,9 +159,9 @@ def render_cytoscape_network(elements, container_id="cy"):
     """
     components.html(cyto_html, height=650)
 
-# --- PRIDOBIVANJE BIBLIOGRAFIJ Z LETNICAMI ---
+# --- BIBLIOGRAPHY FETCHING ---
 def fetch_author_bibliographies(author_input):
-    """Zajame bibliografske podatke z letnicami preko ORCID in Scholar API baz."""
+    """Fetches bibliographic data with years via ORCID and Scholar APIs."""
     if not author_input: return ""
     author_list = [a.strip() for a in author_input.split(",")]
     comprehensive_biblio = ""
@@ -192,7 +189,6 @@ def fetch_author_bibliographies(author_input):
                         pub_date = summary.get('publication-date')
                         year = pub_date.get('year').get('value', 'n.d.') if pub_date and pub_date.get('year') else "n.d."
                         comprehensive_biblio += f"- [{year}] {title}\n"
-                else: comprehensive_biblio += "No public works found.\n"
             except: pass
         else:
             try:
@@ -207,7 +203,7 @@ def fetch_author_bibliographies(author_input):
     return comprehensive_biblio
 
 # =========================================================
-# 1. POPOLNA MULTIDIMENZIONALNA ONTOLOGIJA (VSEH 18 DISCIPLIN)
+# 1. MULTIDIMENSIONAL ONTOLOGY (18 DISCIPLINES)
 # =========================================================
 KNOWLEDGE_BASE = {
     "mental_approaches": ["Perspective shifting", "Induction", "Deduction", "Hierarchy", "Mini-max", "Whole and part", "Addition and composition", "Balance", "Abstraction and elimination", "Openness and closedness", "Bipolarity and dialectics", "Framework and foundation", "Pleasure and displeasure", "Similarity and difference", "Core (Attraction & Repulsion)", "Condensation", "Constant", "Associativity"],
@@ -237,32 +233,28 @@ KNOWLEDGE_BASE = {
 }
 
 # =========================================================
-# 2. STREAMLIT INTERFACE KONSTRUKCIJA
+# 2. USER INTERFACE CONSTRUCTION
 # =========================================================
 
 if 'expertise_val' not in st.session_state: st.session_state.expertise_val = "Expert"
 if 'show_user_guide' not in st.session_state: st.session_state.show_user_guide = False
 
-# --- STRANSKA VRSTICA (CONTROL PANEL & KNOWLEDGE EXPLORER) ---
+# --- SIDEBAR (CONTROL PANEL & KNOWLEDGE EXPLORER) ---
 with st.sidebar:
     st.markdown(f'<div style="text-align:center"><img src="data:image/svg+xml;base64,{get_svg_base64(SVG_3D_RELIEF)}" width="220"></div>', unsafe_allow_html=True)
     st.header("⚙️ Control Panel")
     
-    api_key = st.text_input(
-        "Groq API Key:", 
-        type="password", 
-        help="Varnost: Vaš ključ je shranjen le v RAM pomnilniku seje."
-    )
+    api_key = st.text_input("Groq API Key:", type="password", help="Security: Your key is held only in volatile RAM.")
     
     if st.button("📖 User Guide"):
         st.session_state.show_user_guide = not st.session_state.show_user_guide
         st.rerun()
     if st.session_state.show_user_guide:
         st.info("""
-        1. **API Key**: Vnesite ključ za povezavo z AI motorjem.
-        2. **Avtorji**: Vnesite imena (npr. Karl Petrič) za ORCID analizo.
-        3. **Inquiry**: Vnesite vprašanje. Za ikone v grafu dodajte besedo 'ikone'.
-        4. **Graf**: Kliknite vozlišča za skok na besedilo. Shranite s 💾.
+        **1. API Key:** Enter your key to connect the AI engine.  
+        **2. Authors:** Enter researcher names for ORCID metadata analysis.  
+        **3. Inquiry:** Submit your research query. To enable icons in the graph, include the word 'icons' or 'emojis'.  
+        **4. Knowledge Graph:** Click nodes to scroll to text. Use 💾 to export as PNG.
         """)
         if st.button("Close Guide ✖️"): st.session_state.show_user_guide = False; st.rerun()
 
@@ -336,11 +328,11 @@ with r4_c3:
 
 st.divider()
 user_query = st.text_area("❓ Your Synthesis Inquiry:", 
-                         placeholder="Npr: Create a synergy between Economics and Physics using icons and emojies in the graph.",
+                         placeholder="Create a synergy between Economics and Physics for global problems. Use icons in the graph.",
                          height=150, key="user_query_key")
 
 # =========================================================
-# 3. JEDRO SINTEZE: GROQ AI + INTERCONNECTED 18D GRAPH
+# 3. SYNTHESIS ENGINE: GROQ AI + INTERCONNECTED 18D GRAPH
 # =========================================================
 if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=True):
     if not api_key: st.error("Missing Groq API Key.")
@@ -350,7 +342,7 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
             biblio = fetch_author_bibliographies(target_authors) if target_authors else ""
             client = OpenAI(api_key=api_key, base_url="https://api.groq.com/openai/v1")
             
-            # SISTEMSKO NAVODILO
+            # SYSTEM PROMPT
             sys_prompt = f"""
             You are the SIS Synthesizer. Perform an exhaustive dissertation (1500+ words).
             FIELDS: {", ".join(sel_sciences)}. CONTEXT AUTHORS: {biblio}.
@@ -362,7 +354,7 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
             - JSON schema: {{"nodes": [{{"id": "n1", "label": "Text", "type": "Root|Branch|Leaf|Class", "color": "#hex", "shape": "triangle|rectangle|ellipse|diamond"}}], "edges": [{{"source": "n1", "target": "n2", "rel_type": "BT|NT|AS|..."}}]}}
             """
             
-            with st.spinner('Synthesizing exhaustive interdisciplinary synergy (8–40s)...'):
+            with st.spinner('Synthesizing exhaustive interdisciplinary synergy...'):
                 response = client.chat.completions.create(
                     model="llama-3.3-70b-versatile",
                     messages=[{"role": "system", "content": sys_prompt}, {"role": "user", "content": user_query}],
@@ -373,14 +365,14 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
                 parts = text_out.split("### SEMANTIC_GRAPH_JSON")
                 main_markdown = parts[0]
                 
-                # --- PROCESIRANJE BESEDILA (Google Search + Sidra) ---
+                # --- POST-PROCESSING: GOOGLE LINKS & ANCHORS ---
                 if len(parts) > 1:
                     try:
                         g_json = json.loads(re.search(r'\{.*\}', parts[1], re.DOTALL).group())
                         for n in g_json.get("nodes", []):
                             lbl, nid = n["label"], n["id"]
                             g_url = urllib.parse.quote(lbl)
-                            # Sidro za skok iz grafa
+                            # Anchor for graph jump
                             pattern = re.compile(rf'\b({re.escape(lbl)})\b', re.IGNORECASE)
                             replacement = f'<span id="{nid}"><a href="https://www.google.com/search?q={g_url}" target="_blank" class="semantic-node-highlight">{lbl}<i class="google-icon">↗</i></a></span>'
                             main_markdown = pattern.sub(replacement, main_markdown, count=1)
@@ -397,12 +389,13 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
                 st.subheader("📊 Synthesis Output")
                 st.markdown(main_markdown, unsafe_allow_html=True)
 
-                # --- VIZUALIZACIJA (Interconnected Graph) ---
+                # --- VISUALIZATION (Interconnected Graph) ---
                 if len(parts) > 1:
                     try:
                         g_json = json.loads(re.search(r'\{.*\}', parts[1], re.DOTALL).group())
                         st.subheader("🕸️ LLMGraphTransformer: Unified Interdisciplinary Network")
                         
+                        # Robust check for icon request
                         use_icons = any(kw in user_query.lower() for kw in ["ikone", "ikonce", "emoji", "simbol", "slik", "vizual", "icon"])
                         
                         elements = []
@@ -413,11 +406,18 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
                             icon_prefix = ""
 
                             if use_icons:
-                                if any(s.lower() in node_label.lower() for s in KNOWLEDGE_BASE["subject_details"].keys()): icon_prefix = "🔬 "
-                                elif any(a.lower() in node_label.lower() for a in KNOWLEDGE_BASE["mental_approaches"]): icon_prefix = "🧠 "
-                                elif any(p.lower() in node_label.lower() for p in KNOWLEDGE_BASE["paradigms"].keys()): icon_prefix = "🌍 "
-                                elif any(m.lower() in node_label.lower() for m in KNOWLEDGE_BASE["knowledge_models"].keys()): icon_prefix = "🏗️ "
-                                elif any(pr.lower() in node_label.lower() for pr in KNOWLEDGE_BASE["profiles"].keys()): icon_prefix = "👤 "
+                                node_label_low = node_label.lower()
+                                # Enhanced Icon matching logic
+                                if any(s.lower() in node_label_low for s in KNOWLEDGE_BASE["subject_details"].keys()): 
+                                    icon_prefix = "🔬 "
+                                elif any(a.lower() in node_label_low for a in KNOWLEDGE_BASE["mental_approaches"]): 
+                                    icon_prefix = "🧠 "
+                                elif any(p.lower() in node_label_low for p in KNOWLEDGE_BASE["paradigms"].keys()): 
+                                    icon_prefix = "🌍 "
+                                elif any(m.lower() in node_label_low for m in KNOWLEDGE_BASE["knowledge_models"].keys()): 
+                                    icon_prefix = "🏗️ "
+                                elif any(pr.lower() in node_label_low for pr in KNOWLEDGE_BASE["profiles"].keys()): 
+                                    icon_prefix = "👤 "
 
                             elements.append({"data": {
                                 "id": n["id"], "label": f"{icon_prefix}{node_label}", "color": n.get("color", "#2a9d8f"),
@@ -439,6 +439,7 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
 
 st.divider()
 st.caption("SIS Universal Knowledge Synthesizer | v18.0 Full 18D Geometrical Export Edition | 2026")
+
 
 
 
