@@ -19,10 +19,10 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS for Lego UI, Semantic Highlights, and Anchor Effects
+# Comprehensive CSS for Interdisciplinary Lego UI, Semantic Highlights, and Anchors
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap');
     
     html, body, [class*="st-"] {
         font-family: 'Inter', sans-serif;
@@ -30,9 +30,9 @@ st.markdown("""
 
     /* Semantic Highlighting and Link Styling */
     .semantic-node-highlight {
-        color: #2a9d8f;
-        font-weight: 700;
-        border-bottom: 2.5px solid #2a9d8f;
+        color: #2a9d8f !important;
+        font-weight: 700 !important;
+        border-bottom: 2.5px solid #2a9d8f !important;
         padding: 0 4px;
         background-color: #f0fdfa;
         border-radius: 6px;
@@ -42,9 +42,9 @@ st.markdown("""
         margin-top: 2px;
     }
     .semantic-node-highlight:hover {
-        background-color: #264653;
-        color: #ffffff;
-        border-bottom: 2.5px solid #e76f51;
+        background-color: #264653 !important;
+        color: #ffffff !important;
+        border-bottom: 2.5px solid #e76f51 !important;
         transform: translateY(-2px);
         cursor: pointer;
     }
@@ -67,19 +67,19 @@ st.markdown("""
         opacity: 0.7;
     }
 
-    /* Content Styling */
+    /* Content and Analysis Styling */
     .stMarkdown {
         line-height: 1.9;
         font-size: 1.05em;
         text-align: justify;
     }
 
-    /* Aesthetic Knowledge Explorer Cards */
+    /* Knowledge Explorer Aesthetic Cards */
     .explorer-card {
         padding: 15px;
         border-radius: 12px;
         background: #ffffff;
-        border: 1px solid #eee;
+        border: 1px solid #eaeaea;
         border-left: 6px solid #2a9d8f;
         margin-bottom: 12px;
         box-shadow: 2px 2px 8px rgba(0,0,0,0.03);
@@ -87,8 +87,8 @@ st.markdown("""
     .explorer-title {
         font-weight: 700;
         color: #264653;
-        font-size: 1.05em;
-        margin-bottom: 4px;
+        font-size: 1em;
+        margin-bottom: 5px;
         display: block;
     }
     .explorer-desc {
@@ -98,7 +98,7 @@ st.markdown("""
     }
 
     /* Lego Section Styling */
-    .lego-header-box {
+    .lego-main-title {
         font-size: 1.5em;
         font-weight: 800;
         color: #264653;
@@ -145,10 +145,7 @@ SVG_3D_RELIEF = """
 def render_cytoscape_network(elements, viz_mode="Standard Shapes", container_id="cy_canvas"):
     """
     Renders an interactive Cytoscape.js network.
-    - viz_mode: "Standard Shapes", "Pure Large Icons", "Mixed (Shapes + Icons)"
-    - Dynamic font scaling: 14pt (18px) for complex graphs, 20pt (26px) for simple.
-    - Anchor scrolling: node tap scrolls page to semantic ID.
-    - Export graph as high-res PNG.
+    Dynamic font scaling: 14pt (18px) for complex graphs, 20pt (26px) for simple.
     """
     num_nodes = len([e for e in elements if 'source' not in e['data']])
     f_size = "18px" if num_nodes > 15 else "26px"
@@ -157,19 +154,19 @@ def render_cytoscape_network(elements, viz_mode="Standard Shapes", container_id=
         'label': 'data(label)', 'text-valign': 'center', 'color': '#333',
         'font-weight': 'bold', 'text-outline-width': 2, 'text-outline-color': '#fff',
         'cursor': 'pointer', 'z-index': 'data(z_index)', 'font-size': f_size,
-        'transition-property': 'background-color, line-color, width, height', 'transition-duration': '0.3s'
+        'transition-property': 'background-color, line-color', 'transition-duration': '0.3s'
     }
 
     if viz_mode == "Pure Large Icons":
         node_style.update({
             'background-opacity': 0, 'border-width': 0,
-            'width': 60, 'height': 60, 'font-size': '38px'
+            'width': 60, 'height': 60, 'font-size': '40px'
         })
     else:
         node_style.update({
             'background-color': 'data(color)', 'width': 'data(size)',
             'height': 'data(size)', 'shape': 'data(shape)',
-            'border-width': 3, 'border-color': '#ffffff'
+            'border-width': 3, 'border-color': '#fff'
         })
 
     cyto_html = f"""
@@ -177,7 +174,7 @@ def render_cytoscape_network(elements, viz_mode="Standard Shapes", container_id=
         <div style="position: absolute; top: 15px; right: 15px; z-index: 100;">
             <button id="save_btn" style="padding: 10px 18px; background: #2a9d8f; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: 0.2s;">💾 Export PNG</button>
         </div>
-        <div id="{container_id}" style="width: 100%; height: 750px; background: #ffffff; border-radius: 25px; border: 1px solid #ddd; box-shadow: 2px 2px 20px rgba(0,0,0,0.04);"></div>
+        <div id="{container_id}" style="width: 100%; height: 700px; background: #ffffff; border-radius: 25px; border: 1px solid #ddd; box-shadow: 2px 2px 20px rgba(0,0,0,0.04);"></div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.26.0/cytoscape.min.js"></script>
     <script>
@@ -196,7 +193,7 @@ def render_cytoscape_network(elements, viz_mode="Standard Shapes", container_id=
                         'text-background-padding': '3px', 'text-background-shape': 'roundrectangle'
                     }} }}
                 ],
-                layout: {{ name: 'cose', padding: 60, animate: true, nodeRepulsion: 50000, idealEdgeLength: 150 }}
+                layout: {{ name: 'cose', padding: 60, animate: true, nodeRepulsion: 45000, idealEdgeLength: 140 }}
             }});
             
             cy.on('tap', 'node', function(evt){{
@@ -218,23 +215,22 @@ def render_cytoscape_network(elements, viz_mode="Standard Shapes", container_id=
         }});
     </script>
     """
-    components.html(cyto_html, height=780)
+    components.html(cyto_html, height=730)
 
 # --- AUTHOR BIBLIOGRAPHY ENGINE ---
-def fetch_author_bib_metadata(author_input):
+def fetch_author_bib_pro(author_input):
     """Fetches researcher data from ORCID with year extraction."""
     if not author_input: return ""
     author_list = [a.strip() for a in author_input.split(",")]
     comprehensive_biblio = ""
     for auth in author_list:
         try:
-            search_url = f"https://pub.orcid.org/v3.0/search/?q={auth}"
-            s_res = requests.get(search_url, headers={"Accept": "application/json"}, timeout=5).json()
+            s_res = requests.get(f"https://pub.orcid.org/v3.0/search/?q={auth}", headers={"Accept": "application/json"}, timeout=5).json()
             if s_res.get('result'):
                 oid = s_res['result'][0]['orcid-identifier']['path']
                 bib_res = requests.get(f"https://pub.orcid.org/v3.0/{oid}/record", headers={"Accept": "application/json"}, timeout=5).json()
                 works = bib_res.get('activities-summary', {}).get('works', {}).get('group', [])
-                comprehensive_biblio += f"\n--- DATABASE: ORCID | AUTHOR: {auth.upper()} ({oid}) ---\n"
+                comprehensive_biblio += f"\n--- DATABASE: ORCID | ID: {oid} | AUTHOR: {auth.upper()} ---\n"
                 for work in works[:5]:
                     summary = work.get('work-summary', [{}])[0]
                     title = summary.get('title', {}).get('title', {}).get('value', 'N/A')
@@ -248,77 +244,80 @@ def fetch_author_bib_metadata(author_input):
 # ==============================================================================
 KNOWLEDGE_BASE = {
     "profiles": {
-        "Adventurers": {"desc": "Explorers of hidden patterns and boundary-pushing ideas.", "color": "#264653"},
-        "Applicators": {"desc": "Pragmatic thinkers focused on efficient execution and utility.", "color": "#2a9d8f"},
-        "Know-it-alls": {"desc": "Seekers of systemic clarity and absolute universal laws.", "color": "#e9c46a"},
-        "Observers": {"desc": "System monitors focused on data streams and tracking.", "color": "#f4a261"}
+        "Adventurers": {"desc": "Explorers of hidden patterns, boundary-pushing ideas and non-linear systems.", "icon": "👤"},
+        "Applicators": {"desc": "Pragmatic thinkers focused on efficient execution and practical utility.", "icon": "👤"},
+        "Know-it-alls": {"desc": "Seekers of systemic clarity and absolute universal laws.", "icon": "👤"},
+        "Observers": {"desc": "System monitors focused on data streams and tracking.", "icon": "👤"}
     },
     "mental_approaches": {
-        "Perspective shifting": "Analyzing systems from multiple angles.",
-        "Induction": "Deriving general theories from specific data.",
-        "Deduction": "Predicting outcomes based on general laws.",
-        "Hierarchy": "Organizing concepts based on systemic scale.",
-        "Mini-max": "Optimization of results using minimal input.",
-        "Associativity": "Linking diverse concepts through characteristics."
+        "Perspective shifting": "Analyzing the system from multiple vantage points.",
+        "Induction": "Deriving general theories from specific empirical observations.",
+        "Deduction": "Predicting specific outcomes based on general scientific laws.",
+        "Hierarchy": "Organizing knowledge by importance or systemic scale.",
+        "Mini-max": "Optimization of results using minimal input resources.",
+        "Bipolarity": "Exploring the dialectical tension between opposites.",
+        "Whole and part": "Systemic structural analysis and synthesis.",
+        "Associativity": "Linking diverse concepts through shared characteristics."
     },
     "paradigms": {
-        "Empiricism": "Focus on data-driven reality.",
-        "Rationalism": "Focus on deductive consistency.",
-        "Constructivism": "Knowledge as a social construct.",
-        "Positivism": "Strict scientific fact adherence.",
-        "Pragmatism": "Evaluation based on practical success."
+        "Empiricism": "Knowledge from sensory evidence and data-driven reality.",
+        "Rationalism": "Knowledge from deductive logic and internal consistency.",
+        "Constructivism": "Knowledge as a social and individually built construct.",
+        "Positivism": "Strict adherence to verifiable scientific data and facts.",
+        "Pragmatism": "Evaluation of theories based on their practical application."
     },
     "knowledge_models": {
-        "Causal Connections": "Functional cause-and-effect paths.",
-        "Principles & Relations": "Fundamental governing laws.",
-        "Episodes & Sequences": "Temporal flow and chronology.",
-        "Concepts": "Atomic abstract building blocks."
+        "Causal Connections": "Mapping functional cause-and-effect paths.",
+        "Principles & Relations": "Identification of fundamental governing laws.",
+        "Episodes & Sequences": "Analysis of temporal flow and chronology.",
+        "Facts & Characteristics": "High-fidelity descriptive data analysis.",
+        "Concepts": "Defining atomic abstract building blocks."
     },
     "subject_details": {
-        "Physics": {"cat": "Natural", "col": "#264653", "meth": ["Simulation"], "tools": ["Accelerator"]},
-        "Chemistry": {"cat": "Natural", "col": "#287271", "meth": ["Synthesis"], "tools": ["NMR"]},
-        "Biology": {"cat": "Natural", "col": "#2a9d8f", "meth": ["CRISPR"], "tools": ["Microscope"]},
-        "Neuroscience": {"cat": "Natural", "col": "#8ab17d", "meth": ["Imaging"], "tools": ["fMRI"]},
-        "Psychology": {"cat": "Social", "col": "#b5ba72", "meth": ["Psychometrics"], "tools": ["fMRI"]},
-        "Sociology": {"cat": "Social", "col": "#e9c46a", "meth": ["Ethnography"], "tools": ["SPSS"]},
-        "Economics": {"cat": "Social", "col": "#f4a261", "meth": ["Econometrics"], "tools": ["Bloomberg"]},
-        "Politics": {"cat": "Social", "col": "#e76f51", "meth": ["Policy Analysis"], "tools": ["Polls"]},
-        "Computer Science": {"cat": "Formal", "col": "#d62828", "meth": ["Algorithms"], "tools": ["Git"]},
-        "Medicine": {"cat": "Applied", "col": "#003049", "meth": ["Trials"], "tools": ["MRI"]},
-        "Engineering": {"cat": "Applied", "col": "#669bbc", "meth": ["FEA"], "tools": ["CAD"]},
+        "Physics": {"cat": "Natural", "col": "#264653", "meth": ["Simulation", "Modeling"], "tools": ["Accelerator"]},
+        "Chemistry": {"cat": "Natural", "col": "#287271", "meth": ["Synthesis", "Spectroscopy"], "tools": ["NMR"]},
+        "Biology": {"cat": "Natural", "col": "#2a9d8f", "meth": ["CRISPR", "Sequencing"], "tools": ["Microscope"]},
+        "Neuroscience": {"cat": "Natural", "col": "#8ab17d", "meth": ["Imaging", "EEG"], "tools": ["fMRI"]},
+        "Psychology": {"cat": "Social", "col": "#b5ba72", "meth": ["Psychometrics", "Trials"], "tools": ["fMRI"]},
+        "Sociology": {"cat": "Social", "col": "#e9c46a", "meth": ["Ethnography", "Surveys"], "tools": ["SPSS"]},
+        "Economics": {"cat": "Social", "col": "#f4a261", "meth": ["Econometrics", "Game Theory"], "tools": ["Bloomberg"]},
+        "Politics": {"cat": "Social", "col": "#e76f51", "meth": ["Policy Analysis", "Comparative"], "tools": ["Polls"]},
+        "Computer Science": {"cat": "Formal", "col": "#d62828", "meth": ["Algorithms", "Verification"], "tools": ["Git"]},
+        "Medicine": {"cat": "Applied", "col": "#003049", "meth": ["Clinical Trials"], "tools": ["MRI Scanner"]},
+        "Engineering": {"cat": "Applied", "col": "#669bbc", "meth": ["FEA Analysis"], "tools": ["CAD"]},
         "Library Science": {"cat": "Applied", "col": "#fdf0d5", "meth": ["Taxonomy"], "tools": ["Zotero"]},
-        "Philosophy": {"cat": "Humanities", "col": "#c1121f", "meth": ["Dialectics"], "tools": ["Logic"]},
-        "Linguistics": {"cat": "Humanities", "col": "#780000", "meth": ["Parsing"], "tools": ["NLTK"]},
+        "Philosophy": {"cat": "Humanities", "col": "#c1121f", "meth": ["Dialectics"], "tools": ["Logic Mapping"]},
+        "Linguistics": {"cat": "Humanities", "col": "#780000", "meth": ["Parsing"], "tools": ["NLTK Toolkit"]},
         "Geography": {"cat": "Natural/Social", "col": "#003566", "meth": ["GIS"], "tools": ["ArcGIS"]},
         "Geology": {"cat": "Natural", "col": "#ffc300", "meth": ["Stratigraphy"], "tools": ["Seismograph"]},
         "Climatology": {"cat": "Natural", "col": "#000814", "meth": ["Modeling"], "tools": ["Weather Station"]},
-        "History": {"cat": "Humanities", "col": "#ffd60a", "meth": ["Archival Research"], "tools": ["Archives"]}
+        "History": {"cat": "Humanities", "col": "#ffd60a", "meth": ["Archival Research"], "tools": ["Digital Archives"]}
     }
 }
 
 # ==============================================================================
 # 3. UI CONSTRUCTION (SIDEBAR & 9D LEGO CONFIGURATION)
 # ==============================================================================
-if 'show_guide_en' not in st.session_state: st.session_state.show_guide_en = False
+if 'show_guide' not in st.session_state: st.session_state.show_guide = False
 
 with st.sidebar:
     st.markdown(f'<div style="text-align:center"><img src="data:image/svg+xml;base64,{get_svg_base64(SVG_3D_RELIEF)}" width="220"></div>', unsafe_allow_html=True)
     st.header("⚙️ Control Panel")
     api_key = st.text_input("Groq API Key:", type="password", help="Key held only in volatile RAM.")
     
-    if st.button("📖 User Guide (EN)", key="guide_btn"):
-        st.session_state.show_guide_en = not st.session_state.show_guide_en
+    if st.button("📖 User Guide (EN)", key="guide_main"):
+        st.session_state.show_guide = not st.session_state.show_guide
         st.rerun()
-    if st.session_state.show_guide_en:
+    if st.session_state.show_guide:
         st.info("""
         **English User Guide**:
         1. **Authors**: Enter names for metadata sync (ORCID).
         2. **9-Dimensions**: Fully configure Profiles, Paradigms, Models, etc.
-        3. **Lego Viz**: Choose between standard shapes, pure icons, or mixed mode.
-        4. **Google Links**: Concepts in text link to search results and graph nodes.
-        5. **Anchors**: Tapping nodes in the graph scrolls the page to relevant text.
+        3. **Google Links**: Concepts in text link to search results and graph nodes.
+        4. **Icons**: Use 'icons' in inquiry for symbols. Use 'only icons' to hide geometry.
+        5. **Anchors**: Tapping nodes scrolls text to relevant analysis.
         """)
-        if st.button("Close Guide"): st.session_state.show_guide_en = False; st.rerun()
+        if st.button("Close Guide"): st.session_state.show_guide = False; st.rerun()
 
     st.divider()
     st.markdown('<div style="font-weight:700; color:#264653; font-size:1.2em; margin-bottom:10px;">Knowledge Explorer</div>', unsafe_allow_html=True)
@@ -352,7 +351,7 @@ with st.sidebar:
 st.title("🧱 SIS Universal Knowledge Synthesizer")
 st.markdown("Advanced Multi-dimensional synthesis with **Interdisciplinary Lego Architecture**.")
 
-st.markdown('<div class="lego-header-box">🏗️ Build Your 9D Cognitive Lego Structure</div>', unsafe_allow_html=True)
+st.markdown('<div class="lego-main-title">🏗️ Build Your 9D Cognitive Lego Structure</div>', unsafe_allow_html=True)
 
 # ROW 1: AUTHORS & EXPERTISE
 r1_c1, r1_c2 = st.columns([2, 1])
@@ -376,10 +375,10 @@ for s in sel_sciences:
     if s in KNOWLEDGE_BASE["subject_details"]: agg_meth.extend(KNOWLEDGE_BASE["subject_details"][s]["meth"])
 with c7: sel_methods = st.multiselect("8. Methodologies:", sorted(list(set(agg_meth))), default=[])
 with c8: sel_tools = st.multiselect("9. Specific Tools:", ["LLMGraphTransformer", "Python", "fMRI", "3D Printing", "Bloomberg"], default=["LLMGraphTransformer"])
-with c9: viz_mode = st.radio("Visualization Style:", ["Standard Shapes", "Pure Large Icons", "Mixed (Shapes + Icons)"])
+with c9: viz_mode = st.radio("Visualization Style:", ["Standard Shapes", "Pure Large Icons", "Mixed Mode"])
 
 st.divider()
-user_query = st.text_area("❓ Your Synthesis Inquiry:", placeholder="Create a multidimensional synergy. Use large icons for clarity.", height=150)
+user_query = st.text_area("❓ Your Synthesis Inquiry:", placeholder="Create a synergy between geopolitical forces and economics. Use icons and varied geometry.", height=150)
 
 # ==============================================================================
 # 4. CORE SYNTHESIS ENGINE: GROQ AI + LEGO GRAPH LOGIC
@@ -389,16 +388,17 @@ if st.button("🚀 Execute Multi-Dimensional Lego Synthesis", use_container_widt
     elif not user_query: st.warning("Please provide inquiry.")
     else:
         try:
-            bib_data = fetch_author_bib_metadata(target_authors) if target_authors else ""
+            bib_data = fetch_author_bib_pro(target_authors) if target_authors else ""
             client = OpenAI(api_key=api_key, base_url="https://api.groq.com/openai/v1")
             
             sys_prompt = f"""
             You are the SIS Synthesizer. Perform an exhaustive dissertation (1500+ words).
             LEGO ARCHITECTURE: 9-Dimensions active. FIELDS: {sel_sciences}. CONTEXT: {bib_data}.
             STRICT RULES:
-            1. No text lists of nodes/edges in dissertation.
+            1. FOCUS 100% on deep research. NEVER include node lists in text.
             2. Apply THESAURUS logic (TT, BT, NT, AS, RT, EQ).
-            3. End with '### SEMANTIC_GRAPH_JSON' followed by valid JSON.
+            3. End with '### SEMANTIC_GRAPH_JSON' and valid JSON.
+            JSON: {{"nodes": [{{"id": "n1", "label": "Text", "type": "Root|Branch", "color": "#hex", "shape": "triangle|rectangle|ellipse|diamond"}}], "edges": [{{"source": "n1", "target": "n2", "rel_type": "AS"}}]}}
             """
             
             with st.spinner('Building Interdisciplinary Lego Structure...'):
@@ -410,10 +410,13 @@ if st.button("🚀 Execute Multi-Dimensional Lego Synthesis", use_container_widt
                 # --- POST-PROCESSING: LINKS & ANCHORS ---
                 if len(parts) > 1:
                     try:
-                        g_json = json.loads(re.search(r'\{.*\}', parts[1], re.DOTALL).group())
+                        # Extract JSON safely from code blocks or raw text
+                        json_str = re.search(r'\{.*\}', parts[1], re.DOTALL).group()
+                        g_json = json.loads(json_str)
                         for n in g_json.get("nodes", []):
                             lbl, nid = n["label"], n["id"]
                             url_lbl = urllib.parse.quote(lbl)
+                            # Create Semantic Link with Google Search and Anchor ID
                             pattern = re.compile(rf'\b({re.escape(lbl)})\b', re.IGNORECASE)
                             replacement = f'<span id="{nid}"><a href="https://www.google.com/search?q={url_lbl}" target="_blank" class="semantic-node-highlight">{lbl}<i class="google-icon">↗</i></a></span>'
                             main_markdown = pattern.sub(replacement, main_markdown, count=1)
@@ -425,7 +428,8 @@ if st.button("🚀 Execute Multi-Dimensional Lego Synthesis", use_container_widt
                 # --- VIZ LOGIC ---
                 if len(parts) > 1:
                     try:
-                        g_json = json.loads(re.search(r'\{.*\}', parts[1], re.DOTALL).group())
+                        json_str = re.search(r'\{.*\}', parts[1], re.DOTALL).group()
+                        g_json = json.loads(json_str)
                         st.subheader("🕸️ Unified Interdisciplinary Lego Network")
                         
                         elements = []
@@ -449,13 +453,9 @@ if st.button("🚀 Execute Multi-Dimensional Lego Synthesis", use_container_widt
                                 elif any(m.lower() in lbl.lower() for m in KNOWLEDGE_BASE["knowledge_models"]): icon, col = "🏗️ ", "#f4a261"
                                 shape = ["hexagon", "rhomboid", "octagon", "star"][hash(lbl)%4]
 
-                            # Construct Label based on mode
-                            final_label = lbl
-                            if viz_mode in ["Pure Large Icons", "Mixed (Shapes + Icons)"]:
-                                final_label = f"{icon}{lbl}"
-
+                            display_lbl = f"{icon}{lbl}" if viz_mode in ["Pure Large Icons", "Mixed Mode"] else lbl
                             elements.append({"data": {
-                                "id": n["id"], "label": final_label, 
+                                "id": n["id"], "label": display_lbl, 
                                 "color": col, "size": size, "shape": shape, "z_index": 10 if level == "Root" else 1
                             }})
                         for e in g_json.get("edges", []):
@@ -469,5 +469,6 @@ if st.button("🚀 Execute Multi-Dimensional Lego Synthesis", use_container_widt
 
 st.divider()
 st.caption("SIS Universal Knowledge Synthesizer | v18.5 | Interdisciplinary Lego Architecture | 2026")
+
 
 
