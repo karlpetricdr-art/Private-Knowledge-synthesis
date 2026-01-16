@@ -142,9 +142,10 @@ SVG_3D_RELIEF = """
 # ==============================================================================
 # 1. ADVANCED CYTOSCAPE RENDERER (LEGO GRAPH INTERFACE)
 # ==============================================================================
-def render_cytoscape_network(elements, viz_mode="Standard Shapes", container_id="cy_canvas"):
+def render_cytoscape_network(elements, container_id="cy_canvas"):
     """
     Renders an interactive Cytoscape.js network.
+    - Standard colorful shapes with solid icons in Mixed mode.
     - Dynamic font scaling: 14pt (18px) for complex graphs, 20pt (26px) for simple.
     - Anchor scrolling: node tap scrolls page to semantic ID.
     - Export graph as high-res PNG.
@@ -153,23 +154,24 @@ def render_cytoscape_network(elements, viz_mode="Standard Shapes", container_id=
     f_size = "18px" if num_nodes > 15 else "26px"
     
     node_style = {
-        'label': 'data(label)', 'text-valign': 'center', 'color': '#333',
-        'font-weight': 'bold', 'text-outline-width': 2, 'text-outline-color': '#fff',
-        'cursor': 'pointer', 'z-index': 'data(z_index)', 'font-size': f_size,
-        'transition-property': 'background-color, line-color, width, height', 'transition-duration': '0.3s'
+        'label': 'data(label)', 
+        'text-valign': 'center', 
+        'color': '#333',
+        'font-weight': 'bold', 
+        'text-outline-width': 2, 
+        'text-outline-color': '#fff',
+        'cursor': 'pointer', 
+        'z-index': 'data(z_index)', 
+        'font-size': f_size,
+        'background-color': 'data(color)', 
+        'width': 'data(size)',
+        'height': 'data(size)', 
+        'shape': 'data(shape)',
+        'border-width': 3, 
+        'border-color': '#ffffff',
+        'transition-property': 'background-color, line-color', 
+        'transition-duration': '0.3s'
     }
-
-    if viz_mode == "Pure Large Icons":
-        node_style.update({
-            'background-opacity': 0, 'border-width': 0,
-            'width': 60, 'height': 60, 'font-size': '42px'
-        })
-    else:
-        node_style.update({
-            'background-color': 'data(color)', 'width': 'data(size)',
-            'height': 'data(size)', 'shape': 'data(shape)',
-            'border-width': 3, 'border-color': '#ffffff'
-        })
 
     cyto_html = f"""
     <div style="position: relative; font-family: sans-serif;">
@@ -211,7 +213,7 @@ def render_cytoscape_network(elements, viz_mode="Standard Shapes", container_id=
             document.getElementById('save_btn').onclick = function() {{
                 var link = document.createElement('a');
                 link.href = cy.png({{full: true, bg: 'white', scale: 2}});
-                link.download = 'sis_interdisciplinary_lego_architecture.png';
+                link.download = 'sis_lego_architecture_graph.png';
                 link.click();
             }};
         }});
@@ -220,8 +222,8 @@ def render_cytoscape_network(elements, viz_mode="Standard Shapes", container_id=
     components.html(cyto_html, height=780)
 
 # --- AUTHOR BIBLIOGRAPHY ENGINE ---
-def fetch_author_metadata_advanced(author_input):
-    """Fetches real-time research metadata from ORCID Registry."""
+def fetch_author_bib_meta(author_input):
+    """Fetches researcher data from ORCID with year extraction."""
     if not author_input: return ""
     author_list = [a.strip() for a in author_input.split(",")]
     comprehensive_biblio = ""
@@ -233,7 +235,7 @@ def fetch_author_metadata_advanced(author_input):
                 oid = s_res['result'][0]['orcid-identifier']['path']
                 bib_res = requests.get(f"https://pub.orcid.org/v3.0/{oid}/record", headers={"Accept": "application/json"}, timeout=5).json()
                 works = bib_res.get('activities-summary', {}).get('works', {}).get('group', [])
-                comprehensive_biblio += f"\n--- DATABASE: ORCID | ID: {oid} | AUTHOR: {auth.upper()} ---\n"
+                comprehensive_biblio += f"\n--- DATABASE: ORCID | AUTHOR: {auth.upper()} ({oid}) ---\n"
                 for work in works[:5]:
                     summary = work.get('work-summary', [{}])[0]
                     title = summary.get('title', {}).get('title', {}).get('value', 'N/A')
@@ -255,26 +257,26 @@ KNOWLEDGE_BASE = {
     "mental_approaches": {
         "Perspective shifting": "Analyzing systems from multiple angles.",
         "Induction": "Deriving general theories from specific data.",
-        "Deduction": "Predicting outcomes based on general scientific laws.",
-        "Hierarchy": "Organizing concepts based on systemic scale or importance.",
-        "Mini-max": "Optimization of results using minimal input resources.",
+        "Deduction": "Predicting outcomes based on general laws.",
+        "Hierarchy": "Organizing concepts based on systemic scale.",
+        "Mini-max": "Optimization of results using minimal input.",
         "Bipolarity": "Exploring the dialectical tension between opposites.",
         "Whole and part": "Systemic structural analysis and synthesis.",
         "Associativity": "Linking diverse concepts through shared characteristics."
     },
     "paradigms": {
         "Empiricism": "Focus on sensory evidence and data-driven reality.",
-        "Rationalism": "Focus on deductive logic and internal consistency.",
-        "Constructivism": "Knowledge as a social and individually built construct.",
-        "Positivism": "Strict adherence to verifiable scientific facts.",
-        "Pragmatism": "Evaluation of theories based on their practical application."
+        "Rationalism": "Focus on deductive logic and consistency.",
+        "Constructivism": "Knowledge as a social construct.",
+        "Positivism": "Strict scientific fact adherence.",
+        "Pragmatism": "Evaluation based on practical success."
     },
     "knowledge_models": {
-        "Causal Connections": "Mapping functional cause-and-effect paths.",
-        "Principles & Relations": "Identification of fundamental governing laws.",
-        "Episodes & Sequences": "Analysis of temporal flow and chronology.",
-        "Facts & Characteristics": "High-fidelity descriptive data analysis.",
-        "Concepts": "Defining atomic abstract building blocks."
+        "Causal Connections": "Functional cause-and-effect paths.",
+        "Principles & Relations": "Fundamental governing laws.",
+        "Episodes & Sequences": "Temporal flow and chronology.",
+        "Facts & Characteristics": "High-fidelity descriptive data points.",
+        "Concepts": "Atomic abstract building blocks."
     },
     "subject_details": {
         "Physics": {"cat": "Natural", "col": "#264653", "meth": ["Simulation", "Modeling"], "tools": ["Accelerator"]},
@@ -289,7 +291,7 @@ KNOWLEDGE_BASE = {
         "Medicine": {"cat": "Applied", "col": "#003049", "meth": ["Clinical Trials"], "tools": ["MRI Scanner"]},
         "Engineering": {"cat": "Applied", "col": "#669bbc", "meth": ["FEA Analysis", "Prototyping"], "tools": ["CAD"]},
         "Library Science": {"cat": "Applied", "col": "#fdf0d5", "meth": ["Taxonomy", "Metadata"], "tools": ["Zotero"]},
-        "Philosophy": {"cat": "Humanities", "col": "#c1121f", "meth": ["Dialectics", "Phenomenology"], "tools": ["Logic"]},
+        "Philosophy": {"cat": "Humanities", "col": "#c1121f", "meth": ["Dialectics", "Phenomenology"], "tools": ["Logic Mapping"]},
         "Linguistics": {"cat": "Humanities", "col": "#780000", "meth": ["Parsing", "Corpus Analysis"], "tools": ["NLTK Toolkit"]},
         "Geography": {"cat": "Natural/Social", "col": "#003566", "meth": ["GIS Analysis"], "tools": ["ArcGIS"]},
         "Geology": {"cat": "Natural", "col": "#ffc300", "meth": ["Stratigraphy"], "tools": ["Seismograph"]},
@@ -301,7 +303,7 @@ KNOWLEDGE_BASE = {
 # ==============================================================================
 # 3. UI CONSTRUCTION (SIDEBAR & 9D LEGO CONFIGURATION)
 # ==============================================================================
-if 'show_guide' not in st.session_state: st.session_state.show_guide = False
+if 'show_guide_en' not in st.session_state: st.session_state.show_guide_en = False
 
 with st.sidebar:
     st.markdown(f'<div style="text-align:center"><img src="data:image/svg+xml;base64,{get_svg_base64(SVG_3D_RELIEF)}" width="220"></div>', unsafe_allow_html=True)
@@ -309,18 +311,18 @@ with st.sidebar:
     api_key = st.text_input("Groq API Key:", type="password", help="Key held only in volatile RAM.")
     
     if st.button("📖 User Guide (EN)", key="guide_main"):
-        st.session_state.show_guide = not st.session_state.show_guide
+        st.session_state.show_guide_en = not st.session_state.show_guide_en
         st.rerun()
-    if st.session_state.show_guide:
+    if st.session_state.show_guide_en:
         st.info("""
         **English User Guide**:
         1. **Authors**: Enter names for metadata sync (ORCID).
-        2. **9-Dimensions**: Fully configure Profiles, Paradigms, Models, etc.
-        3. **Lego Viz**: Choose between standard colorful shapes, pure large icons, or mixed mode.
+        2. **9-Dimensions**: Fully configure Profiles, Paradigms, Models, Methods, etc.
+        3. **Standard Shapes**: Now colorful based on scientific category.
         4. **Google Links**: Concepts in text link to search results and graph nodes.
         5. **Anchors**: Tapping nodes in the graph scrolls the page to relevant text.
         """)
-        if st.button("Close Guide"): st.session_state.show_guide = False; st.rerun()
+        if st.button("Close Guide"): st.session_state.show_guide_en = False; st.rerun()
 
     st.divider()
     st.markdown('<div style="font-weight:700; color:#264653; font-size:1.2em; margin-bottom:10px;">Knowledge Explorer</div>', unsafe_allow_html=True)
@@ -378,10 +380,10 @@ for s in sel_sciences:
     if s in KNOWLEDGE_BASE["subject_details"]: agg_meth.extend(KNOWLEDGE_BASE["subject_details"][s]["meth"])
 with c7: sel_methods = st.multiselect("8. Methodologies:", sorted(list(set(agg_meth))), default=[])
 with c8: sel_tools = st.multiselect("9. Specific Tools:", ["LLMGraphTransformer", "Python", "fMRI", "3D Printing", "Bloomberg"], default=["LLMGraphTransformer"])
-with c9: viz_mode = st.radio("Visualization Style:", ["Standard Shapes", "Pure Large Icons", "Mixed Mode"])
+with c9: viz_mode = st.radio("Visualization Style:", ["Standard Shapes", "Mixed (Shapes + Icons)"])
 
 st.divider()
-user_query = st.text_area("❓ Your Synthesis Inquiry:", placeholder="Create a synergy between geopolitical forces and economics. Use large icons for clarity.", height=150)
+user_query = st.text_area("❓ Your Synthesis Inquiry:", placeholder="Create a synergy between geopolitical forces and economics. Use varied geometry for nodes.", height=150)
 
 # ==============================================================================
 # 4. CORE SYNTHESIS ENGINE: GROQ AI + LEGO GRAPH LOGIC
@@ -391,17 +393,17 @@ if st.button("🚀 Execute Multi-Dimensional Lego Synthesis", use_container_widt
     elif not user_query: st.warning("Please provide inquiry.")
     else:
         try:
-            bib_data = fetch_author_metadata_advanced(target_authors) if target_authors else ""
+            bib_data = fetch_author_bib_pro(target_authors) if target_authors else ""
             client = OpenAI(api_key=api_key, base_url="https://api.groq.com/openai/v1")
             
             sys_prompt = f"""
             You are the SIS Synthesizer. Perform an exhaustive dissertation (1500+ words).
             LEGO ARCHITECTURE: 9-Dimensions active. FIELDS: {sel_sciences}. CONTEXT: {bib_data}.
             STRICT RULES:
-            1. FOCUS 100% on deep research. NEVER include node lists in text.
+            1. FOCUS 100% on deep research. NEVER include node lists in dissertation text.
             2. Apply THESAURUS logic (TT, BT, NT, AS, RT, EQ).
             3. End with '### SEMANTIC_GRAPH_JSON' followed by valid JSON.
-            JSON: {{"nodes": [{{"id": "n1", "label": "Text", "type": "Root|Branch", "color": "#hex", "shape": "triangle|rectangle|ellipse|diamond"}}], "edges": [{{"source": "n1", "target": "n2", "rel_type": "AS"}}]}}
+            JSON Schema: {{"nodes": [{{"id": "n1", "label": "Text", "type": "Root|Branch", "color": "#hex", "shape": "triangle|rectangle|ellipse|diamond"}}], "edges": [{{"source": "n1", "target": "n2", "rel_type": "BT|NT|AS|RT"}}]}}
             """
             
             with st.spinner('Building Interdisciplinary Lego Structure...'):
@@ -413,16 +415,16 @@ if st.button("🚀 Execute Multi-Dimensional Lego Synthesis", use_container_widt
                 # --- POST-PROCESSING: LINKS & ANCHORS ---
                 if len(parts) > 1:
                     try:
-                        # Improved JSON extraction
-                        json_match = re.search(r'\{.*\}', parts[1], re.DOTALL)
-                        if json_match:
-                            g_json = json.loads(json_match.group())
-                            for n in g_json.get("nodes", []):
-                                lbl, nid = n["label"], n["id"]
-                                url_lbl = urllib.parse.quote(lbl)
-                                pattern = re.compile(rf'\b({re.escape(lbl)})\b', re.IGNORECASE)
-                                replacement = f'<span id="{nid}"><a href="https://www.google.com/search?q={url_lbl}" target="_blank" class="semantic-node-highlight">{lbl}<i class="google-icon">↗</i></a></span>'
-                                main_markdown = pattern.sub(replacement, main_markdown, count=1)
+                        # Improved JSON extraction from potential markdown blocks
+                        json_str = re.search(r'\{.*\}', parts[1], re.DOTALL).group()
+                        g_json = json.loads(json_str)
+                        for n in g_json.get("nodes", []):
+                            lbl, nid = n["label"], n["id"]
+                            url_lbl = urllib.parse.quote(lbl)
+                            # Create Semantic Link with Google Search and Anchor ID
+                            pattern = re.compile(rf'\b({re.escape(lbl)})\b', re.IGNORECASE)
+                            replacement = f'<span id="{nid}"><a href="https://www.google.com/search?q={url_lbl}" target="_blank" class="semantic-node-highlight">{lbl}<i class="google-icon">↗</i></a></span>'
+                            main_markdown = pattern.sub(replacement, main_markdown, count=1)
                     except: pass
 
                 st.subheader("📊 Synthesis Output")
@@ -431,41 +433,40 @@ if st.button("🚀 Execute Multi-Dimensional Lego Synthesis", use_container_widt
                 # --- VIZ LOGIC ---
                 if len(parts) > 1:
                     try:
-                        json_match = re.search(r'\{.*\}', parts[1], re.DOTALL)
-                        if json_match:
-                            g_json = json.loads(json_match.group())
-                            st.subheader("🕸️ Unified Interdisciplinary Lego Network")
+                        json_str = re.search(r'\{.*\}', parts[1], re.DOTALL).group()
+                        g_json = json.loads(json_str)
+                        st.subheader("🕸️ Unified Interdisciplinary Lego Network")
+                        
+                        elements = []
+                        for n in g_json.get("nodes", []):
+                            lbl, level = n["label"], n.get("type", "Branch")
+                            size = 110 if level == "Root" else 75
+                            icon, shape, col = "", "ellipse", "#2a9d8f"
                             
-                            elements = []
-                            for n in g_json.get("nodes", []):
-                                lbl, level = n["label"], n.get("type", "Branch")
-                                size = 110 if level == "Root" else 75
-                                icon, shape, col = "", "ellipse", "#2a9d8f"
-                                
-                                found_s = next((s for s in KNOWLEDGE_BASE["subject_details"].keys() if s.lower() in lbl.lower()), None)
-                                if found_s:
-                                    icon, col = "🔬 ", KNOWLEDGE_BASE["subject_details"][found_s]["col"]
-                                    cat = KNOWLEDGE_BASE["subject_details"][found_s]["cat"]
-                                    if "Natural" in cat: shape = "triangle"
-                                    elif "Social" in cat: shape = "rectangle"
-                                    elif "Formal" in cat: shape = "diamond"
-                                    elif "Applied" in cat: shape = "pentagon"
-                                    elif "Humanities" in cat: shape = "vee"
-                                else:
-                                    if any(a.lower() in lbl.lower() for a in KNOWLEDGE_BASE["mental_approaches"].keys()): icon, col = "🧠 ", "#e76f51"
-                                    elif any(p.lower() in lbl.lower() for p in KNOWLEDGE_BASE["paradigms"]): icon, col = "🌍 ", "#264653"
-                                    elif any(m.lower() in lbl.lower() for m in KNOWLEDGE_BASE["knowledge_models"]): icon, col = "🏗️ ", "#f4a261"
-                                    shape = ["hexagon", "rhomboid", "octagon", "star"][hash(lbl)%4]
+                            found_s = next((s for s in KNOWLEDGE_BASE["subject_details"].keys() if s.lower() in lbl.lower()), None)
+                            if found_s:
+                                icon, col = "🔬 ", KNOWLEDGE_BASE["subject_details"][found_s]["col"]
+                                cat = KNOWLEDGE_BASE["subject_details"][found_s]["cat"]
+                                if "Natural" in cat: shape = "triangle"
+                                elif "Social" in cat: shape = "rectangle"
+                                elif "Formal" in cat: shape = "diamond"
+                                elif "Applied" in cat: shape = "pentagon"
+                                elif "Humanities" in cat: shape = "vee"
+                            else:
+                                if any(a.lower() in lbl.lower() for a in KNOWLEDGE_BASE["mental_approaches"].keys()): icon, col = "🧠 ", "#e76f51"
+                                elif any(p.lower() in lbl.lower() for p in KNOWLEDGE_BASE["paradigms"]): icon, col = "🌍 ", "#264653"
+                                elif any(m.lower() in lbl.lower() for m in KNOWLEDGE_BASE["knowledge_models"]): icon, col = "🏗️ ", "#f4a261"
+                                shape = ["hexagon", "rhomboid", "octagon", "star"][hash(lbl)%4]
 
-                                display_lbl = f"{icon}{lbl}" if viz_mode in ["Pure Large Icons", "Mixed Mode"] else lbl
-                                elements.append({"data": {
-                                    "id": n["id"], "label": display_lbl, 
-                                    "color": col, "size": size, "shape": shape, "z_index": 10 if level == "Root" else 1
-                                }})
-                            for e in g_json.get("edges", []):
-                                elements.append({"data": {"source": e["source"], "target": e["target"], "rel_type": e.get("rel_type", "AS")}})
-                            
-                            render_cytoscape_network(elements, viz_mode=viz_mode)
+                            display_lbl = f"{icon}{lbl}" if viz_mode == "Mixed (Shapes + Icons)" else lbl
+                            elements.append({"data": {
+                                "id": n["id"], "label": display_lbl, 
+                                "color": col, "size": size, "shape": shape, "z_index": 10 if level == "Root" else 1
+                            }})
+                        for e in g_json.get("edges", []):
+                            elements.append({"data": {"source": e["source"], "target": e["target"], "rel_type": e.get("rel_type", "AS")}})
+                        
+                        render_cytoscape_network(elements)
                     except: st.warning("Graph data could not be parsed.")
                 
         except Exception as e:
@@ -473,6 +474,7 @@ if st.button("🚀 Execute Multi-Dimensional Lego Synthesis", use_container_widt
 
 st.divider()
 st.caption("SIS Universal Knowledge Synthesizer | v18.5 | Interdisciplinary Lego Architecture | 2026")
+
 
 
 
