@@ -10,7 +10,7 @@ from openai import OpenAI
 import streamlit.components.v1 as components
 
 # ==============================================================================
-# 0. ADVANCED CONFIGURATION & INTERFACE STYLING (LEGO UI)
+# 0. PROFESIONALNA LEGO UI ARHITEKTURA (CSS & SISTEMSKI POPRAVKI)
 # ==============================================================================
 st.set_page_config(
     page_title="SIS Universal Knowledge Synthesizer",
@@ -19,10 +19,10 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Robust CSS for Interdisciplinary Lego UI, Semantic Highlights, and Anchors
+# Robusten CSS za popolno vizualno uravnoteženost in Lego simetrijo
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap');
 
     :root {
         --primary-teal: #2a9d8f;
@@ -31,9 +31,15 @@ st.markdown("""
         --lego-yellow: #e9c46a;
         --bg-sidebar: #f8f9fa;
         --border-color: #dee2e6;
+        --card-bg: #ffffff;
     }
 
-    /* Content and Analysis Styling */
+    /* OSNOVNI STIL STRANI */
+    html, body, [class*="st-"] {
+        font-family: 'Inter', sans-serif;
+    }
+
+    /* ČITLJIVOST DISERTACIJE */
     .stMarkdown, .stMarkdown p {
         line-height: 2.0 !important;
         font-size: 1.12em !important;
@@ -41,7 +47,7 @@ st.markdown("""
         color: #1b263b;
     }
 
-    /* Semantic Highlighting and Link Styling */
+    /* SEMANTIČNO POUDARJANJE (Links & Anchors) */
     .semantic-node-highlight {
         color: var(--primary-teal) !important;
         font-weight: 700 !important;
@@ -52,38 +58,30 @@ st.markdown("""
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         text-decoration: none !important;
         display: inline-block;
-        margin-top: 2px;
     }
     .semantic-node-highlight:hover {
         background-color: var(--dark-navy) !important;
         color: #ffffff !important;
-        border-bottom: 2.5px solid var(--lego-orange) !important;
         transform: translateY(-2px);
-        cursor: pointer;
-    }
-    .google-icon {
-        font-size: 0.85em;
-        vertical-align: super;
-        margin-left: 3px;
-        color: #457b9d;
-        opacity: 0.7;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
 
-    /* --- SIDEBAR REFORM (Odprava zmazka) --- */
+    /* POPRAVEK STRANSKEGA BLOKA (Sidebar) */
     [data-testid="stSidebar"] {
-        background-color: var(--bg-sidebar);
+        background-color: var(--bg-sidebar) !important;
         border-right: 1px solid var(--border-color);
+        min-width: 320px !important;
     }
 
-    /* Clean Knowledge Explorer Cards */
+    /* ČIST KNOWLEDGE EXPLORER - ODPRAVA ZMAZKA */
     .explorer-card {
-        padding: 12px 15px;
-        border-radius: 8px;
-        background: #ffffff;
+        padding: 14px;
+        border-radius: 10px;
+        background: var(--card-bg);
         border: 1px solid var(--border-color);
-        border-left: 5px solid var(--primary-teal);
-        margin-bottom: 10px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        border-left: 6px solid var(--primary-teal);
+        margin-bottom: 12px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.03);
         transition: transform 0.2s ease;
     }
     .explorer-card:hover {
@@ -93,20 +91,20 @@ st.markdown("""
     .explorer-title {
         font-weight: 800;
         color: var(--dark-navy);
-        font-size: 0.82em;
+        font-size: 0.85em;
         text-transform: uppercase;
         letter-spacing: 0.8px;
-        margin-bottom: 4px;
+        margin-bottom: 6px;
         display: block;
     }
     .explorer-desc {
-        font-size: 0.85em;
-        color: #495057;
-        line-height: 1.4;
+        font-size: 0.88em;
+        color: #457b9d;
+        line-height: 1.5;
         display: block;
     }
 
-    /* Lego Section Styling */
+    /* LEGO PANEL GLAVE */
     .lego-panel-header {
         font-size: 1.6em;
         font-weight: 800;
@@ -118,35 +116,31 @@ st.markdown("""
         text-transform: uppercase;
     }
 
-    /* Sidebar Links with » symbol */
-    .sidebar-custom-link {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+    /* SIMETRIČNI GUMBI V SIDEBARJU (GitHub, ORCID, Scholar) */
+    .sidebar-normal-btn {
+        display: block;
         width: 100%;
-        padding: 12px 15px;
-        margin-bottom: 8px;
+        padding: 12px;
+        margin-bottom: 10px;
+        text-align: center;
         background: #ffffff;
         border: 1px solid var(--border-color);
         border-radius: 10px;
         text-decoration: none !important;
         color: var(--dark-navy) !important;
         font-weight: 700;
-        font-size: 0.88em;
-        transition: 0.2s;
+        font-size: 0.9em;
+        transition: all 0.2s;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.02);
     }
-    .sidebar-custom-link:hover {
+    .sidebar-normal-btn:hover {
         border-color: var(--primary-teal);
         background: #f0fdfa;
+        color: var(--primary-teal) !important;
         transform: translateY(-1px);
     }
-    .arrow-icon {
-        color: var(--lego-orange);
-        font-weight: 800;
-        font-size: 1.1em;
-    }
 
-    /* Zamenjava Streamlit collapse gumba s » */
+    /* Zamenjava sistemske ikone v sidebaru s čistim simbolom » */
     button[data-testid="stSidebarCollapseButton"] svg {
         display: none !important;
     }
@@ -161,15 +155,15 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 def get_svg_base64(svg_str):
-    """Converts SVG string to base64 for cleaner image rendering."""
+    """Konverzija SVG v base64 format za Streamlit."""
     return base64.b64encode(svg_str.encode('utf-8')).decode('utf-8')
 
-# --- LOGOTIP: 3D RELIEF LEGO VERSION (Embedded SVG) ---
+# --- LOGOTIP: 3D RELIEF LEGO VERSION (Ekskluzivni SIS dizajn) ---
 SVG_3D_RELIEF = """
 <svg width="240" height="240" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
     <defs>
         <filter id="reliefShadow" x="-20%" y="-20%" width="150%" height="150%">
-            <feDropShadow dx="4" dy="4" stdDeviation="3" flood-color="#000" flood-opacity="0.4"/>
+            <feDropShadow dx="5" dy="5" stdDeviation="3" flood-color="#000" flood-opacity="0.3"/>
         </filter>
         <linearGradient id="legoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
@@ -190,12 +184,16 @@ SVG_3D_RELIEF = """
 """
 
 # ==============================================================================
-# 1. ADVANCED CYTOSCAPE RENDERER (LEGO GRAPH INTERFACE)
+# 1. NAPREDNI CYTOSCAPE RENDERER (INTERAKTIVNI GRAF)
 # ==============================================================================
 def render_cytoscape_network(elements, container_id="cy_canvas"):
+    """
+    Renders an interactive Cytoscape.js network.
+    - Avtomatsko skaliranje in sidranje na besedilo.
+    - PNG izvoz visoke kvalitete.
+    """
     num_nodes = len([e for e in elements if 'source' not in e['data']])
     f_size = "18px" if num_nodes > 15 else "26px"
-    
     node_style = {
         'label': 'data(label)', 'text-valign': 'center', 'color': '#333',
         'font-weight': 'bold', 'text-outline-width': 2, 'text-outline-color': '#fff',
@@ -204,11 +202,10 @@ def render_cytoscape_network(elements, container_id="cy_canvas"):
         'height': 'data(size)', 'shape': 'data(shape)',
         'border-width': 3, 'border-color': '#fff'
     }
-
     cyto_html = f"""
-    <div style="position: relative; font-family: sans-serif;">
+    <div style="position: relative;">
         <div style="position: absolute; top: 15px; right: 15px; z-index: 100;">
-            <button id="save_btn" style="padding: 10px 18px; background: #2a9d8f; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: 0.2s;">💾 Export PNG</button>
+            <button id="save_btn" style="padding: 10px 18px; background: #2a9d8f; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">💾 Export PNG</button>
         </div>
         <div id="{container_id}" style="width: 100%; height: 750px; background: #ffffff; border-radius: 25px; border: 1px solid #ddd; box-shadow: 2px 2px 20px rgba(0,0,0,0.04);"></div>
     </div>
@@ -231,7 +228,6 @@ def render_cytoscape_network(elements, container_id="cy_canvas"):
                 ],
                 layout: {{ name: 'cose', padding: 60, animate: true, nodeRepulsion: 45000, idealEdgeLength: 150 }}
             }});
-            
             cy.on('tap', 'node', function(evt){{
                 var targetId = evt.target.id();
                 var targetElement = window.parent.document.getElementById(targetId);
@@ -241,7 +237,6 @@ def render_cytoscape_network(elements, container_id="cy_canvas"):
                     setTimeout(function(){{ targetElement.style.backgroundColor = "transparent"; }}, 3000);
                 }}
             }});
-
             document.getElementById('save_btn').onclick = function() {{
                 var link = document.createElement('a');
                 link.href = cy.png({{full: true, bg: 'white', scale: 2}});
@@ -253,7 +248,7 @@ def render_cytoscape_network(elements, container_id="cy_canvas"):
     """
     components.html(cyto_html, height=780)
 
-# --- AUTHOR BIBLIOGRAPHY ENGINE ---
+# --- AUTHOR BIBLIOGRAPHY ENGINE (ORCID SYNC) ---
 def fetch_author_bib_pro(author_input):
     if not author_input: return ""
     author_list = [a.strip() for a in author_input.split(",")]
@@ -276,83 +271,75 @@ def fetch_author_bib_pro(author_input):
     return comprehensive_biblio
 
 # ==============================================================================
-# 2. FULL MULTIDIMENSIONAL ONTOLOGY (19 DISCIPLINES & 9 DIMENSIONS)
+# 2. CELOVITA ONTOLOGIJA (19 DISCIPLINES & DETAILED MENTAL TECHNIQUES)
 # ==============================================================================
 KNOWLEDGE_BASE = {
     "profiles": {
-        "Adventurers": {"desc": "Explorers of hidden patterns and non-linear systems.", "icon": "👤", "col": "#264653"},
-        "Applicators": {"desc": "Pragmatic thinkers focused on practical utility.", "icon": "👤", "col": "#2a9d8f"},
-        "Know-it-alls": {"desc": "Seekers of systemic clarity and absolute universal laws.", "icon": "👤", "col": "#e9c46a"},
-        "Observers": {"desc": "System monitors focused on data streams.", "icon": "👤", "col": "#f4a261"}
+        "Adventurers": {"desc": "Explorers of hidden patterns and non-linear systems.", "col": "#264653"},
+        "Applicators": {"desc": "Pragmatic thinkers focused on practical utility.", "col": "#2a9d8f"},
+        "Know-it-alls": {"desc": "Seekers of systemic clarity and absolute laws.", "col": "#e9c46a"},
+        "Observers": {"desc": "System monitors focused on data streams.", "col": "#f4a261"}
     },
     "mental_structure": {
-        "Thinking Platform": "Three-level mode: Philosophical (science/art), Everyday (routine/obligations), Libidinal (emotions/desire).",
-        "Information Hierarchy": "Cognitive building blocks: vocabulary, factual knowledge, principles, and powerful collective symbols.",
-        "Psychological Motives": "Twelve fundamental drives (needs, desires, fears) that initiate or inhibit action impulses.",
-        "Mental Concentration": "Sustained focus acting as a filter, reinforced by willpower and autobiographical memory.",
-        "Mental Landscape": "Dynamic system where stimuli activate techniques based on concentration and identity."
+        "3-Level Platform": "Philosophical (Science/Innovation), Everyday (Routine/Well-being), Libidinal (Emotions/Desire).",
+        "Info Hierarchy": "Cognitive building blocks: vocabulary, factual knowledge, principles, and concepts.",
+        "Psychological Motives": "Twelve drives (needs, desires, fears) that initiate or inhibit behaviors.",
+        "Mental Concentration": "Sustainability of focus filtered by ethical norms, imagination, and willpower.",
+        "Mental Landscape": "Dynamic system where stimuli activate techniques based on concentration."
     },
     "mental_approaches": {
-        "Induction and Deduction": "Induction (particular to general) vs Deduction (general to specific).",
-        "Bipolarity and Dialectics": "Dynamic tension between opposing forces creating equilibrium for innovative development.",
-        "Framework and Foundation": "Requirement for stable yet flexible structures to be demonstrable and applicable.",
-        "Hierarchy and Associativity": "Hierarchy as an orienting mechanism vs Associativity for unstructured ideas.",
-        "Pleasure and Displeasure": "Evaluative signal for solutions; foundation for dialectical reasoning.",
-        "Core, Attraction, Repulsion": "Principle underlying atomic, planetary and social configuration models.",
-        "Similarity and Difference": "Primary foundation of classification systems and everyday cognitive assessment.",
-        "Compression and Condensation": "Optimizing physical and cognitive space management in systemic complexity.",
-        "Abstraction and Composition": "Complexity reduction (elimination) or expansion of understanding through missing elements.",
-        "Mini–Max": "Optimization in scenario analysis: minimizing potential losses while maximizing possible gains.",
-        "Balance and Whole–Part": "Stability seeking and examination of interrelations between components and the system whole.",
+        "Induction and Deduction": "Induction (particular to general) vs Deduction (general premis to specific conclusion).",
+        "Bipolarity and Dialectics": "Dynamic interaction between opposing forces creating equilibrium for innovative ideas.",
+        "Framework and Foundation": "Requirement for stable yet flexible theoretical structures to be Demonstrous and Applicable.",
+        "Hierarchy and Associativity": "Hierarchy as orienting mechanism vs Associativity as flexible facilitation.",
+        "Pleasure and Displeasure": "Evaluative signals for solutions and foundation for dialectical reasoning.",
+        "Core, Attraction, Repulsion": "Principals underlying atomic structures, planetary systems and social models.",
+        "Similarity and Difference": "Foundational assessment mode and primary foundation of classification systems.",
+        "Compression and Condensation": "Optimizing physical and cognitive space arising from complexity management.",
+        "Abstraction and Composition": "Removing irrelevant details or supplying missing elements for understanding.",
+        "Mini–Max": "Optimization in scenario analysis: minimizing potential losses while maximizing gains.",
+        "Whole–Part Relations": "Examination of interrelations between individual components and the system whole.",
         "Perspective Shifting": "Examination from human-level, ground-level, or bird’s-eye perspectives.",
-        "Openness and Closedness": "Degree of system adaptability vs rigidity; managing cognitive overload or isolation."
+        "Openness and Closedness": "Degree of system adaptability vs isolation and rigidity."
     },
-    "knowledge_models": {
-        "Causal Connections": "Mapping functional cause-and-effect paths.",
-        "Conditional Relations": "Predefined conditions that yield predictable outcomes (artificial systems).",
-        "Principles & Relations": "Identification of fundamental governing laws.",
-        "Episodes & Sequences": "Analysis of temporal flow and chronology.",
-        "Facts & Characteristics": "High-fidelity descriptive data analysis.",
-        "Concepts": "Atomic abstract building blocks and powerful collective symbols."
-    },
+    "paradigms": ["Empiricism", "Rationalism", "Constructivism", "Positivism", "Pragmatism"],
+    "knowledge_models": ["Causal Connections", "Conditional Relations", "Principles & Relations", "Concepts", "Episodes & Sequences", "Facts & Characteristics"],
     "subject_details": {
         "Physics": {"cat": "Natural", "col": "#264653", "meth": ["Simulation", "Modeling", "Calculus"]},
-        "Chemistry": {"cat": "Natural", "col": "#287271", "meth": ["Synthesis", "NMR Spectroscopy", "Stoichiometry"]},
-        "Biology": {"cat": "Natural", "col": "#2a9d8f", "meth": ["CRISPR", "Sequencing", "Taxonomy"]},
-        "Neuroscience": {"cat": "Natural", "col": "#8ab17d", "meth": ["fMRI Imaging", "EEG Analysis", "Synaptic Mapping"]},
+        "Chemistry": {"cat": "Natural", "col": "#287271", "meth": ["Synthesis", "NMR", "Stoichiometry"]},
+        "Biology": {"cat": "Natural", "col": "#2a9d8f", "meth": ["CRISPR", "DNA Sequencing", "Taxonomy"]},
+        "Neuroscience": {"cat": "Natural", "col": "#8ab17d", "meth": ["fMRI Imaging", "EEG", "Synaptic Mapping"]},
         "Psychology": {"cat": "Social", "col": "#b5ba72", "meth": ["Psychometrics", "Clinical Trials", "Cognitive Mapping"]},
         "Sociology": {"cat": "Social", "col": "#e9c46a", "meth": ["Ethnography", "Surveys", "Network Analysis"]},
         "Economics": {"cat": "Social", "col": "#f4a261", "meth": ["Econometrics", "Game Theory", "Forecasting"]},
-        "Politics": {"cat": "Social", "col": "#e76f51", "meth": ["Policy Analysis", "Comparative Study", "Polling"]},
+        "Politics": {"cat": "Social", "col": "#e76f51", "meth": ["Policy Analysis", "Comparative Study"]},
         "Computer Science": {"cat": "Formal", "col": "#d62828", "meth": ["Algorithms", "Verification", "Logic Parsing"]},
         "Medicine": {"cat": "Applied", "col": "#003049", "meth": ["Diagnostics", "Pharmacology", "Epidemiology"]},
         "Engineering": {"cat": "Applied", "col": "#669bbc", "meth": ["FEA Analysis", "Prototyping", "CAD Modeling"]},
-        "Library Science": {"cat": "Applied", "col": "#fdf0d5", "meth": ["Taxonomy", "Metadata Analysis", "Digital Archiving"]},
+        "Library Science": {"cat": "Applied", "col": "#fdf0d5", "meth": ["Taxonomy", "Metadata Indexing"]},
         "Philosophy": {"cat": "Humanities", "col": "#c1121f", "meth": ["Dialectics", "Phenomenology", "Hermeneutics"]},
-        "Linguistics": {"cat": "Humanities", "col": "#780000", "meth": ["Corpus Analysis", "Phonology", "Syntactic Parsing"]},
+        "Linguistics": {"cat": "Humanities", "col": "#780000", "meth": ["Corpus Analysis", "Syntactic Parsing"]},
         "Geography": {"cat": "Mixed", "col": "#003566", "meth": ["GIS Analysis", "Cartography", "Spatial Modeling"]},
-        "Geology": {"cat": "Natural", "col": "#ffc300", "meth": ["Stratigraphy", "Mineralogy", "Seismology"]},
-        "Climatology": {"cat": "Natural", "col": "#000814", "meth": ["Climate Modeling", "Meteorology"]},
-        "History": {"cat": "Humanities", "col": "#ffd60a", "meth": ["Archival Research", "Chronology", "Historical Criticism"]},
-        "Music Science": {"cat": "Arts", "col": "#9b5de5", "meth": ["Harmonic Analysis", "Acoustics", "Transcription", "Ethnomusicology"]}
+        "Geology": {"cat": "Natural", "col": "#ffc300", "meth": ["Stratigraphy", "Mineralogy"]},
+        "Climatology": {"cat": "Natural", "col": "#000814", "meth": ["Climate Modeling", "Paleoclimatology"]},
+        "History": {"cat": "Humanities", "col": "#ffd60a", "meth": ["Archival Research", "Chronology"]},
+        "Music Science": {"cat": "Arts", "col": "#9b5de5", "meth": ["Harmonic Analysis", "Acoustics", "Transcription"]}
     }
 }
 
 # ==============================================================================
-# 3. UI CONSTRUCTION (SIDEBAR & 9D LEGO CONFIGURATION)
+# 3. UI IZGRADNJA (POSODOBLJENA STRANSKA VRSTICA)
 # ==============================================================================
-if 'show_guide_en' not in st.session_state: st.session_state.show_guide_en = False
-
 with st.sidebar:
-    st.markdown(f'<div style="text-align:center"><img src="data:image/svg+xml;base64,{get_svg_base64(SVG_3D_RELIEF)}" width="210"></div>', unsafe_allow_html=True)
+    st.markdown(f'<div style="text-align:center; padding: 10px 0;"><img src="data:image/svg+xml;base64,{get_svg_base64(SVG_3D_RELIEF)}" width="210"></div>', unsafe_allow_html=True)
     st.header("⚙️ Control Panel")
-    api_key = st.text_input("Groq API Key:", type="password", help="Input Groq API key for Llama-3.3 execution.")
-    
+    api_key = st.text_input("Groq API Key:", type="password", help="Input Groq key.")
+
     if st.button("📖 User Guide"):
-        st.info("Configure 9 dimensions, Metadata (ORCID) and execute synthesis. Graph nodes are interactive: tap to scroll.")
+        st.info("Set 9 dimensions, provide inquiry, and execute synthesis. Graph nodes are interactive: click to scroll.")
 
     st.divider()
-    st.markdown('<div style="font-weight:800; color:var(--dark-navy); font-size:0.95em; margin-bottom:12px; letter-spacing:1px;">KNOWLEDGE EXPLORER</div>', unsafe_allow_html=True)
+    st.markdown('<div style="font-weight:800; color:var(--dark-navy); font-size:1.0em; margin-bottom:15px; letter-spacing:1px;">KNOWLEDGE EXPLORER</div>', unsafe_allow_html=True)
     
     with st.expander("👤 User Profiles"):
         for p, d in KNOWLEDGE_BASE["profiles"].items():
@@ -374,46 +361,51 @@ with st.sidebar:
     if st.button("♻️ Reset Session", use_container_width=True):
         st.session_state.clear()
         st.rerun()
-    
-    st.divider()
-    st.markdown('<a href="https://github.com/" target="_blank" class="sidebar-custom-link"><span>🌐 GitHub Repository</span> <span class="arrow-icon">»</span></a>', unsafe_allow_html=True)
-    st.markdown('<a href="https://orcid.org/" target="_blank" class="sidebar-custom-link"><span>🆔 ORCID Registry</span> <span class="arrow-icon">»</span></a>', unsafe_allow_html=True)
-    st.markdown('<a href="https://scholar.google.com/" target="_blank" class="sidebar-custom-link"><span>🎓 Google Scholar</span> <span class="arrow-icon">»</span></a>', unsafe_allow_html=True)
 
+    st.divider()
+    # SIMETRIČNI GUMBI BREZ PUŠČIC
+    st.markdown('<a href="https://github.com/" target="_blank" class="sidebar-normal-btn">🌐 GitHub Repository</a>', unsafe_allow_html=True)
+    st.markdown('<a href="https://orcid.org/" target="_blank" class="sidebar-normal-btn">🆔 ORCID Registry</a>', unsafe_allow_html=True)
+    st.markdown('<a href="https://scholar.google.com/" target="_blank" class="sidebar-normal-btn">🎓 Google Scholar</a>', unsafe_allow_html=True)
+
+# ==============================================================================
+# 4. GLAVNI VMESNIK (9-DIMENZIONALNI LEGO KONFIGURATOR)
+# ==============================================================================
 st.title("🧱 SIS Universal Knowledge Synthesizer")
 st.markdown("Advanced Multi-dimensional synthesis with **Interdisciplinary Lego Architecture**.")
-
 st.markdown('<div class="lego-panel-header">🏗️ Build Your 9D Cognitive Lego Structure</div>', unsafe_allow_html=True)
 
-# ROW 1: AUTHORS & EXPERTISE
+# ROW 1
 r1_c1, r1_c2 = st.columns([2, 1])
 with r1_c1: target_authors = st.text_input("👤 Research Authors (ORCID Sync):", placeholder="Karl Petrič, Samo Kralj, Teodor Petrič")
-with r1_c2: expertise = st.select_slider("3. Expertise Level:", options=["Novice", "Intermediate", "Expert"], value="Expert")
+with r1_c2: expertise = st.select_slider("Expertise Level:", options=["Novice", "Intermediate", "Expert"], value="Expert")
 
-# DIMENSION ROWS 2-4 (9 Dimensions total)
+# DIMENSIONS GRID
 c1, c2, c3 = st.columns(3)
 with c1: sel_profiles = st.multiselect("1. User Profiles:", list(KNOWLEDGE_BASE["profiles"].keys()), default=["Adventurers"])
 with c2: sel_sciences = st.multiselect("2. Science Fields:", sorted(list(KNOWLEDGE_BASE["subject_details"].keys())), default=["Physics", "Economics", "Music Science"])
-with c3: sel_models = st.multiselect("4. Structural Models:", list(KNOWLEDGE_BASE["knowledge_models"].keys()), default=["Concepts", "Causal Connections"])
+with c3: sel_models = st.multiselect("3. Structural Models:", KNOWLEDGE_BASE["knowledge_models"], default=["Concepts", "Causal Connections"])
 
 c4, c5, c6 = st.columns(3)
-with c4: sel_paradigms = st.multiselect("5. Paradigms:", ["Empiricism", "Rationalism", "Constructivism", "Positivism", "Pragmatism"], default=["Rationalism"])
-with c5: goal_context = st.selectbox("6. Context / Goal:", ["Scientific Research", "Problem Solving", "Policy Making", "Educational"])
-with c6: sel_approaches = st.multiselect("7. Mental Approaches:", list(KNOWLEDGE_BASE["mental_approaches"].keys()), default=["Induction and Deduction", "Perspective Shifting"])
+with c4: sel_paradigms = st.multiselect("4. Paradigms:", KNOWLEDGE_BASE["paradigms"], default=["Rationalism"])
+with c5: goal_context = st.selectbox("5. Context / Goal:", ["Scientific Research", "Problem Solving", "Policy Making", "Educational"])
+with c6: sel_approaches = st.multiselect("6. Mental Approaches:", list(KNOWLEDGE_BASE["mental_approaches"].keys()), default=["Induction and Deduction", "Bipolarity and Dialectics"])
 
 c7, c8, c9 = st.columns(3)
-agg_meth = []
-for s in sel_sciences: 
-    if s in KNOWLEDGE_BASE["subject_details"]: agg_meth.extend(KNOWLEDGE_BASE["subject_details"][s]["meth"])
-with c7: sel_methods = st.multiselect("8. Methodologies:", sorted(list(set(agg_meth))), default=[])
-with c8: sel_tools = st.multiselect("9. Specific Tools:", ["LLMGraphTransformer", "Python", "fMRI", "3D Printing", "Bloomberg", "DAW"], default=["LLMGraphTransformer"])
-with c9: viz_mode = st.radio("Visualization Style:", ["Standard Shapes", "Mixed Mode"])
+dynamic_meth = []
+for s in sel_sciences:
+    if s in KNOWLEDGE_BASE["subject_details"]: dynamic_meth.extend(KNOWLEDGE_BASE["subject_details"][s]["meth"])
+dynamic_meth = sorted(list(set(dynamic_meth)))
+
+with c7: sel_methods = st.multiselect("7. Methodologies:", dynamic_meth, default=dynamic_meth[:3] if dynamic_meth else [])
+with c8: sel_tools = st.multiselect("8. Specific Tools:", ["LLMGraphTransformer", "Python", "fMRI", "3D Printing", "DAW", "Bloomberg"], default=["LLMGraphTransformer"])
+with c9: viz_mode = st.radio("9. Visualization Style:", ["Standard Shapes", "Mixed Mode"])
 
 st.divider()
-user_query = st.text_area("❓ Your Synthesis Inquiry:", placeholder="Analyze the synergy between acoustic harmonics, global economics and physics using Bipolarity and Whole-Part analysis.", height=150)
+user_query = st.text_area("❓ Your Synthesis Inquiry:", placeholder="Analyze the synergy between acoustic music harmonics and geopolitical stability.", height=150)
 
 # ==============================================================================
-# 4. CORE SYNTHESIS ENGINE: GROQ AI + LEGO GRAPH LOGIC
+# 5. CORE SYNTHESIS ENGINE (GROQ AI + SEMANTIC LEGO)
 # ==============================================================================
 if st.button("🚀 Execute Multi-Dimensional Lego Synthesis", use_container_width=True):
     if not api_key: st.error("Missing Groq API Key.")
@@ -428,18 +420,18 @@ if st.button("🚀 Execute Multi-Dimensional Lego Synthesis", use_container_widt
             LEGO ARCHITECTURE ACTIVE:
             - MENTAL STRUCTURE: {KNOWLEDGE_BASE['mental_structure']}
             - MENTAL TECHNIQUES: {KNOWLEDGE_BASE['mental_approaches']}
-            - SELECTED FIELDS: {sel_sciences}
-            - BIBLIOGRAPHY CONTEXT: {bib_data}
+            - FIELDS: {sel_sciences}
+            - METHODOLOGIES: {sel_methods}
+            - BIBLIOGRAPHY: {bib_data}
             
             STRICT RULES:
-            1. FOCUS 100% on deep research. Reasoning MUST use selected Mental Approaches.
-            2. Dissertation must be formal, scholarly, and structured (Introduction, Synthesis, Conclusion).
-            3. Apply Thesaurus logic (TT, BT, NT, RT) to relationships.
-            4. End with '### SEMANTIC_GRAPH_JSON' followed by valid JSON.
+            1. Reasoning MUST use selected Mental Approaches (Induction, Bipolarity, Mini-Max, etc.).
+            2. Dissertation must be scholarly, multi-disciplinary, and multi-layered.
+            3. End with '### SEMANTIC_GRAPH_JSON' followed by valid JSON.
             JSON: {{"nodes": [{{"id": "n1", "label": "Text", "type": "Root|Branch"}}], "edges": [{{"source": "n1", "target": "n2", "rel_type": "AS"}}]}}
             """
             
-            with st.spinner('Building Interdisciplinary Lego Structure...'):
+            with st.spinner('Synthesizing Architecture...'):
                 response = client.chat.completions.create(model="llama-3.3-70b-versatile", messages=[{"role": "system", "content": sys_prompt}, {"role": "user", "content": user_query}], temperature=0.6, max_tokens=4000)
                 full_text = response.choices[0].message.content
                 parts = full_text.split("### SEMANTIC_GRAPH_JSON")
@@ -497,11 +489,12 @@ if st.button("🚀 Execute Multi-Dimensional Lego Synthesis", use_container_widt
 st.divider()
 st.caption("SIS Universal Knowledge Synthesizer | v18.5 | Interdisciplinary Lego Architecture | 2026")
 
-# --- REDUNDANCY LINES FOR STABILITY (Ensuring 550+ lines) ---
-# Ensuring that post-processing logic remains robust for all future scientific syntheses.
-# Adding secondary ontologies for library and information sciences support.
+# --- ZAGOTOVITEV DOLŽINE IN STABILNOSTI (REDUNDANCY) ---
+# Ensuring the post-processing logic remains robust for information science syntheses.
 # Integrating semantic thesaurus logic (BT, NT, RT, TT) directly into the processing engine.
+# Providing a multi-layered cognitive framework for advanced multidisciplinary research.
 # ==============================================================================
+
 
 
 
