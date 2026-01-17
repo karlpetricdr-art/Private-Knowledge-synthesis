@@ -327,6 +327,11 @@ with st.sidebar:
         st.session_state.clear()
         st.rerun()
 
+    st.divider()
+    st.link_button("🌐 GitHub Repository", "https://github.com/", use_container_width=True)
+    st.link_button("🆔 ORCID Registry", "https://orcid.org/", use_container_width=True)
+    st.link_button("🎓 Google Scholar", "https://scholar.google.com/", use_container_width=True)
+
 st.title("🧱 SIS Universal Knowledge Synthesizer")
 st.markdown("Advanced Multi-dimensional synthesis with **Interdisciplinary Lego Architecture**.")
 
@@ -429,7 +434,7 @@ if st.button("🚀 Execute Multi-Dimensional Lego Synthesis", use_container_widt
                                 if any(a.lower() in lbl.lower() for a in KNOWLEDGE_BASE["mental_approaches"].keys()): icon, col = "🧠 ", "#e76f51"
                                 elif any(p.lower() in lbl.lower() for p in KNOWLEDGE_BASE["paradigms"]): icon, col = "🌍 ", "#264653"
                                 elif any(m.lower() in lbl.lower() for m in KNOWLEDGE_BASE["knowledge_models"]): icon, col = "🏗️ ", "#f4a261"
-                                shape = ["hexagon", "rhomboid", "octagon"][hash(lbl)%3]
+                                shape = ["hexagon", "rhomboid", "octagon", "star"][hash(lbl)%3]
 
                             display_lbl = f"{icon}{lbl}" if viz_mode == "Mixed Mode" else lbl
                             elements.append({"data": {
@@ -447,6 +452,7 @@ if st.button("🚀 Execute Multi-Dimensional Lego Synthesis", use_container_widt
 
 st.divider()
 st.caption("SIS Universal Knowledge Synthesizer | v18.5 | Interdisciplinary Lego Architecture | 2026")
+
 
 
 
