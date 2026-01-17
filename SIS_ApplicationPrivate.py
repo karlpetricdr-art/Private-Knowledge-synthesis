@@ -1,3 +1,5 @@
+--- START OF FILE Paste January 17, 2026 - 4:53PM ---
+
 import streamlit as st
 import json
 import base64
@@ -282,7 +284,8 @@ KNOWLEDGE_BASE = {
         "Geography": {"cat": "Natural/Social", "col": "#003566", "meth": ["GIS Analysis"], "tools": ["ArcGIS"]},
         "Geology": {"cat": "Natural", "col": "#ffc300", "meth": ["Stratigraphy"], "tools": ["Seismograph"]},
         "Climatology": {"cat": "Natural", "col": "#000814", "meth": ["Modeling"], "tools": ["Weather Station"]},
-        "History": {"cat": "Humanities", "col": "#ffd60a", "meth": ["Archival Research"], "tools": ["Digital Archives"]}
+        "History": {"cat": "Humanities", "col": "#ffd60a", "meth": ["Archival Research"], "tools": ["Digital Archives"]},
+        "Music Science": {"cat": "Arts", "col": "#9b5de5", "meth": ["Harmonic Analysis", "Acoustics", "Ethnomusicology"], "tools": ["DAW", "MIDI", "Spectrogram"]}
     }
 }
 
@@ -438,6 +441,7 @@ if st.button("🚀 Execute Multi-Dimensional Lego Synthesis", use_container_widt
                                 elif "Formal" in cat: shape = "diamond"
                                 elif "Applied" in cat: shape = "pentagon"
                                 elif "Humanities" in cat: shape = "vee"
+                                elif "Arts" in cat: shape = "star"
                             else:
                                 if any(a.lower() in lbl.lower() for a in KNOWLEDGE_BASE["mental_approaches"].keys()): icon, col = "🧠 ", "#e76f51"
                                 elif any(p.lower() in lbl.lower() for p in KNOWLEDGE_BASE["paradigms"]): icon, col = "🌍 ", "#264653"
@@ -460,6 +464,7 @@ if st.button("🚀 Execute Multi-Dimensional Lego Synthesis", use_container_widt
 
 st.divider()
 st.caption("SIS Universal Knowledge Synthesizer | v18.5 | Interdisciplinary Lego Architecture | 2026")
+
 
 
 
