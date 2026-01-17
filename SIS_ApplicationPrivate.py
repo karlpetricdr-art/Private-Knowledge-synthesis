@@ -19,10 +19,10 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Robust CSS for Interdisciplinary Lego UI, Semantic Highlights, and Metadata blocks
+# Robust CSS for Interdisciplinary Lego UI, Semantic Highlights, and Metadata Display
 st.markdown("""
 <style>
-    /* Main Content Layout */
+    /* Main Content Styling */
     .stMarkdown, .stMarkdown p {
         line-height: 1.85 !important;
         font-size: 1.05em !important;
@@ -83,24 +83,26 @@ st.markdown("""
 
     /* Aesthetic Knowledge Explorer Cards */
     .explorer-card {
-        padding: 15px;
-        border-radius: 10px;
+        padding: 12px;
+        border-radius: 8px;
         background: #ffffff;
         border: 1px solid #eeeeee;
-        border-left: 6px solid #2a9d8f;
-        margin-bottom: 15px;
-        box-shadow: 2px 2px 5px rgba(0,0,0,0.03);
+        border-left: 5px solid #2a9d8f;
+        margin-bottom: 10px;
+        box-shadow: 1px 1px 3px rgba(0,0,0,0.03);
     }
     .explorer-title {
-        font-weight: 800;
+        font-weight: 700;
         color: #264653;
-        font-size: 1.05em;
-        margin-bottom: 5px;
-        display: block;
+        font-size: 0.95em;
         text-transform: uppercase;
     }
+    .explorer-desc {
+        font-size: 0.85em;
+        color: #555;
+    }
 
-    /* Lego Panel Header */
+    /* Lego Section Header */
     .lego-panel-header {
         font-size: 1.5em;
         font-weight: 800;
@@ -114,7 +116,6 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 def get_svg_base64(svg_str):
-    """Converts SVG string to base64 for image rendering."""
     return base64.b64encode(svg_str.encode('utf-8')).decode('utf-8')
 
 SVG_3D_RELIEF = """
@@ -145,12 +146,6 @@ SVG_3D_RELIEF = """
 # 1. ADVANCED CYTOSCAPE RENDERER (LEGO GRAPH INTERFACE)
 # ==============================================================================
 def render_cytoscape_network(elements, container_id="cy_canvas"):
-    """
-    Renders an interactive Cytoscape.js network.
-    - Dynamic font scaling based on complexity.
-    - Anchor scrolling functionality.
-    - Export graph as high-res PNG.
-    """
     num_nodes = len([e for e in elements if 'source' not in e['data']])
     f_size = "18px" if num_nodes > 15 else "26px"
     
@@ -213,7 +208,6 @@ def render_cytoscape_network(elements, container_id="cy_canvas"):
 
 # --- AUTHOR BIBLIOGRAPHY ENGINE (ORCID SYNC) ---
 def fetch_author_bib_pro(author_input):
-    """Fetches real-time research metadata from ORCID Registry."""
     if not author_input: return ""
     author_list = [a.strip() for a in author_input.split(",")]
     comprehensive_biblio = ""
@@ -235,42 +229,42 @@ def fetch_author_bib_pro(author_input):
     return comprehensive_biblio
 
 # ==============================================================================
-# 2. FULL MULTIDIMENSIONAL ONTOLOGY (18 DISCIPLINES & 9 DIMENSIONS)
+# 2. FULL MULTIDIMENSIONAL ONTOLOGY (KNOWLEDGE_BASE)
 # ==============================================================================
 KNOWLEDGE_BASE = {
     "profiles": {
-        "Adventurers": {"desc": "Explorers of hidden patterns and systems.", "icon": "👤", "col": "#264653"},
-        "Applicators": {"desc": "Pragmatic thinkers focused on practical utility.", "icon": "👤", "col": "#2a9d8f"},
-        "Know-it-alls": {"desc": "Seekers of systemic clarity and absolute laws.", "icon": "👤", "col": "#e9c46a"},
-        "Observers": {"desc": "Data stream monitors tracking objective reporting.", "icon": "👤", "col": "#f4a261"}
+        "Adventurers": {"desc": "Explorers of hidden patterns.", "col": "#264653"},
+        "Applicators": {"desc": "Pragmatic executioners.", "col": "#2a9d8f"},
+        "Know-it-alls": {"desc": "Seekers of universal laws.", "col": "#e9c46a"},
+        "Observers": {"desc": "System monitors.", "col": "#f4a261"}
     },
     "mental_approaches": {
-        "Perspective shifting": "Analyzing systems from multiple vantage points.",
-        "Induction": "Deriving general theories from empirical data.",
-        "Deduction": "Predicting outcomes based on general laws.",
-        "Hierarchy": "Organizing knowledge by importance or scale.",
-        "Mini-max": "Optimization using minimal resources.",
-        "Bipolarity": "Exploring the tension between opposites.",
-        "Whole and part": "Systemic structural analysis.",
-        "Associativity": "Linking diverse concepts through shared traits."
+        "Perspective shifting": "Fluid macro/micro transitions.",
+        "Induction": "Synthesizing theories from data.",
+        "Deduction": "Predicting from general laws.",
+        "Hierarchy": "Organizing by scale.",
+        "Mini-max": "Efficiency optimization.",
+        "Bipolarity": "Dialectical tension analysis.",
+        "Whole and part": "Systemic structural logic.",
+        "Associativity": "Cross-domain traits linking."
     },
     "paradigms": {
-        "Empiricism": "Knowledge derived from sensory evidence.",
-        "Rationalism": "Knowledge based on deductive logic.",
-        "Constructivism": "Knowledge as a social construct.",
-        "Positivism": "Strict adherence to verifiable scientific data.",
-        "Pragmatism": "Evaluation of theories based on success."
+        "Empiricism": "Evidence-driven knowledge.",
+        "Rationalism": "Logic-based internal consistency.",
+        "Constructivism": "Socially built structures.",
+        "Positivism": "Strict verifiable data.",
+        "Pragmatism": "Evaluation by utility."
     },
     "knowledge_models": {
-        "Causal Connections": "Cause-and-effect paths.",
-        "Principles & Relations": "Identification of governing laws.",
-        "Episodes & Sequences": "Analysis of temporal flow.",
-        "Facts & Characteristics": "Descriptive data analysis.",
-        "Concepts": "Atomic abstract building blocks."
+        "Causal Connections": "Functional cause-effect paths.",
+        "Principles & Relations": "Identification of laws.",
+        "Episodes & Sequences": "Temporal progression.",
+        "Facts & Characteristics": "Descriptive metadata.",
+        "Concepts": "Atomic abstract blocks."
     },
     "subject_details": {
         "Physics": {"cat": "Natural", "col": "#264653", "meth": ["Simulation"], "shape": "triangle"},
-        "Chemistry": {"cat": "Natural", "col": "#287271", "meth": ["Spectroscopy"], "shape": "triangle"},
+        "Chemistry": {"cat": "Natural", "col": "#287271", "meth": ["Synthesis"], "shape": "triangle"},
         "Biology": {"cat": "Natural", "col": "#2a9d8f", "meth": ["CRISPR"], "shape": "triangle"},
         "Neuroscience": {"cat": "Natural", "col": "#8ab17d", "meth": ["fMRI"], "shape": "triangle"},
         "Psychology": {"cat": "Social", "col": "#b5ba72", "meth": ["Trials"], "shape": "rectangle"},
@@ -285,65 +279,75 @@ KNOWLEDGE_BASE = {
         "Philosophy": {"cat": "Humanities", "col": "#780000", "meth": ["Logic"], "shape": "vee"},
         "Linguistics": {"cat": "Humanities", "col": "#c1121f", "meth": ["Parsing"], "shape": "vee"},
         "Geography": {"cat": "Hybrid", "col": "#003566", "meth": ["GIS"], "shape": "hexagon"},
-        "History": {"cat": "Humanities", "col": "#ffd60a", "meth": ["Archives"], "shape": "vee"},
-        "Climatology": {"cat": "Natural", "col": "#000814", "meth": ["Modeling"], "shape": "triangle"}
+        "History": {"cat": "Humanities", "col": "#ffd60a", "meth": ["Archives"], "shape": "vee"}
     }
 }
 
 # ==============================================================================
 # 3. UI CONSTRUCTION (SIDEBAR & 9D LEGO CONFIGURATION)
 # ==============================================================================
-if 'show_guide_en' not in st.session_state: st.session_state.show_guide_en = False
-
 with st.sidebar:
     st.markdown(f'<div style="text-align:center"><img src="data:image/svg+xml;base64,{get_svg_base64(SVG_3D_RELIEF)}" width="220"></div>', unsafe_allow_html=True)
     st.header("⚙️ Control Panel")
-    api_key = st.text_input("Groq API Key:", type="password", help="Volatile storage only.")
+    api_key = st.text_input("Groq API Key:", type="password")
     
-    if st.button("📖 User Guide (EN)", key="guide_main"):
-        st.session_state.show_guide_en = not st.session_state.show_guide_en
-        st.rerun()
-    if st.session_state.show_guide_en:
-        st.info("1. Enter Author Names. 2. Configure 9-Dimensions. 3. Explore semantic links and bibliography.")
-
     st.divider()
+    st.markdown("### 🧭 Knowledge Explorer")
     with st.expander("👤 User Profiles"):
         for p, d in KNOWLEDGE_BASE["profiles"].items():
-            st.markdown(f'<div class="explorer-card"><b>{p}</b><br>{d["desc"]}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="explorer-card"><div class="explorer-title">{p}</div><div class="explorer-desc">{d["desc"]}</div></div>', unsafe_allow_html=True)
+    with st.expander("🧠 Mental Approaches"):
+        for a, d in KNOWLEDGE_BASE["mental_approaches"].items():
+            st.markdown(f'<div class="explorer-card"><div class="explorer-title">{a}</div><div class="explorer-desc">{d}</div></div>', unsafe_allow_html=True)
+    with st.expander("🌍 Scientific Paradigms"):
+        for p, d in KNOWLEDGE_BASE["paradigms"].items():
+            st.markdown(f'<div class="explorer-card"><div class="explorer-title">{p}</div><div class="explorer-desc">{d}</div></div>', unsafe_allow_html=True)
+    with st.expander("🏗️ Structural Models"):
+        for m, d in KNOWLEDGE_BASE["knowledge_models"].items():
+            st.markdown(f'<div class="explorer-card"><div class="explorer-title">{m}</div><div class="explorer-desc">{d}</div></div>', unsafe_allow_html=True)
+    with st.expander("🔬 Science Fields"):
+        for s, d in KNOWLEDGE_BASE["subject_details"].items():
+            st.markdown(f'<div class="explorer-card"><div class="explorer-title">{s} ({d["cat"]})</div></div>', unsafe_allow_html=True)
+
+    st.divider()
+    st.markdown("### 🔗 External Resources")
+    st.link_button("🌐 SIS GitHub Repository", "https://github.com/", use_container_width=True)
+    st.link_button("🆔 ORCID Registry Search", "https://orcid.org/", use_container_width=True)
+    st.link_button("🎓 Google Scholar", "https://scholar.google.com/", use_container_width=True)
     
     if st.button("♻️ Reset Workspace", use_container_width=True):
         st.session_state.clear()
         st.rerun()
 
 st.title("🧱 SIS Universal Knowledge Synthesizer")
-st.markdown('<div class="lego-panel-header">🏗️ Build Your 9D Cognitive Lego Structure</div>', unsafe_allow_html=True)
+st.markdown('<div class="lego-panel-header">🏗️ Configuration: 9-Dimensional Architecture</div>', unsafe_allow_html=True)
 
 # ROW 1: AUTHORS & EXPERTISE
 r1_c1, r1_c2 = st.columns([2, 1])
 with r1_c1: target_authors = st.text_input("👤 Research Authors (ORCID Sync):", placeholder="Karl Petrič, Samo Kralj, Teodor Petrič")
 with r1_c2: expertise = st.select_slider("Expertise Level:", options=["Novice", "Intermediate", "Expert"], value="Expert")
 
-# DIMENSION ROWS 2-4 (9 Dimensions total)
+# DIMENSION ROWS 2-4 (9 Dimensions Grid)
 c1, c2, c3 = st.columns(3)
 with c1: sel_profiles = st.multiselect("1. Profiles:", list(KNOWLEDGE_BASE["profiles"].keys()), default=["Adventurers"])
 with c2: sel_sciences = st.multiselect("2. Science Fields:", sorted(list(KNOWLEDGE_BASE["subject_details"].keys())), default=["Physics", "Economics"])
-with c3: sel_models = st.multiselect("4. Models:", list(KNOWLEDGE_BASE["knowledge_models"].keys()), default=["Concepts"])
+with c3: sel_models = st.multiselect("3. Models:", list(KNOWLEDGE_BASE["knowledge_models"].keys()), default=["Concepts"])
 
 c4, c5, c6 = st.columns(3)
-with c4: sel_paradigms = st.multiselect("5. Paradigms:", list(KNOWLEDGE_BASE["paradigms"].keys()), default=["Rationalism"])
-with c5: goal_context = st.selectbox("6. Context / Goal:", ["Scientific Research", "Problem Solving", "Policy Making"])
-with c6: sel_approaches = st.multiselect("7. Approaches:", list(KNOWLEDGE_BASE["mental_approaches"].keys()), default=["Perspective shifting"])
+with c4: sel_paradigms = st.multiselect("4. Paradigms:", list(KNOWLEDGE_BASE["paradigms"].keys()), default=["Rationalism"])
+with c5: goal_context = st.selectbox("5. Goal / Context:", ["Scientific Research", "Problem Solving", "Policy Making"])
+with c6: sel_approaches = st.multiselect("6. Approaches:", list(KNOWLEDGE_BASE["mental_approaches"].keys()), default=["Perspective shifting"])
 
 c7, c8, c9 = st.columns(3)
 agg_meth = []
 for s in sel_sciences: 
     if s in KNOWLEDGE_BASE["subject_details"]: agg_meth.extend(KNOWLEDGE_BASE["subject_details"][s]["meth"])
-with c7: sel_methods = st.multiselect("8. Methodologies:", sorted(list(set(agg_meth))), default=[])
-with c8: sel_tools = st.multiselect("9. Specific Tools:", ["LLMGraphTransformer", "Python", "fMRI"], default=["Python"])
-with c9: viz_mode = st.radio("Visualization Style:", ["Lego Shapes", "Mixed Mode"])
+with c7: sel_methods = st.multiselect("7. Methodologies:", sorted(list(set(agg_meth))), default=[])
+with c8: sel_tools = st.multiselect("8. Synthesis Tools:", ["Python", "LLMGraphTransformer", "fMRI"], default=["Python"])
+with c9: viz_mode = st.radio("9. Visualization Style:", ["Lego Shapes", "Mixed Mode"])
 
 st.divider()
-user_query = st.text_area("❓ Your Synthesis Inquiry:", placeholder="Create a synergy between geopolitics and physics...", height=120)
+user_query = st.text_area("❓ Your Synthesis Inquiry:", placeholder="Analyze the synergy between forces...", height=120)
 
 # ==============================================================================
 # 4. CORE SYNTHESIS ENGINE: GROQ AI + LEGO GRAPH LOGIC
@@ -363,7 +367,6 @@ if st.button("🚀 Execute Multi-Dimensional Lego Synthesis", use_container_widt
             RESEARCH CONTEXT: {bib_raw_data}.
             STRICT RULES:
             1. No node lists in text. End with '### SEMANTIC_GRAPH_JSON' followed by valid JSON.
-            JSON: {{"nodes": [{{"id": "n1", "label": "X", "type": "Root", "color": "#hex"}}], "edges": [{{"source": "n1", "target": "n2", "rel_type": "AS"}}]}}
             """
             
             with st.spinner('Building Knowledge Architecture...'):
@@ -398,10 +401,8 @@ if st.button("🚀 Execute Multi-Dimensional Lego Synthesis", use_container_widt
                         elements = []
                         for n in g_json.get("nodes", []):
                             lbl = n["label"]
-                            # Default values
-                            icon, shape, col = "", "ellipse", "#2a9d8f"
+                            shape, col = "ellipse", "#2a9d8f"
                             
-                            # Match nodes with Knowledge Base for colorful shapes
                             found_s = next((s for s in KNOWLEDGE_BASE["subject_details"].keys() if s.lower() in lbl.lower()), None)
                             if found_s:
                                 col = KNOWLEDGE_BASE["subject_details"][found_s]["col"]
@@ -409,16 +410,13 @@ if st.button("🚀 Execute Multi-Dimensional Lego Synthesis", use_container_widt
                             else:
                                 shape = ["hexagon", "rhomboid", "octagon", "star"][hash(lbl)%4]
 
-                            elements.append({"data": {
-                                "id": n["id"], "label": lbl, 
-                                "color": col, "size": 85, "shape": shape, "z_index": 5
-                            }})
+                            elements.append({"data": {"id": n["id"], "label": lbl, "color": col, "size": 85, "shape": shape, "z_index": 5}})
                         for e in g_json.get("edges", []):
                             elements.append({"data": {"source": e["source"], "target": e["target"], "rel_type": e.get("rel_type", "AS")}})
                         
                         render_cytoscape_network(elements)
 
-                        # --- NEW: METADATA & BIBLIOGRAPHY DISPLAY ---
+                        # --- METADATA & BIBLIOGRAPHY DISPLAY ---
                         if bib_raw_data:
                             st.markdown("### 📑 Research Metadata (ORCID Sync)")
                             st.markdown('<div class="metadata-card">', unsafe_allow_html=True)
@@ -436,6 +434,7 @@ if st.button("🚀 Execute Multi-Dimensional Lego Synthesis", use_container_widt
 
 st.divider()
 st.caption("SIS Universal Knowledge Synthesizer | v18.9 | Interdisciplinary Lego Architecture | 2026")
+
 
 
 
