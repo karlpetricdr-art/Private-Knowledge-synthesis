@@ -1,5 +1,3 @@
---- START OF FILE Paste January 17, 2026 - 4:53PM ---
-
 import streamlit as st
 import json
 import base64
@@ -22,7 +20,6 @@ st.set_page_config(
 )
 
 # Robust CSS for Interdisciplinary Lego UI, Semantic Highlights, and Anchors
-# Scope limited to specific elements to avoid breaking Streamlit's internal UI icons.
 st.markdown("""
 <style>
     /* Content and Analysis Styling */
@@ -143,12 +140,6 @@ SVG_3D_RELIEF = """
 # 1. ADVANCED CYTOSCAPE RENDERER (LEGO GRAPH INTERFACE)
 # ==============================================================================
 def render_cytoscape_network(elements, container_id="cy_canvas"):
-    """
-    Renders an interactive Cytoscape.js network.
-    - Dynamic font scaling: 14pt (18px) for complex graphs, 20pt (26px) for simple.
-    - Anchor scrolling: node tap scrolls page to semantic ID.
-    - Export graph as high-res PNG.
-    """
     num_nodes = len([e for e in elements if 'source' not in e['data']])
     f_size = "18px" if num_nodes > 15 else "26px"
     
@@ -211,7 +202,6 @@ def render_cytoscape_network(elements, container_id="cy_canvas"):
 
 # --- AUTHOR BIBLIOGRAPHY ENGINE ---
 def fetch_author_bib_pro(author_input):
-    """Fetches real-time research metadata from ORCID Registry."""
     if not author_input: return ""
     author_list = [a.strip() for a in author_input.split(",")]
     comprehensive_biblio = ""
@@ -233,7 +223,7 @@ def fetch_author_bib_pro(author_input):
     return comprehensive_biblio
 
 # ==============================================================================
-# 2. FULL MULTIDIMENSIONAL ONTOLOGY (18 DISCIPLINES & 9 DIMENSIONS)
+# 2. FULL MULTIDIMENSIONAL ONTOLOGY (19 DISCIPLINES & 9 DIMENSIONS)
 # ==============================================================================
 KNOWLEDGE_BASE = {
     "profiles": {
@@ -308,8 +298,8 @@ with st.sidebar:
         1. **Authors**: Enter names for metadata sync (ORCID).
         2. **9-Dimensions**: Fully configure Profiles, Paradigms, Models, Methods, etc.
         3. **Standard Shapes**: Colorful nodes based on scientific category.
-        4. **Google Links**: Concepts in text link to search results and graph nodes.
-        5. **Anchors**: Tapping nodes in the graph scrolls the page to relevant text.
+        4. **Google Links**: Concepts link to search.
+        5. **Anchors**: Tapping nodes scrolls the page to relevant text.
         """)
         if st.button("Close Guide"): st.session_state.show_guide_en = False; st.rerun()
 
@@ -336,11 +326,6 @@ with st.sidebar:
     if st.button("♻️ Reset Session", use_container_width=True):
         st.session_state.clear()
         st.rerun()
-    
-    st.divider()
-    st.link_button("🌐 GitHub Repository", "https://github.com/", use_container_width=True)
-    st.link_button("🆔 ORCID Registry", "https://orcid.org/", use_container_width=True)
-    st.link_button("🎓 Google Scholar", "https://scholar.google.com/", use_container_width=True)
 
 st.title("🧱 SIS Universal Knowledge Synthesizer")
 st.markdown("Advanced Multi-dimensional synthesis with **Interdisciplinary Lego Architecture**.")
@@ -352,10 +337,10 @@ r1_c1, r1_c2 = st.columns([2, 1])
 with r1_c1: target_authors = st.text_input("👤 Research Authors (ORCID Sync):", placeholder="Karl Petrič, Samo Kralj, Teodor Petrič")
 with r1_c2: expertise = st.select_slider("3. Expertise Level:", options=["Novice", "Intermediate", "Expert"], value="Expert")
 
-# DIMENSION ROWS 2-4 (9 Dimensions total)
+# DIMENSION ROWS
 c1, c2, c3 = st.columns(3)
 with c1: sel_profiles = st.multiselect("1. Profiles:", list(KNOWLEDGE_BASE["profiles"].keys()), default=["Adventurers"])
-with c2: sel_sciences = st.multiselect("2. Science Fields:", sorted(list(KNOWLEDGE_BASE["subject_details"].keys())), default=["Physics", "Economics", "Politics"])
+with c2: sel_sciences = st.multiselect("2. Science Fields:", sorted(list(KNOWLEDGE_BASE["subject_details"].keys())), default=["Physics", "Music Science", "Economics"])
 with c3: sel_models = st.multiselect("4. Models:", list(KNOWLEDGE_BASE["knowledge_models"].keys()), default=["Concepts", "Causal Connections"])
 
 c4, c5, c6 = st.columns(3)
@@ -368,11 +353,11 @@ agg_meth = []
 for s in sel_sciences: 
     if s in KNOWLEDGE_BASE["subject_details"]: agg_meth.extend(KNOWLEDGE_BASE["subject_details"][s]["meth"])
 with c7: sel_methods = st.multiselect("8. Methodologies:", sorted(list(set(agg_meth))), default=[])
-with c8: sel_tools = st.multiselect("9. Specific Tools:", ["LLMGraphTransformer", "Python", "fMRI", "3D Printing", "Bloomberg"], default=["LLMGraphTransformer"])
+with c8: sel_tools = st.multiselect("9. Specific Tools:", ["LLMGraphTransformer", "Python", "fMRI", "3D Printing", "DAW", "Bloomberg"], default=["LLMGraphTransformer"])
 with c9: viz_mode = st.radio("Visualization Style:", ["Standard Shapes", "Mixed Mode"])
 
 st.divider()
-user_query = st.text_area("❓ Your Synthesis Inquiry:", placeholder="Create a synergy between geopolitical forces and economics. Use icons and varied geometry for nodes.", height=150)
+user_query = st.text_area("❓ Your Synthesis Inquiry:", placeholder="Create a synergy between geopolitical forces, music science and economics.", height=150)
 
 # ==============================================================================
 # 4. CORE SYNTHESIS ENGINE: GROQ AI + LEGO GRAPH LOGIC
@@ -392,7 +377,7 @@ if st.button("🚀 Execute Multi-Dimensional Lego Synthesis", use_container_widt
             1. FOCUS 100% on deep research. NEVER include node lists in dissertation text.
             2. Apply THESAURUS logic (TT, BT, NT, AS, RT, EQ).
             3. End with '### SEMANTIC_GRAPH_JSON' followed by valid JSON.
-            JSON: {{"nodes": [{{"id": "n1", "label": "Text", "type": "Root|Branch", "color": "#hex", "shape": "triangle|rectangle|ellipse|diamond"}}], "edges": [{{"source": "n1", "target": "n2", "rel_type": "AS"}}]}}
+            JSON: {{"nodes": [{{"id": "n1", "label": "Text", "type": "Root|Branch"}}], "edges": [{{"source": "n1", "target": "n2", "rel_type": "AS"}}]}}
             """
             
             with st.spinner('Building Interdisciplinary Lego Structure...'):
@@ -404,13 +389,11 @@ if st.button("🚀 Execute Multi-Dimensional Lego Synthesis", use_container_widt
                 # --- POST-PROCESSING: LINKS & ANCHORS ---
                 if len(parts) > 1:
                     try:
-                        # Improved JSON extraction from potential markdown blocks
                         json_str = re.search(r'\{.*\}', parts[1], re.DOTALL).group()
                         g_json = json.loads(json_str)
                         for n in g_json.get("nodes", []):
                             lbl, nid = n["label"], n["id"]
                             url_lbl = urllib.parse.quote(lbl)
-                            # Regex replacement for Google links and Anchor IDs
                             pattern = re.compile(rf'\b({re.escape(lbl)})\b', re.IGNORECASE)
                             replacement = f'<span id="{nid}"><a href="https://www.google.com/search?q={url_lbl}" target="_blank" class="semantic-node-highlight">{lbl}<i class="google-icon">↗</i></a></span>'
                             main_markdown = pattern.sub(replacement, main_markdown, count=1)
@@ -446,7 +429,7 @@ if st.button("🚀 Execute Multi-Dimensional Lego Synthesis", use_container_widt
                                 if any(a.lower() in lbl.lower() for a in KNOWLEDGE_BASE["mental_approaches"].keys()): icon, col = "🧠 ", "#e76f51"
                                 elif any(p.lower() in lbl.lower() for p in KNOWLEDGE_BASE["paradigms"]): icon, col = "🌍 ", "#264653"
                                 elif any(m.lower() in lbl.lower() for m in KNOWLEDGE_BASE["knowledge_models"]): icon, col = "🏗️ ", "#f4a261"
-                                shape = ["hexagon", "rhomboid", "octagon", "star"][hash(lbl)%4]
+                                shape = ["hexagon", "rhomboid", "octagon"][hash(lbl)%3]
 
                             display_lbl = f"{icon}{lbl}" if viz_mode == "Mixed Mode" else lbl
                             elements.append({"data": {
@@ -464,6 +447,7 @@ if st.button("🚀 Execute Multi-Dimensional Lego Synthesis", use_container_widt
 
 st.divider()
 st.caption("SIS Universal Knowledge Synthesizer | v18.5 | Interdisciplinary Lego Architecture | 2026")
+
 
 
 
