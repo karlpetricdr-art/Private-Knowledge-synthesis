@@ -22,7 +22,7 @@ st.set_page_config(
 # Robust CSS for Interdisciplinary Lego UI, Semantic Highlights, and Metadata Display
 st.markdown("""
 <style>
-    /* Content and Analysis Styling */
+    /* Main Content Styling */
     .stMarkdown, .stMarkdown p {
         line-height: 1.9 !important;
         font-size: 1.05em !important;
@@ -32,11 +32,11 @@ st.markdown("""
 
     /* Semantic Highlighting and Link Styling */
     .semantic-node-highlight {
-        color: #e63946 !important;
+        color: #1d3557 !important;
         font-weight: 700 !important;
-        border-bottom: 2.5px solid #e63946 !important;
+        border-bottom: 2.5px solid #ffb703 !important;
         padding: 0 4px;
-        background-color: #fff5f5;
+        background-color: #f1f3f5;
         border-radius: 6px;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         text-decoration: none !important;
@@ -45,23 +45,23 @@ st.markdown("""
     .semantic-node-highlight:hover {
         background-color: #1d3557 !important;
         color: #ffffff !important;
-        border-bottom: 2.5px solid #ffb703 !important;
+        border-bottom: 2.5px solid #e63946 !important;
         transform: translateY(-2px);
         cursor: pointer;
     }
 
-    /* Metadata Panel (Bibliography) Styling */
+    /* Bibliography & Metadata Card Styling */
     .metadata-card {
         padding: 25px;
         border-radius: 15px;
         background: #f8f9fa;
-        border-left: 10px solid #1d3557;
+        border-left: 10px solid #43a047;
         margin-top: 20px;
         box-shadow: 0 6px 12px rgba(0,0,0,0.08);
     }
     .bib-author-header {
         font-weight: 800;
-        color: #e63946;
+        color: #1d3557;
         text-transform: uppercase;
         letter-spacing: 1.2px;
         margin-bottom: 12px;
@@ -83,7 +83,7 @@ st.markdown("""
         border-radius: 8px;
         background: #ffffff;
         border: 1px solid #eeeeee;
-        border-left: 6px solid #457b9d;
+        border-left: 6px solid #43a047;
         margin-bottom: 10px;
         box-shadow: 1px 1px 4px rgba(0,0,0,0.03);
     }
@@ -102,7 +102,7 @@ st.markdown("""
         color: #264653;
         margin-bottom: 22px;
         padding-bottom: 10px;
-        border-bottom: 4px solid #e76f51;
+        border-bottom: 4px solid #43a047;
         display: inline-block;
     }
 </style>
@@ -111,6 +111,7 @@ st.markdown("""
 def get_svg_base64(svg_str):
     return base64.b64encode(svg_str.encode('utf-8')).decode('utf-8')
 
+# --- LOGOTIP: 3D RELIEF LEGO VERSION (GREEN CIRCLE UPDATED) ---
 SVG_3D_RELIEF = """
 <svg width="240" height="240" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
     <defs>
@@ -126,7 +127,7 @@ SVG_3D_RELIEF = """
     <path d="M120 40 L50 180 L120 200 Z" fill="url(#pyramidSide)" />
     <path d="M120 40 L190 180 L120 200 Z" fill="#9e9e9e" />
     <rect x="116" y="110" width="8" height="70" rx="2" fill="#5d4037" />
-    <circle cx="120" cy="85" r="32" fill="#e63946" filter="url(#reliefShadow)" />
+    <circle cx="120" cy="85" r="32" fill="#43a047" filter="url(#reliefShadow)" />
     <rect x="70" y="170" width="22" height="14" rx="2" fill="#1d3557" />
     <rect x="148" y="170" width="22" height="14" rx="2" fill="#ffb703" />
     <rect x="109" y="188" width="22" height="14" rx="2" fill="#fb8500" />
@@ -152,7 +153,7 @@ def render_cytoscape_network(elements, container_id="cy_canvas"):
     cyto_html = f"""
     <div style="position: relative; font-family: sans-serif;">
         <div style="position: absolute; top: 15px; right: 15px; z-index: 100;">
-            <button id="save_btn" style="padding: 10px 18px; background: #e63946; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">💾 Export Architecture</button>
+            <button id="save_btn" style="padding: 10px 18px; background: #1d3557; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">💾 Export Architecture</button>
         </div>
         <div id="{container_id}" style="width: 100%; height: 750px; background: #ffffff; border-radius: 25px; border: 1px solid #ddd; box-shadow: 2px 2px 20px rgba(0,0,0,0.04);"></div>
     </div>
@@ -250,17 +251,14 @@ KNOWLEDGE_BASE = {
         "Physics": {"cat": "Natural", "col": "#e63946", "meth": ["Simulation"], "shape": "triangle"},
         "Chemistry": {"cat": "Natural", "col": "#e63946", "meth": ["Synthesis"], "shape": "triangle"},
         "Biology": {"cat": "Natural", "col": "#e63946", "meth": ["CRISPR"], "shape": "triangle"},
-        "Neuroscience": {"cat": "Natural", "col": "#e63946", "meth": ["Imaging"], "shape": "triangle"},
         "Psychology": {"cat": "Social", "col": "#ffb703", "meth": ["Trials"], "shape": "rectangle"},
         "Sociology": {"cat": "Social", "col": "#ffb703", "meth": ["Ethnography"], "shape": "rectangle"},
         "Economics": {"cat": "Social", "col": "#ffb703", "meth": ["Game Theory"], "shape": "rectangle"},
-        "Politics": {"cat": "Social", "col": "#ffb703", "meth": ["Policy Analysis"], "shape": "rectangle"},
         "Computer Science": {"cat": "Formal", "col": "#1d3557", "meth": ["Algorithms"], "shape": "diamond"},
         "Mathematics": {"cat": "Formal", "col": "#1d3557", "meth": ["Proofs"], "shape": "diamond"},
-        "Medicine": {"cat": "Applied", "col": "#fb8500", "meth": ["Clinical"], "shape": "pentagon"},
-        "Engineering": {"cat": "Applied", "col": "#fb8500", "meth": ["Prototyping"], "shape": "pentagon"},
-        "Philosophy": {"cat": "Humanities", "col": "#6a4c93", "meth": ["Logic"], "shape": "vee"},
-        "Linguistics": {"cat": "Humanities", "col": "#6a4c93", "meth": ["Parsing"], "shape": "vee"},
+        "Engineering": {"cat": "Applied", "col": "#fb8500", "meth": ["FEA"], "shape": "pentagon"},
+        "Medicine": {"cat": "Applied", "col": "#fb8500", "meth": ["Trials"], "shape": "pentagon"},
+        "Philosophy": {"cat": "Humanities", "col": "#6a4c93", "meth": ["Dialectics"], "shape": "vee"},
         "History": {"cat": "Humanities", "col": "#6a4c93", "meth": ["Archival"], "shape": "vee"}
     }
 }
@@ -278,24 +276,24 @@ with st.sidebar:
     
     st.divider()
     with st.expander("📖 User Guide", expanded=False):
-        st.info("1. Enter researchers for ORCID sync. 2. Configure 9-Dimensions. 3. Execute and explore colorful nodes.")
+        st.info("1. Enter Author Names for ORCID sync. 2. Configure Dimensions. 3. Select Domain-specific Tools. 4. Execute.")
 
     st.markdown("### 🧭 Knowledge Explorer")
     with st.expander("👤 User Profiles"):
         for p, d in KNOWLEDGE_BASE["profiles"].items():
             st.markdown(f'<div class="explorer-card"><div class="explorer-title">{p}</div></div>', unsafe_allow_html=True)
-            st.button(f"Details: {p}", key=f"btn_{p}")
+            st.button(f"Explore: {p}", key=f"ex_{p}")
     with st.expander("🧠 Mental Approaches"):
         for a, d in KNOWLEDGE_BASE["mental_approaches"].items():
             st.markdown(f'<div class="explorer-card"><div class="explorer-title">{a}</div></div>', unsafe_allow_html=True)
-            st.button(f"Details: {a}", key=f"btn_{a}")
+            st.button(f"Method: {a}", key=f"ma_{a}")
     with st.expander("🔬 Science Fields"):
         for s, d in KNOWLEDGE_BASE["subject_details"].items():
             st.markdown(f'<div class="explorer-card"><div class="explorer-title">{s} ({d["cat"]})</div></div>', unsafe_allow_html=True)
-            st.button(f"Details: {s}", key=f"btn_{s}")
+            st.button(f"Field: {s}", key=f"sf_{s}")
 
     st.divider()
-    st.markdown("### 🔗 External Resources")
+    st.markdown("### 🔗 Links")
     st.link_button("🌐 GitHub", "https://github.com/", use_container_width=True)
     st.link_button("🆔 ORCID", "https://orcid.org/", use_container_width=True)
     st.link_button("🎓 Google Scholar", "https://scholar.google.com/", use_container_width=True)
@@ -305,52 +303,54 @@ with st.sidebar:
         st.rerun()
 
 st.title("🧱 SIS Universal Knowledge Synthesizer")
-st.markdown('<div class="lego-panel-header">🏗️ Configuration: 9-Dimensional Architecture</div>', unsafe_allow_html=True)
+st.markdown('<div class="lego-panel-header">🏗️ Build your own cognitive perspective</div>', unsafe_allow_html=True)
 
 # ROW 1: AUTHORS & EXPERTISE
 r1_c1, r1_c2 = st.columns([2, 1])
-with r1_c1: target_authors = st.text_input("👤 Researchers (ORCID Sync):", placeholder="Teodor Petrič, Karl Petrič...")
-with r1_c2: expertise = st.select_slider("Expertise Level:", options=["Novice", "Expert"], value="Expert")
+with r1_c1: target_authors = st.text_input("👤 Researchers (ORCID Sync):", placeholder="Karl Petrič, Samo Kralj, Teodor Petrič")
+with r1_c2: expertise = st.select_slider("Expertise:", options=["Novice", "Expert"], value="Expert")
 
 # DIMENSION ROWS (9-Dimensions Grid)
 c1, c2, c3 = st.columns(3)
 with c1: sel_profiles = st.multiselect("1. Profiles:", list(KNOWLEDGE_BASE["profiles"].keys()), default=["Adventurers"])
-with c2: sel_sciences = st.multiselect("2. Science Fields:", sorted(list(KNOWLEDGE_BASE["subject_details"].keys())), default=["Physics", "Economics"])
-with c3: sel_models = st.multiselect("3. Knowledge Models:", ["Concepts", "Cause-Effect", "Principles"], default=["Concepts"])
+with c2: sel_sciences = st.multiselect("2. Fields:", sorted(list(KNOWLEDGE_BASE["subject_details"].keys())), default=["Physics", "Economics"])
+with c3: sel_models = st.multiselect("3. Models:", ["Concepts", "Cause-Effect", "Principles"], default=["Concepts"])
 
 c4, c5, c6 = st.columns(3)
 with c4: sel_paradigms = st.multiselect("4. Paradigms:", list(KNOWLEDGE_BASE["paradigms"].keys()), default=["Rationalism"])
-with c5: goal_context = st.selectbox("5. Goal / Context:", ["Scientific Research", "Problem Solving"])
+with c5: goal_context = st.selectbox("5. Goal / Context:", ["Scientific Research", "Strategic Planning"])
 with c6: sel_approaches = st.multiselect("6. Approaches:", list(KNOWLEDGE_BASE["mental_approaches"].keys()), default=["Perspective shifting"])
 
 c7, c8, c9 = st.columns(3)
-with c7: sel_methods = st.multiselect("7. Methodologies:", ["Simulation", "Ethnography", "Logic"], default=[])
-with c8: sel_tools = st.multiselect("8. Synthesis Tools:", ["Python", "fMRI", "LLMGraphTransformer"], default=["Python"])
-with c9: viz_mode = st.radio("9. Visualization:", ["Colorful Lego shapes", "Mixed icons"])
+with c7: sel_methods = st.multiselect("7. Methodologies:", ["Simulation", "Ethnography", "Archival"], default=[])
+# NEW: MULTIDISCIPLINARY TOOLS (Replacing Synthesis Tool)
+with c8: sel_tools = st.multiselect("8. Scientific Tools:", ["Python", "CRISPR", "fMRI", "ArcGIS", "Bloomberg", "Digital Archives", "LaTeX"], default=["Python"])
+with c9: viz_mode = st.radio("9. Visualization:", ["Colorful Lego shapes", "Standard Mode"])
 
 st.divider()
-user_query = st.text_area("❓ Your Synthesis Inquiry:", placeholder="Synthesize quantum mechanics and behavioral economics...", height=120)
+user_query = st.text_area("❓ Synthesis Inquiry:", placeholder="Analyze the synergy between forces...", height=120)
 
 # ==============================================================================
 # 4. CORE SYNTHESIS ENGINE: GROQ AI + LEGO GRAPH LOGIC
 # ==============================================================================
 if st.button("🚀 Execute 9-Dimensional Synthesis", use_container_width=True):
-    if not api_key: st.error("Please enter your Groq API Key.")
-    elif not user_query: st.warning("Please enter an inquiry.")
+    if not api_key: st.error("Groq API Key is required.")
+    elif not user_query: st.warning("Please enter your inquiry.")
     else:
         try:
-            # Step A: Fetch Author Metadata
+            # Fetch Author Data
             bib_raw = fetch_author_bib_pro(target_authors) if target_authors else ""
             st.session_state.bib_data_store = bib_raw
             
             client = OpenAI(api_key=api_key, base_url="https://api.groq.com/openai/v1")
             sys_prompt = f"""
             You are the SIS Synthesizer. Perform a 1500+ word deep synthesis.
-            ARCHITECTURE: 9-Dimensions. CONTEXT: {target_authors}.
-            RULES: No node lists. Use semantic links. Output valid JSON after '### SEMANTIC_GRAPH_JSON'.
+            9-DIMENSIONS: Profiles={sel_profiles}, Tools={sel_tools}, Fields={sel_sciences}.
+            CONTEXT: {target_authors}.
+            RULES: Use semantic links. Output valid JSON after '### SEMANTIC_GRAPH_JSON'.
             """
             
-            with st.spinner('Building Knowledge Architecture...'):
+            with st.spinner('Constructing knowledge architecture...'):
                 response = client.chat.completions.create(model="llama-3.3-70b-versatile", messages=[{"role": "system", "content": sys_prompt}, {"role": "user", "content": user_query}], temperature=0.6, max_tokens=4000)
                 full_text = response.choices[0].message.content
                 parts = full_text.split("### SEMANTIC_GRAPH_JSON")
@@ -372,7 +372,7 @@ if st.button("🚀 Execute 9-Dimensional Synthesis", use_container_width=True):
                 st.subheader("📊 Synthesis Output")
                 st.markdown(main_markdown, unsafe_allow_html=True)
 
-                # VIZ LOGIC (COLORFUL LEGO SHAPES)
+                # VIZ LOGIC (PRIMARY COLOR PALETTE)
                 if len(parts) > 1:
                     try:
                         json_str = re.search(r'\{.*\}', parts[1], re.DOTALL).group()
@@ -382,16 +382,17 @@ if st.button("🚀 Execute 9-Dimensional Synthesis", use_container_width=True):
                         elements = []
                         for n in g_json.get("nodes", []):
                             lbl = n["label"]
-                            # PRIMARY COLORS PALETTE
-                            shape, col = "ellipse", "#1d3557" # Default Navy
+                            # PRIMARY PALETTE LOGIC
+                            shape, col = "ellipse", "#1b263b" # Default dark blue
                             
                             found_s = next((s for s in KNOWLEDGE_BASE["subject_details"].keys() if s.lower() in lbl.lower()), None)
                             if found_s:
                                 col = KNOWLEDGE_BASE["subject_details"][found_s]["col"]
                                 shape = KNOWLEDGE_BASE["subject_details"][found_s]["shape"]
                             else:
-                                # Categorical colors for concepts
-                                col = ["#e63946", "#ffb703", "#fb8500", "#6a4c93"][hash(lbl)%4]
+                                # Categorical colors for abstract concepts
+                                palette = ["#e63946", "#ffb703", "#1d3557", "#fb8500", "#6a4c93"]
+                                col = palette[hash(lbl) % len(palette)]
                                 shape = ["hexagon", "rhomboid", "octagon", "star"][hash(lbl)%4]
 
                             elements.append({"data": {"id": n["id"], "label": lbl, "color": col, "size": 85, "shape": shape, "z_index": 5}})
@@ -399,10 +400,10 @@ if st.button("🚀 Execute 9-Dimensional Synthesis", use_container_width=True):
                             elements.append({"data": {"source": e["source"], "target": e["target"], "rel_type": e.get("rel_type", "AS")}})
                         
                         render_cytoscape_network(elements)
-                    except: st.error("Failed to render graph.")
+                    except: st.error("Could not parse graph data.")
 
         except Exception as e:
-            st.error(f"Synthesis error: {e}")
+            st.error(f"Synthesis failed: {e}")
 
 # ==============================================================================
 # 5. DYNAMIC METADATA TOGGLE (BELOW GRAPH)
@@ -422,7 +423,8 @@ if st.session_state.bib_data_store:
         st.markdown('</div>', unsafe_allow_html=True)
 
 st.divider()
-st.caption("SIS Universal Knowledge Synthesizer | v18.11 | Interdisciplinary Lego Architecture | 2026")
+st.caption("SIS Universal Knowledge Synthesizer | v18.12 | Interdisciplinary Lego Architecture | 2026")
+
 
 
 
