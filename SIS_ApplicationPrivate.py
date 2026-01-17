@@ -10,7 +10,7 @@ from openai import OpenAI
 import streamlit.components.v1 as components
 
 # ==============================================================================
-# 0. ADVANCED CONFIGURATION & INTERFACE STYLING (LEGO UI)
+# 0. KONFIGURACIJA IN NAPREDNI LEGO UI (CSS)
 # ==============================================================================
 st.set_page_config(
     page_title="SIS Universal Knowledge Synthesizer",
@@ -19,24 +19,25 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Robust CSS for Interdisciplinary Lego UI, Semantic Highlights, and Anchors
+# Robusten CSS za Interdisciplinary Lego UI, semantične poudarke in sidra
 st.markdown("""
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&family=Inter:wght@400;700;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap');
 
+    /* Osnovna tipografija */
     html, body, [class*="st-"] {
         font-family: 'Inter', sans-serif;
+        color: #1b263b;
     }
 
-    /* Content and Analysis Styling */
+    /* Izpis disertacije */
     .stMarkdown, .stMarkdown p {
-        line-height: 1.9 !important;
-        font-size: 1.08em !important;
+        line-height: 2.0 !important;
+        font-size: 1.1em !important;
         text-align: justify;
-        color: #1d3557;
     }
 
-    /* Semantic Highlighting and Link Styling */
+    /* Semantično poudarjanje vozlišč v besedilu */
     .semantic-node-highlight {
         color: #2a9d8f !important;
         font-weight: 700 !important;
@@ -64,56 +65,65 @@ st.markdown("""
         opacity: 0.7;
     }
 
-    /* Aesthetic Knowledge Explorer Cards */
+    /* Kartice v raziskovalcu znanja */
     .explorer-card {
-        padding: 18px;
+        padding: 15px;
         border-radius: 12px;
         background: #ffffff;
-        border: 1px solid #e9ecef;
+        border: 1px solid #e0e1dd;
         border-left: 6px solid #2a9d8f;
         margin-bottom: 15px;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+        box-shadow: 2px 2px 8px rgba(0,0,0,0.05);
         transition: transform 0.2s;
     }
     .explorer-card:hover {
-        transform: translateX(5px);
-        box-shadow: 0 6px 12px rgba(0,0,0,0.05);
+        transform: scale(1.02);
     }
     .explorer-title {
         font-weight: 800;
-        color: #264653;
-        font-size: 1.05em;
-        margin-bottom: 8px;
+        color: #0d1b2a;
+        font-size: 1em;
+        margin-bottom: 5px;
         display: block;
         text-transform: uppercase;
-        letter-spacing: 0.8px;
+        letter-spacing: 0.5px;
     }
     .explorer-desc {
-        font-size: 0.94em;
-        color: #495057;
-        line-height: 1.6;
-        display: block;
+        font-size: 0.92em;
+        color: #415a77;
+        line-height: 1.5;
     }
 
-    /* Lego Section Styling */
+    /* Lego Panel Headers */
     .lego-panel-header {
         font-size: 1.6em;
         font-weight: 800;
-        color: #264653;
-        margin-bottom: 25px;
+        color: #1b263b;
+        margin-bottom: 20px;
         padding-bottom: 10px;
         border-bottom: 5px solid #e76f51;
         display: inline-block;
         text-transform: uppercase;
     }
-
-    /* Button Styling */
-    .stButton > button {
-        border-radius: 10px;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        transition: all 0.3s;
+    
+    /* Sidebar gumbi */
+    .sidebar-link-btn {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        margin: 5px 0;
+        text-align: center;
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        text-decoration: none;
+        color: #264653;
+        font-weight: 600;
+        font-size: 0.9em;
+    }
+    .sidebar-link-btn:hover {
+        background: #e9ceca;
+        border-color: #e76f51;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -129,13 +139,13 @@ SVG_3D_RELIEF = """
             <feDropShadow dx="4" dy="4" stdDeviation="3" flood-color="#000" flood-opacity="0.4"/>
         </filter>
         <linearGradient id="pyramidSide" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" style="stop-color:#f8f9fa;stop-opacity:1" />
-            <stop offset="100%" style="stop-color:#dee2e6;stop-opacity:1" />
+            <stop offset="0%" style="stop-color:#f0f0f0;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#c0c0c0;stop-opacity:1" />
         </linearGradient>
     </defs>
-    <circle cx="120" cy="120" r="110" fill="#ffffff" stroke="#264653" stroke-width="2" filter="url(#reliefShadow)" />
+    <circle cx="120" cy="120" r="105" fill="#ffffff" stroke="#264653" stroke-width="2" filter="url(#reliefShadow)" />
     <path d="M120 40 L50 180 L120 200 Z" fill="url(#pyramidSide)" />
-    <path d="M120 40 L190 180 L120 200 Z" fill="#adb5bd" />
+    <path d="M120 40 L190 180 L120 200 Z" fill="#9e9e9e" />
     <rect x="116" y="110" width="8" height="70" rx="2" fill="#5d4037" />
     <circle cx="120" cy="85" r="32" fill="#66bb6a" filter="url(#reliefShadow)" />
     <circle cx="95" cy="125" r="24" fill="#43a047" filter="url(#reliefShadow)" />
@@ -147,12 +157,11 @@ SVG_3D_RELIEF = """
 """
 
 # ==============================================================================
-# 1. ADVANCED CYTOSCAPE RENDERER (LEGO GRAPH INTERFACE)
+# 1. NAPREDNI CYTOSCAPE RENDERER (LEGO GRAPH INTERFACE)
 # ==============================================================================
 def render_cytoscape_network(elements, container_id="cy_canvas"):
     num_nodes = len([e for e in elements if 'source' not in e['data']])
     f_size = "18px" if num_nodes > 15 else "26px"
-    
     node_style = {
         'label': 'data(label)', 'text-valign': 'center', 'color': '#333',
         'font-weight': 'bold', 'text-outline-width': 2, 'text-outline-color': '#fff',
@@ -161,7 +170,6 @@ def render_cytoscape_network(elements, container_id="cy_canvas"):
         'height': 'data(size)', 'shape': 'data(shape)',
         'border-width': 3, 'border-color': '#fff'
     }
-
     cyto_html = f"""
     <div style="position: relative; font-family: sans-serif;">
         <div style="position: absolute; top: 15px; right: 15px; z-index: 100;">
@@ -188,7 +196,6 @@ def render_cytoscape_network(elements, container_id="cy_canvas"):
                 ],
                 layout: {{ name: 'cose', padding: 60, animate: true, nodeRepulsion: 45000, idealEdgeLength: 150 }}
             }});
-            
             cy.on('tap', 'node', function(evt){{
                 var targetId = evt.target.id();
                 var targetElement = window.parent.document.getElementById(targetId);
@@ -198,7 +205,6 @@ def render_cytoscape_network(elements, container_id="cy_canvas"):
                     setTimeout(function(){{ targetElement.style.backgroundColor = "transparent"; }}, 3000);
                 }}
             }});
-
             document.getElementById('save_btn').onclick = function() {{
                 var link = document.createElement('a');
                 link.href = cy.png({{full: true, bg: 'white', scale: 2}});
@@ -233,166 +239,143 @@ def fetch_author_bib_pro(author_input):
     return comprehensive_biblio
 
 # ==============================================================================
-# 2. FULL MULTIDIMENSIONAL ONTOLOGY (LEGO ARCHITECTURE)
+# 2. CELOVITA MULTIDIMENZIONALNA ONTOLOGIJA (LEGO ARCHITECTURE)
 # ==============================================================================
 KNOWLEDGE_BASE = {
     "profiles": {
-        "Adventurers": {"desc": "Explorers of hidden patterns, boundary-pushing ideas and non-linear systems.", "icon": "👤", "col": "#264653"},
-        "Applicators": {"desc": "Pragmatic thinkers focused on efficient execution and practical utility.", "icon": "👤", "col": "#2a9d8f"},
-        "Know-it-alls": {"desc": "Seekers of systemic clarity and absolute universal laws.", "icon": "👤", "col": "#e9c46a"},
-        "Observers": {"desc": "System monitors focused on data streams, tracking and objective reporting.", "icon": "👤", "col": "#f4a261"}
+        "Adventurers": {"desc": "Explorers of hidden patterns and non-linear systems.", "icon": "👤", "col": "#264653"},
+        "Applicators": {"desc": "Pragmatic thinkers focused on practical utility.", "icon": "👤", "col": "#2a9d8f"},
+        "Know-it-alls": {"desc": "Seekers of systemic clarity and absolute laws.", "icon": "👤", "col": "#e9c46a"},
+        "Observers": {"desc": "System monitors focused on data streams.", "icon": "👤", "col": "#f4a261"}
     },
     "mental_structure": {
-        "Three-Level Platform": {
-            "Philosophical Level": "Oriented toward science, art, business, innovation, and abstract reflection.",
-            "Everyday Level": "Concerned with routine activities, obligations, social interaction, and personal well-being.",
-            "Libidinal Level": "Driven by emotions, affect, eroticism, desire, and pleasure."
-        },
-        "Information Hierarchy": "Operates through building blocks: vocabulary, factual knowledge, principles, and concepts. Symbols are 'powerful concepts'.",
-        "Psychological Motives": "12 fundamental drives classified into needs, desires, and fears. Regulatory mechanisms for action or inhibition.",
-        "Mental Concentration": "Sustained focus acting as a filter. Interaction of ethical norms, imagination, and willpower.",
-        "Mental Landscape": "Stimuli generating impulses that activate techniques based on concentration and identity."
+        "Three-Level Platform": "Philosophical (Science/Art), Everyday (Routine/Well-being), Libidinal (Emotions/Desire).",
+        "Information Hierarchy": "Vocabulary, facts, principles, concepts. Symbols act as powerful cognitive blocks.",
+        "Psychological Motives": "12 fundamental drives (needs, desires, fears) that initiate or inhibit action.",
+        "Mental Concentration": "sustained focus as a filter; interaction of ethical norms, imagination, and willpower.",
+        "Mental Landscape": "Dynamic system where stimuli generate impulses that activate approaches based on concentration."
     },
     "mental_approaches": {
-        "Induction and Deduction": "Induction (particular to general) vs Deduction (general to specific). Deduction often favored in everyday reasoning.",
-        "Bipolarity and Dialectics": "Tension between opposing forces producing equilibrium for innovative development.",
-        "Framework and Foundation": "Stable yet flexible structures necessary for theory to be demonstrable and applicable.",
-        "Hierarchy and Associativity": "Hierarchy as an orienting mechanism vs Associativity as a flexible facilitating mode for unstructured ideas.",
-        "Pleasure and Displeasure": "Basic evaluative signal indicating whether expectations are met; foundation for dialectical reasoning.",
-        "Core, Attraction, and Repulsion": "Principals underlying atomic structures, planetary systems, and social focus configurations.",
+        "Induction and Deduction": "Induction (particular to general) vs Deduction (general to specific).",
+        "Bipolarity and Dialectics": "Tension between opposing forces creating equilibrium for innovative development.",
+        "Framework and Foundation": "Requirement for stable yet flexible theoretical structures.",
+        "Hierarchy and Associativity": "Hierarchy as orienting mechanism; Associativity as flexible Facilitation.",
+        "Pleasure and Displeasure": "Evaluative signal for expectations; foundation for dialectical reasoning.",
+        "Core, Attraction, and Repulsion": "Principals underlying atomic structures and social configurations.",
         "Similarity and Difference": "Primary foundation of classification systems and everyday cognitive assessment.",
-        "Compression and Condensation": "Optimizing physical and cognitive space due to systemic complexity management.",
-        "Abstraction, Elimination, Addition, and Composition": "Removing irrelevant details (elimination) or supplying missing elements (composition).",
-        "Mini–Max": "Minimizing potential losses while maximizing gains in scenario analysis.",
-        "Balance and Whole–Part Relations": "Stability seeking (balance) and examination of interrelations between components and the whole.",
-        "Perspective Shifting": "Examination from multiple viewpoints: human-level, ground-level, or bird’s-eye perspectives.",
-        "Openness and Closedness": "Degree of system adaptability vs rigidity; managing cognitive overload or isolation."
+        "Compression and Condensation": "Optimizing physical/cognitive space to manage complexity.",
+        "Abstraction, Elimination, Addition, and Composition": "Removing irrelevant details or supplying missing elements.",
+        "Mini–Max": "Minimizing potential losses while maximizing possible gains.",
+        "Balance and Whole–Part Relations": "Examination of interrelations between components and the system whole.",
+        "Perspective Shifting": "Examination from multiple viewpoints: human-level, ground, or bird’s-eye.",
+        "Openness and Closedness": "Degree of system adaptability vs rigidity; managing cognitive overload."
     },
     "paradigms": {
-        "Empiricism": "Knowledge from sensory evidence and data-driven reality.",
-        "Rationalism": "Knowledge based on deductive logic and internal consistency.",
-        "Constructivism": "Knowledge as a social and individually built construct.",
-        "Positivism": "Strict adherence to verifiable scientific data and facts.",
-        "Pragmatism": "Evaluation of theories based on their practical success."
+        "Empiricism": "Knowledge from sensory evidence.",
+        "Rationalism": "Knowledge based on deductive logic.",
+        "Constructivism": "Knowledge as a social construct.",
+        "Positivism": "Adherence to verifiable scientific facts.",
+        "Pragmatism": "Evaluation based on practical success."
     },
     "knowledge_models": {
-        "Causal Connections": "Observable effects whose underlying causes may not yet be fully understood.",
-        "Conditional Relations": "Predefined conditions that yield predictable outcomes (artificial systems).",
-        "Principles & Relations": "Identification of fundamental governing laws.",
-        "Concepts": "Atomic abstract building blocks and powerful collective symbols.",
-        "Episodes & Sequences": "Analysis of temporal flow and chronology.",
+        "Causal Connections": "Observable effects with underlying causes.",
+        "Conditional Relations": "Predefined conditions yielding predictable outcomes (artificial systems).",
+        "Principles & Relations": "Fundamental governing laws.",
+        "Concepts": "Atomic abstract building blocks.",
+        "Episodes & Sequences": "Temporal flow and chronology.",
         "Facts & Characteristics": "High-fidelity descriptive data analysis."
     },
     "subject_details": {
-        "Physics": {"cat": "Natural", "col": "#264653", "meth": ["Simulation", "Modeling"], "tools": ["Accelerator"]},
-        "Chemistry": {"cat": "Natural", "col": "#287271", "meth": ["Synthesis", "Spectroscopy"], "tools": ["NMR"]},
-        "Biology": {"cat": "Natural", "col": "#2a9d8f", "meth": ["CRISPR", "Sequencing"], "tools": ["Microscope"]},
-        "Neuroscience": {"cat": "Natural", "col": "#8ab17d", "meth": ["Imaging", "EEG"], "tools": ["fMRI"]},
-        "Psychology": {"cat": "Social", "col": "#b5ba72", "meth": ["Psychometrics", "Trials"], "tools": ["fMRI"]},
-        "Sociology": {"cat": "Social", "col": "#e9c46a", "meth": ["Ethnography", "Surveys"], "tools": ["SPSS"]},
-        "Economics": {"cat": "Social", "col": "#f4a261", "meth": ["Econometrics", "Game Theory"], "tools": ["Bloomberg"]},
-        "Politics": {"cat": "Social", "col": "#e76f51", "meth": ["Policy Analysis", "Comparative"], "tools": ["Polls"]},
-        "Computer Science": {"cat": "Formal", "col": "#d62828", "meth": ["Algorithms", "Verification"], "tools": ["Git"]},
-        "Medicine": {"cat": "Applied", "col": "#003049", "meth": ["Clinical Trials"], "tools": ["MRI Scanner"]},
-        "Engineering": {"cat": "Applied", "col": "#669bbc", "meth": ["FEA Analysis", "Prototyping"], "tools": ["CAD"]},
-        "Philosophy": {"cat": "Humanities", "col": "#c1121f", "meth": ["Dialectics", "Phenomenology"], "tools": ["Logic"]},
-        "Linguistics": {"cat": "Humanities", "col": "#780000", "meth": ["Parsing", "Corpus Analysis"], "tools": ["NLTK"]},
-        "Geography": {"cat": "Natural/Social", "col": "#003566", "meth": ["GIS Analysis"], "tools": ["ArcGIS"]},
-        "Geology": {"cat": "Natural", "col": "#ffc300", "meth": ["Stratigraphy"], "tools": ["Seismograph"]},
-        "Climatology": {"cat": "Natural", "col": "#000814", "meth": ["Modeling"], "tools": ["Weather Station"]},
-        "History": {"cat": "Humanities", "col": "#ffd60a", "meth": ["Archival Research"], "tools": ["Digital Archives"]},
-        "Library Science": {"cat": "Applied", "col": "#fdf0d5", "meth": ["Taxonomy", "Metadata"], "tools": ["Zotero"]},
-        "Music Science": {"cat": "Arts", "col": "#9b5de5", "meth": ["Harmonic Analysis", "Acoustics", "Ethnomusicology"], "tools": ["DAW", "MIDI", "Spectrogram"]}
+        "Physics": {"cat": "Natural", "col": "#264653", "meth": ["Simulation", "Modeling", "Calculus"]},
+        "Chemistry": {"cat": "Natural", "col": "#287271", "meth": ["Synthesis", "Spectroscopy", "Stoichiometry"]},
+        "Biology": {"cat": "Natural", "col": "#2a9d8f", "meth": ["CRISPR", "Sequencing", "Taxonomy"]},
+        "Neuroscience": {"cat": "Natural", "col": "#8ab17d", "meth": ["Imaging", "EEG", "Synaptic Mapping"]},
+        "Psychology": {"cat": "Social", "col": "#b5ba72", "meth": ["Psychometrics", "Trials", "Cognitive Mapping"]},
+        "Sociology": {"cat": "Social", "col": "#e9c46a", "meth": ["Ethnography", "Surveys", "Network Analysis"]},
+        "Economics": {"cat": "Social", "col": "#f4a261", "meth": ["Econometrics", "Game Theory", "Forecasting"]},
+        "Politics": {"cat": "Social", "col": "#e76f51", "meth": ["Policy Analysis", "Comparative Study", "Polls"]},
+        "Computer Science": {"cat": "Formal", "col": "#d62828", "meth": ["Algorithms", "Verification", "Logic Parsing"]},
+        "Medicine": {"cat": "Applied", "col": "#003049", "meth": ["Clinical Trials", "Diagnostics", "Pharmacology"]},
+        "Engineering": {"cat": "Applied", "col": "#669bbc", "meth": ["FEA Analysis", "Prototyping", "CAD Modeling"]},
+        "Library Science": {"cat": "Applied", "col": "#fdf0d5", "meth": ["Taxonomy", "Metadata Analysis", "Indexing"]},
+        "Philosophy": {"cat": "Humanities", "col": "#c1121f", "meth": ["Dialectics", "Phenomenology", "Logic"]},
+        "Linguistics": {"cat": "Humanities", "col": "#780000", "meth": ["Parsing", "Corpus Analysis", "Phonology"]},
+        "Geography": {"cat": "Mixed", "col": "#003566", "meth": ["GIS Analysis", "Cartography", "Spatial Modeling"]},
+        "Geology": {"cat": "Natural", "col": "#ffc300", "meth": ["Stratigraphy", "Seismology", "Mineralogy"]},
+        "Climatology": {"cat": "Natural", "col": "#000814", "meth": ["Climate Modeling", "Paleoclimatology", "Meteorology"]},
+        "History": {"cat": "Humanities", "col": "#ffd60a", "meth": ["Archival Research", "Hermeneutics", "Chronology"]},
+        "Music Science": {"cat": "Arts", "col": "#9b5de5", "meth": ["Harmonic Analysis", "Acoustics", "Ethnomusicology", "Transcription"]}
     }
 }
 
 # ==============================================================================
-# 3. UI CONSTRUCTION (SIDEBAR & 9D LEGO CONFIGURATION)
+# 3. UI IZGRADNJA (SIDEBAR & 9D KONFIGURACIJA)
 # ==============================================================================
-if 'show_guide_en' not in st.session_state: st.session_state.show_guide_en = False
-
 with st.sidebar:
     st.markdown(f'<div style="text-align:center"><img src="data:image/svg+xml;base64,{get_svg_base64(SVG_3D_RELIEF)}" width="220"></div>', unsafe_allow_html=True)
     st.header("⚙️ Control Panel")
-    api_key = st.text_input("Groq API Key:", type="password", help="Key held only in volatile RAM.")
-    
-    if st.button("📖 User Guide (EN)", key="guide_main"):
-        st.session_state.show_guide_en = not st.session_state.show_guide_en
-        st.rerun()
-    if st.session_state.show_guide_en:
-        st.info("""
-        **User Guide**:
-        1. **Authors**: Enter names for metadata (ORCID).
-        2. **9-Dimensions**: Configure Mental Structure, Science Fields, Paradigms, and Techniques.
-        3. **Interactive Graph**: Tap nodes to scroll to text. Concepts link to Google.
-        4. **Export**: Export the network as a high-res PNG.
-        """)
-        if st.button("Close Guide"): st.session_state.show_guide_en = False; st.rerun()
+    api_key = st.text_input("Groq API Key:", type="password")
+
+    if st.button("📖 User Guide (EN)"):
+        st.info("Configures 9-Dimensions, Metadata (ORCID) and execute synthesis. Graph nodes are interactive.")
 
     st.divider()
     st.markdown('<div style="font-weight:700; color:#264653; font-size:1.2em; margin-bottom:10px;">Knowledge Explorer</div>', unsafe_allow_html=True)
-    
     with st.expander("👤 User Profiles"):
         for p, d in KNOWLEDGE_BASE["profiles"].items():
             st.markdown(f'<div class="explorer-card"><span class="explorer-title">{p}</span><span class="explorer-desc">{d["desc"]}</span></div>', unsafe_allow_html=True)
-            
-    with st.expander("🧠 Mental Structure"):
+    with st.expander("🧠 Mental Structure & Approaches"):
         for k, v in KNOWLEDGE_BASE["mental_structure"].items():
-            if isinstance(v, dict):
-                st.markdown(f"**{k}**")
-                for subk, subv in v.items(): st.markdown(f"- {subk}: {subv}")
-            else:
-                st.markdown(f'<div class="explorer-card"><span class="explorer-title">{k}</span><span class="explorer-desc">{v}</span></div>', unsafe_allow_html=True)
-
-    with st.expander("🛠️ Mental Approaches"):
+            st.markdown(f'<div class="explorer-card"><span class="explorer-title">{k}</span><span class="explorer-desc">{v}</span></div>', unsafe_allow_html=True)
         for k, v in KNOWLEDGE_BASE["mental_approaches"].items():
             st.markdown(f'<div class="explorer-card"><span class="explorer-title">{k}</span><span class="explorer-desc">{v}</span></div>', unsafe_allow_html=True)
-
     with st.expander("🔬 Science Fields"):
         for s in sorted(KNOWLEDGE_BASE["subject_details"].keys()):
             det = KNOWLEDGE_BASE["subject_details"][s]
-            st.markdown(f'<div class="explorer-card"><span class="explorer-title">{s} ({det["cat"]})</span><span class="explorer-desc">Methods: {", ".join(det["meth"])}</span></div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="explorer-card"><span class="explorer-title">{s} ({det["cat"]})</span></div>', unsafe_allow_html=True)
     
     if st.button("♻️ Reset Session", use_container_width=True):
         st.session_state.clear()
         st.rerun()
-    
+
     st.divider()
-    st.link_button("🌐 GitHub Repository", "https://github.com/", use_container_width=True)
-    st.link_button("🆔 ORCID Registry", "https://orcid.org/", use_container_width=True)
-    st.link_button("🎓 Google Scholar", "https://scholar.google.com/", use_container_width=True)
+    st.markdown('<a href="https://github.com/" target="_blank" class="sidebar-link-btn">🌐 GitHub Repository</a>', unsafe_allow_html=True)
+    st.markdown('<a href="https://orcid.org/" target="_blank" class="sidebar-link-btn">🆔 ORCID Registry</a>', unsafe_allow_html=True)
+    st.markdown('<a href="https://scholar.google.com/" target="_blank" class="sidebar-link-btn">🎓 Google Scholar</a>', unsafe_allow_html=True)
 
 st.title("🧱 SIS Universal Knowledge Synthesizer")
 st.markdown("Advanced Multi-dimensional synthesis with **Interdisciplinary Lego Architecture**.")
-
 st.markdown('<div class="lego-panel-header">🏗️ Build Your 9D Cognitive Lego Structure</div>', unsafe_allow_html=True)
 
-# ROW 1: AUTHORS & EXPERTISE
+# ROW 1: AUTHORS & DEPTH
 r1_c1, r1_c2 = st.columns([2, 1])
 with r1_c1: target_authors = st.text_input("👤 Research Authors (ORCID Sync):", placeholder="Karl Petrič, Samo Kralj, Teodor Petrič")
 with r1_c2: expertise = st.select_slider("3. Expertise Level:", options=["Novice", "Intermediate", "Expert"], value="Expert")
 
-# DIMENSION ROWS (9 Dimensions total)
+# DIMENZIJE
 c1, c2, c3 = st.columns(3)
 with c1: sel_profiles = st.multiselect("1. User Profiles:", list(KNOWLEDGE_BASE["profiles"].keys()), default=["Adventurers"])
 with c2: sel_sciences = st.multiselect("2. Science Fields:", sorted(list(KNOWLEDGE_BASE["subject_details"].keys())), default=["Physics", "Music Science", "Economics"])
-with c3: expertise_depth = st.selectbox("3. Contextual Depth:", ["Fundamental", "Applied", "Theoretical", "Speculative"])
+with c3: sel_models = st.multiselect("4. Structural Models:", list(KNOWLEDGE_BASE["knowledge_models"].keys()), default=["Concepts", "Causal Connections"])
 
 c4, c5, c6 = st.columns(3)
-with c4: sel_models = st.multiselect("4. Structural Models:", list(KNOWLEDGE_BASE["knowledge_models"].keys()), default=["Concepts", "Causal Connections"])
-with c5: sel_paradigms = st.multiselect("5. Paradigms:", list(KNOWLEDGE_BASE["paradigms"].keys()), default=["Rationalism"])
-with c6: goal_context = st.selectbox("6. Context / Goal:", ["Scientific Research", "Problem Solving", "Policy Making", "Educational"])
+with c4: sel_paradigms = st.multiselect("5. Paradigms:", list(KNOWLEDGE_BASE["paradigms"].keys()), default=["Rationalism"])
+with c5: goal_context = st.selectbox("6. Context / Goal:", ["Scientific Research", "Problem Solving", "Policy Making", "Educational"])
+with c6: sel_approaches = st.multiselect("7. Mental Approaches:", list(KNOWLEDGE_BASE["mental_approaches"].keys()), default=["Induction and Deduction", "Perspective Shifting"])
 
 c7, c8, c9 = st.columns(3)
+# Dinamično zbiranje metodologij na podlagi izbranih ved
 agg_meth = []
 for s in sel_sciences: 
     if s in KNOWLEDGE_BASE["subject_details"]: agg_meth.extend(KNOWLEDGE_BASE["subject_details"][s]["meth"])
-with c7: sel_approaches = st.multiselect("7. Mental Approaches:", list(KNOWLEDGE_BASE["mental_approaches"].keys()), default=["Induction and Deduction", "Perspective Shifting", "Bipolarity and Dialectics"])
-with c8: sel_tools = st.multiselect("8. Specific Tools:", ["LLMGraphTransformer", "Python", "fMRI", "DAW", "Bloomberg"], default=["LLMGraphTransformer"])
-with c9: viz_mode = st.radio("9. Visualization Style:", ["Standard Shapes", "Mixed Mode"])
+agg_meth = sorted(list(set(agg_meth)))
+
+with c7: sel_methods = st.multiselect("8. Methodologies:", agg_meth, default=agg_meth[:2] if agg_meth else [])
+with c8: sel_tools = st.multiselect("9. Specific Tools:", ["LLMGraphTransformer", "Python", "fMRI", "DAW", "Bloomberg"], default=["LLMGraphTransformer"])
+with c9: viz_mode = st.radio("Visualization Style:", ["Standard Shapes", "Mixed Mode"])
 
 st.divider()
-user_query = st.text_area("❓ Your Synthesis Inquiry:", placeholder="Analyze the synergy between music science, global economics and physics using Dialectics and Whole-Part analysis.", height=150)
+user_query = st.text_area("❓ Your Synthesis Inquiry:", placeholder="Analyze the synergy between music acoustics and geopolitical stability using Bipolarity and Whole-Part analysis.", height=150)
 
 # ==============================================================================
 # 4. CORE SYNTHESIS ENGINE: GROQ AI + LEGO GRAPH LOGIC
@@ -409,19 +392,18 @@ if st.button("🚀 Execute Multi-Dimensional Lego Synthesis", use_container_widt
             You are the SIS Synthesizer. Perform an exhaustive academic dissertation (1500+ words).
             LEGO ARCHITECTURE ACTIVE:
             - MENTAL STRUCTURE: {KNOWLEDGE_BASE['mental_structure']}
-            - MENTAL TECHNIQUES (APPROACHES): {KNOWLEDGE_BASE['mental_approaches']}
-            - SELECTED FIELDS: {sel_sciences}
-            - SELECTED PROFILES: {sel_profiles}
-            - SELECTED MODELS: {sel_models}
-            - CONTEXT BIBLIOGRAPHY: {bib_data}
+            - MENTAL APPROACHES: {KNOWLEDGE_BASE['mental_approaches']}
+            - PROFILES: {sel_profiles}
+            - FIELDS: {sel_sciences}
+            - METHODOLOGIES: {sel_methods}
+            - BIBLIOGRAPHY: {bib_data}
             
             STRICT RULES:
-            1. Reasoning MUST be rooted in the specific Mental Approaches selected.
-            2. Dissertation must be formal, scholarly, and structured (Introduction, Multi-disciplinary Synthesis, Conclusion).
-            3. NEVER include node lists in dissertation text.
-            4. Use 'Thesaurus logic' (TT, BT, NT, AS, RT, EQ) to define relationships.
-            5. End with '### SEMANTIC_GRAPH_JSON' followed by valid JSON.
-            JSON FORMAT: {{"nodes": [{{"id": "n1", "label": "Text", "type": "Root|Branch", "color": "#hex", "shape": "triangle|rectangle|ellipse|diamond|star"}}], "edges": [{{"source": "n1", "target": "n2", "rel_type": "AS"}}]}}
+            1. Reasoning MUST be rooted in selected Mental Approaches and Methodologies.
+            2. Dissertation must be formal, scholarly, multi-layered.
+            3. Use icons for readability.
+            4. End with '### SEMANTIC_GRAPH_JSON' followed by valid JSON.
+            JSON: {{"nodes": [{{"id": "n1", "label": "Text", "type": "Root|Branch"}}], "edges": [{{"source": "n1", "target": "n2", "rel_type": "AS"}}]}}
             """
             
             with st.spinner('Building Interdisciplinary Lego Structure...'):
@@ -430,7 +412,6 @@ if st.button("🚀 Execute Multi-Dimensional Lego Synthesis", use_container_widt
                 parts = full_text.split("### SEMANTIC_GRAPH_JSON")
                 main_markdown = parts[0]
 
-                # --- POST-PROCESSING: LINKS & ANCHORS ---
                 if len(parts) > 1:
                     try:
                         json_str = re.search(r'\{.*\}', parts[1], re.DOTALL).group()
@@ -446,13 +427,11 @@ if st.button("🚀 Execute Multi-Dimensional Lego Synthesis", use_container_widt
                 st.subheader("📊 Synthesis Output")
                 st.markdown(main_markdown, unsafe_allow_html=True)
 
-                # --- VIZ LOGIC ---
                 if len(parts) > 1:
                     try:
                         json_str = re.search(r'\{.*\}', parts[1], re.DOTALL).group()
                         g_json = json.loads(json_str)
                         st.subheader("🕸️ Unified Interdisciplinary Lego Network")
-                        
                         elements = []
                         for n in g_json.get("nodes", []):
                             lbl, level = n["label"], n.get("type", "Branch")
@@ -461,26 +440,22 @@ if st.button("🚀 Execute Multi-Dimensional Lego Synthesis", use_container_widt
                             
                             found_s = next((s for s in KNOWLEDGE_BASE["subject_details"].keys() if s.lower() in lbl.lower()), None)
                             if found_s:
-                                det = KNOWLEDGE_BASE["subject_details"][found_s]
-                                icon, col = "🔬 ", det["col"]
-                                if det["cat"] == "Natural": shape = "triangle"
-                                elif det["cat"] == "Social": shape = "rectangle"
-                                elif det["cat"] == "Formal": shape = "diamond"
-                                elif det["cat"] == "Arts": shape = "star"
-                                elif det["cat"] == "Humanities": shape = "vee"
+                                icon, col = "🔬 ", KNOWLEDGE_BASE["subject_details"][found_s]["col"]
+                                cat = KNOWLEDGE_BASE["subject_details"][found_s]["cat"]
+                                if "Natural" in cat: shape = "triangle"
+                                elif "Social" in cat: shape = "rectangle"
+                                elif "Arts" in cat: shape = "star"
+                                elif "Formal" in cat: shape = "diamond"
+                                elif "Applied" in cat: shape = "pentagon"
+                                elif "Humanities" in cat: shape = "vee"
                             else:
                                 if any(a.lower() in lbl.lower() for a in KNOWLEDGE_BASE["mental_approaches"].keys()): icon, col = "🧠 ", "#e76f51"
-                                elif any(p.lower() in lbl.lower() for p in KNOWLEDGE_BASE["paradigms"]): icon, col = "🌍 ", "#264653"
-                                shape = ["hexagon", "rhomboid", "octagon", "star"][hash(lbl)%4]
+                                shape = ["hexagon", "rhomboid", "octagon"][hash(lbl)%3]
 
                             display_lbl = f"{icon}{lbl}" if viz_mode == "Mixed Mode" else lbl
-                            elements.append({"data": {
-                                "id": n["id"], "label": display_lbl, 
-                                "color": col, "size": size, "shape": shape, "z_index": 10 if level == "Root" else 1
-                            }})
+                            elements.append({"data": {"id": n["id"], "label": display_lbl, "color": col, "size": size, "shape": shape, "z_index": 10 if level == "Root" else 1}})
                         for e in g_json.get("edges", []):
                             elements.append({"data": {"source": e["source"], "target": e["target"], "rel_type": e.get("rel_type", "AS")}})
-                        
                         render_cytoscape_network(elements)
                     except: st.warning("Graph data could not be parsed.")
                 
@@ -489,6 +464,7 @@ if st.button("🚀 Execute Multi-Dimensional Lego Synthesis", use_container_widt
 
 st.divider()
 st.caption("SIS Universal Knowledge Synthesizer | v18.5 | Interdisciplinary Lego Architecture | 2026")
+
 
 
 
