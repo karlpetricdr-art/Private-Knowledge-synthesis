@@ -48,13 +48,6 @@ st.markdown("""
         transform: translateY(-2px);
         cursor: pointer;
     }
-    .google-icon {
-        font-size: 0.85em;
-        vertical-align: super;
-        margin-left: 3px;
-        color: #457b9d;
-        opacity: 0.7;
-    }
 
     /* Bibliography & Metadata Card Styling */
     .metadata-card {
@@ -250,7 +243,7 @@ KNOWLEDGE_BASE = {
     },
     "paradigms": {
         "Empiricism": "Evidence-driven knowledge.",
-        "Rationalism": "Logic-based internal consistency.",
+        "Rationalism": "Logic-based consistency.",
         "Constructivism": "Socially built structures.",
         "Positivism": "Strict verifiable data.",
         "Pragmatism": "Evaluation by utility."
@@ -292,6 +285,14 @@ with st.sidebar:
     api_key = st.text_input("Groq API Key:", type="password")
     
     st.divider()
+    with st.expander("📖 User Guide", expanded=False):
+        st.info("""
+        1. **Sync Authors**: Enter names for ORCID metadata.
+        2. **Configure 9D**: Select Profiles, Fields, and Paradigms.
+        3. **Analyze**: Use the text links to search Google.
+        4. **Viz**: Click graph nodes to jump to text anchors.
+        """)
+
     st.markdown("### 🧭 Knowledge Explorer")
     with st.expander("👤 User Profiles"):
         for p, d in KNOWLEDGE_BASE["profiles"].items():
@@ -305,14 +306,11 @@ with st.sidebar:
     with st.expander("🏗️ Structural Models"):
         for m, d in KNOWLEDGE_BASE["knowledge_models"].items():
             st.markdown(f'<div class="explorer-card"><div class="explorer-title">{m}</div><div class="explorer-desc">{d}</div></div>', unsafe_allow_html=True)
-    with st.expander("🔬 Science Fields"):
-        for s, d in KNOWLEDGE_BASE["subject_details"].items():
-            st.markdown(f'<div class="explorer-card"><div class="explorer-title">{s} ({d["cat"]})</div></div>', unsafe_allow_html=True)
 
     st.divider()
-    st.markdown("### 🔗 External Resources")
-    st.link_button("🌐 SIS GitHub Repository", "https://github.com/", use_container_width=True)
-    st.link_button("🆔 ORCID Registry Search", "https://orcid.org/", use_container_width=True)
+    st.markdown("### 🔗 Links")
+    st.link_button("🌐 GitHub", "https://github.com/", use_container_width=True)
+    st.link_button("🆔 ORCID", "https://orcid.org/", use_container_width=True)
     st.link_button("🎓 Google Scholar", "https://scholar.google.com/", use_container_width=True)
     
     if st.button("♻️ Reset Workspace", use_container_width=True):
@@ -325,7 +323,7 @@ st.markdown('<div class="lego-panel-header">🏗️ Configuration: 9-Dimensional
 # ROW 1: AUTHORS & EXPERTISE
 r1_c1, r1_c2 = st.columns([2, 1])
 with r1_c1: target_authors = st.text_input("👤 Research Authors (ORCID Sync):", placeholder="Karl Petrič, Samo Kralj, Teodor Petrič")
-with r1_c2: expertise = st.select_slider("Expertise Level:", options=["Novice", "Intermediate", "Expert"], value="Expert")
+with r1_c2: expertise = st.select_slider("Expertise Level:", options=["Novice", "Expert"], value="Expert")
 
 # DIMENSION ROWS 2-4 (9 Dimensions Grid)
 c1, c2, c3 = st.columns(3)
@@ -335,7 +333,7 @@ with c3: sel_models = st.multiselect("3. Models:", list(KNOWLEDGE_BASE["knowledg
 
 c4, c5, c6 = st.columns(3)
 with c4: sel_paradigms = st.multiselect("4. Paradigms:", list(KNOWLEDGE_BASE["paradigms"].keys()), default=["Rationalism"])
-with c5: goal_context = st.selectbox("5. Goal / Context:", ["Scientific Research", "Problem Solving", "Policy Making"])
+with c5: goal_context = st.selectbox("5. Goal / Context:", ["Scientific Research", "Strategic Planning"])
 with c6: sel_approaches = st.multiselect("6. Approaches:", list(KNOWLEDGE_BASE["mental_approaches"].keys()), default=["Perspective shifting"])
 
 c7, c8, c9 = st.columns(3)
@@ -363,19 +361,20 @@ if st.button("🚀 Execute Multi-Dimensional Lego Synthesis", use_container_widt
             client = OpenAI(api_key=api_key, base_url="https://api.groq.com/openai/v1")
             sys_prompt = f"""
             You are the SIS Synthesizer. Perform an exhaustive dissertation (1500+ words).
-            LEGO ARCHITECTURE: 9-Dimensions active. FIELDS: {sel_sciences}. 
-            RESEARCH CONTEXT: {bib_raw_data}.
+            LEGO ARCHITECTURE: 9-Dimensions active. 
+            AUTHORS CONTEXT: {target_authors}.
             STRICT RULES:
-            1. No node lists in text. End with '### SEMANTIC_GRAPH_JSON' followed by valid JSON.
+            1. No node lists in text. Use semantic links.
+            2. End with '### SEMANTIC_GRAPH_JSON' followed by valid JSON.
             """
             
-            with st.spinner('Building Knowledge Architecture...'):
+            with st.spinner('Synthesizing Architecture...'):
                 response = client.chat.completions.create(model="llama-3.3-70b-versatile", messages=[{"role": "system", "content": sys_prompt}, {"role": "user", "content": user_query}], temperature=0.6, max_tokens=4000)
                 full_text = response.choices[0].message.content
                 parts = full_text.split("### SEMANTIC_GRAPH_JSON")
                 main_markdown = parts[0]
 
-                # --- POST-PROCESSING: LINKS & ANCHORS ---
+                # POST-PROCESSING: SEARCH LINKS & ANCHORS
                 if len(parts) > 1:
                     try:
                         json_str = re.search(r'\{.*\}', parts[1], re.DOTALL).group()
@@ -391,7 +390,7 @@ if st.button("🚀 Execute Multi-Dimensional Lego Synthesis", use_container_widt
                 st.subheader("📊 Synthesis Output")
                 st.markdown(main_markdown, unsafe_allow_html=True)
 
-                # --- VIZ LOGIC (COLORFUL LEGO SHAPES) ---
+                # VIZ LOGIC (COLORFUL LEGO SHAPES)
                 if len(parts) > 1:
                     try:
                         json_str = re.search(r'\{.*\}', parts[1], re.DOTALL).group()
@@ -416,7 +415,7 @@ if st.button("🚀 Execute Multi-Dimensional Lego Synthesis", use_container_widt
                         
                         render_cytoscape_network(elements)
 
-                        # --- METADATA & BIBLIOGRAPHY DISPLAY ---
+                        # METADATA DISPLAY UNDER GRAPH
                         if bib_raw_data:
                             st.markdown("### 📑 Research Metadata (ORCID Sync)")
                             st.markdown('<div class="metadata-card">', unsafe_allow_html=True)
@@ -434,6 +433,7 @@ if st.button("🚀 Execute Multi-Dimensional Lego Synthesis", use_container_widt
 
 st.divider()
 st.caption("SIS Universal Knowledge Synthesizer | v18.9 | Interdisciplinary Lego Architecture | 2026")
+
 
 
 
