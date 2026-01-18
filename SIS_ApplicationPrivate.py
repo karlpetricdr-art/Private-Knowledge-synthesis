@@ -95,10 +95,10 @@ SVG_3D_RELIEF = """
 </svg>
 """
 
-# --- CYTOSCAPE RENDERER Z DINAMIČNIMI OBLIKAMI IN IZVOZOM ---
+# --- CYTOSCAPE RENDERER Z DINAMIČNIMI OBLIKAMI IN IZVOZOM + LUPA ---
 def render_cytoscape_network(elements, container_id="cy"):
     """
-    Izriše interaktivno omrežje Cytoscape.js s podporo za oblike in shranjevanje slike.
+    Izriše interaktivno omrežje Cytoscape.js s podporo za oblike, shranjevanje slike in funkcijo lupe.
     """
     cyto_html = f"""
     <div style="position: relative;">
@@ -133,9 +133,32 @@ def render_cytoscape_network(elements, container_id="cy"):
                             'text-background-opacity': 1, 'text-background-color': '#ffffff',
                             'text-background-padding': '2px', 'text-background-shape': 'roundrectangle'
                         }}
+                    }},
+                    /* DODATNI STILI ZA LOGIKO LUPE */
+                    {{
+                        selector: 'node.highlighted',
+                        style: {{
+                            'border-width': 4, 'border-color': '#e76f51', 'transform': 'scale(1.5)',
+                            'z-index': 9999, 'font-size': '18px'
+                        }}
+                    }},
+                    {{
+                        selector: '.dimmed',
+                        style: {{ 'opacity': 0.15, 'text-opacity': 0 }}
                     }}
                 ],
                 layout: {{ name: 'cose', padding: 50, animate: true, nodeRepulsion: 25000, idealEdgeLength: 120 }}
+            }});
+
+            /* LOGIKA LUPE (Fokusiranje na sosesko ob prehodu z miško) */
+            cy.on('mouseover', 'node', function(e){{
+                var sel = e.target;
+                cy.elements().addClass('dimmed');
+                sel.neighborhood().add(sel).removeClass('dimmed').addClass('highlighted');
+            }});
+            
+            cy.on('mouseout', 'node', function(e){{
+                cy.elements().removeClass('dimmed highlighted');
             }});
             
             cy.on('tap', 'node', function(evt){{
@@ -230,7 +253,7 @@ KNOWLEDGE_BASE = {
         "Geography": {"cat": "Natural/Social", "methods": ["Spatial Analysis", "GIS"], "tools": ["ArcGIS"], "facets": ["Human Geo", "Physical Geo"]},
         "Geology": {"cat": "Natural", "methods": ["Stratigraphy", "Mineralogy"], "tools": ["Seismograph"], "facets": ["Tectonics", "Petrology"]},
         "Climatology": {"cat": "Natural", "methods": ["Climate Modeling"], "tools": ["Weather Stations"], "facets": ["Change Analysis"]},
-        "History": {"cat": "Humanities", "methods": ["Archival Research", "Historiography"], "tools": ["Archives"], "facets": ["Social History"]},
+        "History": {"cat": "Humanities", "methods": ["Archives"], "tools": ["Archives"], "facets": ["Social History"]},
         "Economics": {"cat": "Social", "methods": ["Econometrics", "Game Theory", "Market Modeling"], "tools": ["Stata", "R", "Bloomberg"], "facets": ["Macroeconomics", "Behavioral Economics"]},
         "Politics": {"cat": "Social", "methods": ["Policy Analysis", "Comparative Politics"], "tools": ["Polls", "Legislative Databases"], "facets": ["International Relations", "Governance"]}
     }
@@ -447,6 +470,7 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
 
 st.divider()
 st.caption("SIS Universal Knowledge Synthesizer | v18.0 Comprehensive 18D Geometrical Export Edition | 2026")
+
 
 
 
