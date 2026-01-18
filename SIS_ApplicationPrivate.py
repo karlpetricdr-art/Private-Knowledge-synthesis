@@ -95,7 +95,7 @@ SVG_3D_RELIEF = """
 </svg>
 """
 
-# --- CYTOSCAPE RENDERER Z DINAMIČNIMI OBLIKAMI IN IZVOZOM + LUPA ---
+# --- CYTOSCAPE RENDERER Z DINAMIČNIMI OBLIKAMI, IZVOZOM IN LUPO ---
 def render_cytoscape_network(elements, container_id="cy"):
     """
     Izriše interaktivno omrežje Cytoscape.js s podporo za oblike, shranjevanje slike in funkcijo lupe.
@@ -134,12 +134,12 @@ def render_cytoscape_network(elements, container_id="cy"):
                             'text-background-padding': '2px', 'text-background-shape': 'roundrectangle'
                         }}
                     }},
-                    /* DODATNI STILI ZA LOGIKO LUPE */
+                    /* Stil za efekt lupe (povečava in fokus) */
                     {{
                         selector: 'node.highlighted',
                         style: {{
-                            'border-width': 4, 'border-color': '#e76f51', 'transform': 'scale(1.5)',
-                            'z-index': 9999, 'font-size': '18px'
+                            'border-width': 4, 'border-color': '#e76f51', 'transform': 'scale(1.6)',
+                            'z-index': 9999, 'text-outline-width': 4, 'font-size': '16px'
                         }}
                     }},
                     {{
@@ -149,8 +149,8 @@ def render_cytoscape_network(elements, container_id="cy"):
                 ],
                 layout: {{ name: 'cose', padding: 50, animate: true, nodeRepulsion: 25000, idealEdgeLength: 120 }}
             }});
-
-            /* LOGIKA LUPE (Fokusiranje na sosesko ob prehodu z miško) */
+            
+            /* Logika lupe (mouseover fokus na sosesko) */
             cy.on('mouseover', 'node', function(e){{
                 var sel = e.target;
                 cy.elements().addClass('dimmed');
@@ -160,7 +160,7 @@ def render_cytoscape_network(elements, container_id="cy"):
             cy.on('mouseout', 'node', function(e){{
                 cy.elements().removeClass('dimmed highlighted');
             }});
-            
+
             cy.on('tap', 'node', function(evt){{
                 var elementId = evt.target.id();
                 var target = window.parent.document.getElementById(elementId);
@@ -207,15 +207,15 @@ def fetch_author_bibliographies(author_input):
                 record_url = f"https://pub.orcid.org/v3.0/{orcid_id}/record"
                 r_res = requests.get(record_url, headers=headers, timeout=5).json()
                 works = r_res.get('activities-summary', {}).get('works', {}).get('group', [])
-                comprehensive_biblio += f"\n--- ORCID BIBLIOGRAPHY: {auth.upper()} ({orcid_id}) ---\n"
+                comprehensive_biblio += f"\\n--- ORCID BIBLIOGRAPHY: {auth.upper()} ({orcid_id}) ---\\n"
                 if works:
                     for work in works[:5]:
                         summary = work.get('work-summary', [{}])[0]
                         title = summary.get('title', {}).get('title', {}).get('value', 'N/A')
                         pub_date = summary.get('publication-date')
                         year = pub_date.get('year').get('value', 'n.d.') if pub_date and pub_date.get('year') else "n.d."
-                        comprehensive_biblio += f"- [{year}] {title}\n"
-                else: comprehensive_biblio += "No public works found.\n"
+                        comprehensive_biblio += f"- [{year}] {title}\\n"
+                else: comprehensive_biblio += "No public works found.\\n"
             except: pass
         else:
             try:
@@ -223,9 +223,9 @@ def fetch_author_bibliographies(author_input):
                 ss_res = requests.get(ss_url, timeout=5).json()
                 papers = ss_res.get("data", [])
                 if papers:
-                    comprehensive_biblio += f"\n--- SCHOLAR BIBLIOGRAPHY: {auth.upper()} ---\n"
+                    comprehensive_biblio += f"\\n--- SCHOLAR BIBLIOGRAPHY: {auth.upper()} ---\\n"
                     for p in papers:
-                        comprehensive_biblio += f"- [{p.get('year','n.d.')}] {p['title']}\n"
+                        comprehensive_biblio += f"- [{p.get('year','n.d.')}] {p['title']}\\n"
             except: pass
     return comprehensive_biblio
 
@@ -287,7 +287,7 @@ with st.sidebar:
         3. **Authors**: Provide author names to fetch ORCID metadata.
         4. **Inquiry**: Submit a complex query for an exhaustive dissertation.
         5. **Semantic Graph**: Explore colorful nodes interconnected via TT, BT, NT logic.
-        6. **Shapes & 3D**: Request triangles, rectangles or 3D bodies in your inquiry.
+        6. **Lupa**: Premaknite miško čez vozlišča za povečan, fokusiran pogled na sosesko.
         7. **Export PNG**: Use the 💾 button to save the graph to your local disk.
         """)
         if st.button("Close Guide ✖️"): st.session_state.show_user_guide = False; st.rerun()
@@ -442,7 +442,7 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
                     try:
                         g_json = json.loads(re.search(r'\{.*\}', parts[1], re.DOTALL).group())
                         st.subheader("🕸️ LLMGraphTransformer: Unified Interdisciplinary Network")
-                        st.caption("Colorful nodes represent hierarchical concepts. Dimensions are associatively connected. Click nodes to scroll.")
+                        st.caption("Colorful nodes represent hierarchical concepts. Neighborhood Focus Enabled: Hover over nodes to zoom.")
                         
                         elements = []
                         for n in g_json.get("nodes", []):
@@ -469,7 +469,8 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
             st.error(f"Synthesis failed: {e}")
 
 st.divider()
-st.caption("SIS Universal Knowledge Synthesizer | v18.0 Comprehensive 18D Geometrical Export Edition | 2026")
+st.caption("SIS Universal Knowledge Synthesizer | v18.1 Comprehensive Focus-Neighborhood Edition | 2026")
+
 
 
 
