@@ -10,7 +10,7 @@ from openai import OpenAI
 import streamlit.components.v1 as components
 
 # =========================================================
-# 0. KONFIGURACIJA IN NAPREDNI STILI (CSS)
+# 0. KONFIGURACIJA IN NAPREDNI STILI (CSS) - ORIGINAL
 # =========================================================
 st.set_page_config(
     page_title="SIS Universal Knowledge Synthesizer",
@@ -59,12 +59,6 @@ st.markdown("""
         line-height: 1.8;
         font-size: 1.05em;
     }
-    .sidebar-header {
-        font-size: 1.2rem;
-        font-weight: 800;
-        color: #264653;
-        margin-top: 15px;
-    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -72,7 +66,7 @@ def get_svg_base64(svg_str):
     """Pretvori SVG v base64 format za prikaz slike."""
     return base64.b64encode(svg_str.encode('utf-8')).decode('utf-8')
 
-# --- LOGOTIP: 3D RELIEF (Embedded SVG) ---
+# --- LOGOTIP: 3D RELIEF (Embedded SVG) - ORIGINAL ---
 SVG_3D_RELIEF = """
 <svg width="240" height="240" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
     <defs>
@@ -98,12 +92,11 @@ SVG_3D_RELIEF = """
     <rect x="70" y="170" width="20" height="12" rx="2" fill="#1565c0" filter="url(#reliefShadow)" />
     <rect x="150" y="170" width="20" height="12" rx="2" fill="#c62828" filter="url(#reliefShadow)" />
     <rect x="110" y="185" width="20" height="12" rx="2" fill="#f9a825" filter="url(#reliefShadow)" />
-    <text x="120" y="225" font-family="Arial" font-size="12" font-weight="bold" text-anchor="middle" fill="#264653">SIS UNIVERSAL SYNTHESIZER</text>
 </svg>
 """
 
 # ==============================================================================
-# 1. DODATEK: MASTER SISTEMSKO NAVODILO (STROGA INTEGRACIJA SLIKE 5 IN PROMPTA 3)
+# 1. DODATEK: MASTER SISTEMSKO NAVODILO (INTEGRACIJA SLIKE 5 IN PROMPTA 3)
 # ==============================================================================
 
 def get_master_instruction(has_authors):
@@ -111,10 +104,11 @@ def get_master_instruction(has_authors):
     To je jedro kognitivne arhitekture. Združuje stroga pravila Prompta št. 3 
     in natančne relacijske poti iz slike input_file_5.jpeg.
     """
+    # Pogojna logika superordinacije (Vaše navodilo št. 2)
     if has_authors:
-        hierarchy_mode = "A) AUTHORS SPECIFIED: Root (Level 0) is [Authors]. Link: Authors --AS--> Science fields."
+        hierarchy_mode = "A) AUTHORS SPECIFIED: Root Node (Level 0) is [Authors] + [Science fields]. Link: Authors --AS--> Science fields."
     else:
-        hierarchy_mode = "B) AUTHORS NOT SPECIFIED: Root (Level 0) is [User profiles] + [Science fields]."
+        hierarchy_mode = "B) AUTHORS NOT SPECIFIED: Root Node (Level 0) is [User profiles] + [Science fields]."
 
     return f"""
 # ROLE DEFINITION
@@ -122,23 +116,23 @@ You are a specialized Ontological Engineer and Visual Knowledge Architect.
 Your core mission is to transform an 'Inquiry' into a massive, 3D-structured hierarchical-associative knowledge network.
 
 # DIMENSIONAL MANDATE (Vseh 9 dimenzij je obveznih - STROGO!)
-You must represent every single one of these dimensions in the dissertation and the graph:
+You must represent every single one of these dimensions in the interdisciplinary dissertation and the graph:
 1. Authors, 2. User profiles, 3. Science fields, 4. Expertise level, 5. Structural models, 6. Scientific paradigms, 7. Context/Goal, 8. mental approaches, 9. methodologies in specific tools.
 
 # RELATIONAL LOGIC (The 7 Sacred Relations - Use ONLY these exact codes)
 - TT (Tree Traversal): Vertical hierarchical progression.
-- BT (Breadth Traversal): Horizontal peer movement.
+- BT (Breadth Traversal): Horizontal movement within level.
 - NT (Node Traversal): Specific jump between distinct classes.
-- IN (Inheritance): Property passing (NEVER write the full word "Inheritance").
+- IN (Inheritance): Property passing (NEVER write the full word "Inheritance"). Always use IN.
 - AS (Association): Non-hierarchical meaningful linkage.
 - EQ (Equivalence): Functional or semantic identity.
-- RT (Realization/Type): Implementation instance.
+- RT (Realization/Type): Implementation or instance.
 
 # CONDITIONAL HIERARCHY LOGIC
 {hierarchy_mode}
 
 # ARCHITECTURAL PATHWAYS (Strictly from input_file_5.jpeg logic)
-You MUST construct the graph logic using these exact paths:
+Construct the graph logic using these exact paths seen in the reference image:
 1. [Authors] --TT--> [User profiles]
 2. [Authors] --TT--> [Science fields]
 3. [Authors] --TT--> [Expertise level]
@@ -148,23 +142,24 @@ You MUST construct the graph logic using these exact paths:
 7. [Expertise level] --NT--> [Structural models]
 8. [Structural models] --AS--> [Scientific paradigms]
 9. [Scientific paradigms] --RT--> [Context/Goal]
-10. Cross-Equivalence: [mental approaches] --EQ--> [User profiles] | [methodologies in specific tools] --EQ--> [Expertise level].
-11. Realization synergy: [mental approaches] --RT--> [Scientific paradigms] | [methodologies in specific tools] --RT--> [Scientific paradigms].
+10. Cross-Equivalence: [mental approaches] --EQ--> [User profiles] AND [methodologies in specific tools] --EQ--> [Expertise level].
+11. Realization synergy: [mental approaches] --RT--> [Scientific paradigms] AND [methodologies in specific tools] --RT--> [Scientific paradigms].
 
 # VISUAL ARCHITECTURE (3D RELIEF & PERSPECTIVE)
-Your output must manifest a 3D aesthetic:
+Your output MUST manifest a 3D aesthetic:
 - Shapes: Sphere (Authors), Cube (Science fields), Diamond (Models), Pyramid (Paradigms), Hexagon (Tools).
-- Aesthetics: 3D depth, shadow, relief, and gradients.
+- Aesthetics: 3D depth, shadow, relief, and gradients. Use Z-index mapping.
 - Node Sizes: Root = 100, Branch = 75, Leaf = 50.
 
-# MENTAL APPROACHES (Integration of all 18 strategies)
-Incorporate: Perspective shifting, Induction, Deduction, Hierarchy, Mini-max, Whole and part, Addition and composition, Balance, Abstraction and elimination, Openness and closedness, Bipolarity and dialectics, Framework and foundation, Pleasure and displeasure, Similarity and difference, Core Attraction/Repulsion, Condensation, Constant, Associativity.
+# MENTAL APPROACHES (Exhaustive Integration of all 18 strategies)
+Utilize and manifest these 18 approaches in your reasoning:
+Perspective shifting, Induction, Deduction, Hierarchy (TT), Mini-max, Whole and part, Addition and composition, Balance, Abstraction and elimination, Openness and closedness, Bipolarity and dialectics, Framework and foundation, Pleasure and displeasure, Similarity and difference, Core Attraction/Repulsion, Condensation, Constant, Associativity.
 
 # OUTPUT FORMATTING
 1. Title: "Hierarchical-Associative Knowledge Synthesis Network – Inquiry Based"
-2. Dissertation: Provide an exhaustive analysis (1500+ words) with Markdown headers.
-3. Link Highlight: Wrap Authors and Science Fields mentions in Google search link wrappers.
-4. End: ### SEMANTIC_GRAPH_JSON followed by valid JSON elements.
+2. Dissertation: Provide an exhaustive, interdisciplinary analysis (1500+ words) with Markdown headers.
+3. Link Highlight: Wrap every Science Field and Author mention for Google search link generation.
+4. End with: ### SEMANTIC_GRAPH_JSON followed by valid JSON for nodes and edges.
 
 # FORBIDDEN ACTIONS
 - DO NOT skip any of the 9 dimensions.
@@ -173,15 +168,15 @@ Incorporate: Perspective shifting, Induction, Deduction, Hierarchy, Mini-max, Wh
 - NO introductory pleasantries. Only the synthesis.
 """
 
-# --- CYTOSCAPE RENDERER Z DINAMIČNIMI OBLIKAMI IN IZVOZOM ---
+# --- CYTOSCAPE RENDERER Z DINAMIČNIMI OBLIKAMI IN IZVOZOM - ORIGINAL ---
 def render_cytoscape_network(elements, container_id="cy"):
     """
     Izriše interaktivno omrežje Cytoscape.js s podporo za oblike in shranjevanje slike.
     """
     cyto_html = f"""
     <div style="position: relative;">
-        <button id="save_btn" style="position: absolute; top: 10px; right: 10px; z-index: 100; padding: 10px 15px; background: #2a9d8f; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.15);">💾 Export Synthesis PNG</button>
-        <div id="{container_id}" style="width: 100%; height: 750px; background: #ffffff; border-radius: 15px; border: 1px solid #ddd; box-shadow: inset 0 0 15px rgba(0,0,0,0.05);"></div>
+        <button id="save_btn" style="position: absolute; top: 10px; right: 10px; z-index: 100; padding: 8px 12px; background: #2a9d8f; color: white; border: none; border-radius: 5px; cursor: pointer; font-family: sans-serif; font-size: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">💾 Export Graph as PNG</button>
+        <div id="{container_id}" style="width: 100%; height: 750px; background: #ffffff; border-radius: 15px; border: 1px solid #eee; box-shadow: 2px 2px 12px rgba(0,0,0,0.05);"></div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.26.0/cytoscape.min.js"></script>
     <script>
@@ -204,18 +199,20 @@ def render_cytoscape_network(elements, container_id="cy"):
                     {{
                         selector: 'edge',
                         style: {{
-                            'width': 4, 'line-color': '#adb5bd', 'label': 'data(rel_type)',
-                            'font-size': '10px', 'target-arrow-color': '#adb5bd', 'target-arrow-shape': 'triangle',
+                            'width': 3, 'line-color': '#adb5bd', 'label': 'data(rel_type)',
+                            'font-size': '10px', 'font-weight': 'bold', 'color': '#2a9d8f',
+                            'target-arrow-color': '#adb5bd', 'target-arrow-shape': 'triangle',
                             'curve-style': 'bezier', 'text-rotation': 'autorotate',
                             'text-background-opacity': 1, 'text-background-color': '#ffffff',
-                            'text-background-padding': '3px', 'text-background-shape': 'roundrectangle'
+                            'text-background-padding': '2px', 'text-background-shape': 'roundrectangle'
                         }}
                     }}
                 ],
-                layout: {{ name: 'cose', padding: 50, animate: true, nodeRepulsion: 45000, idealEdgeLength: 140 }}
+                layout: {{ name: 'cose', padding: 50, animate: true, nodeRepulsion: 25000, idealEdgeLength: 120 }}
             }});
             
             cy.on('tap', 'node', function(evt){{
+                var elementId = evt.target.id();
                 var label = evt.target.data('label');
                 window.open("https://www.google.com/search?q=" + encodeURIComponent(label), '_blank');
             }});
@@ -234,7 +231,7 @@ def render_cytoscape_network(elements, container_id="cy"):
     """
     components.html(cyto_html, height=800)
 
-# --- PRIDOBIVANJE BIBLIOGRAFIJ Z LETNICAMI ---
+# --- PRIDOBIVANJE BIBLIOGRAFIJ Z LETNICAMI - ORIGINAL ---
 def fetch_author_bibliographies(author_input):
     """Zajame bibliografske podatke z letnicami preko ORCID in Scholar API baz."""
     if not author_input: return ""
@@ -278,39 +275,14 @@ def fetch_author_bibliographies(author_input):
             except: pass
     return comprehensive_biblio
 
-# ==============================================================================
-# 2. DODATEK: POPOLNA MULTIDIMENZIONALNA ONTOLOGIJA (VSEH 18 DISCIPLIN)
-# ==============================================================================
+# =========================================================
+# 2. POPOLNA MULTIDIMENZIONALNA ONTOLOGIJA (VSEH 18 DISCIPLIN)
+# =========================================================
 KNOWLEDGE_BASE = {
-    "mental_approaches": [
-        "Perspective shifting", "Induction", "Deduction", "Hierarchy", "Mini-max", 
-        "Whole and part", "Addition and composition", "Balance", "Abstraction and elimination", 
-        "Openness and closedness", "Bipolarity and dialectics", "Framework and foundation", 
-        "Pleasure and displeasure", "Similarity and difference", "Core Attraction/Repulsion", 
-        "Condensation", "Constant", "Associativity"
-    ],
-    "profiles": {
-        "Adventurers": {"description": "Explorers of hidden patterns and cross-disciplinary anomalies."},
-        "Applicators": {"description": "Efficiency focused practitioners looking for technological implementation."},
-        "Know-it-alls": {"description": "Systemic clarity experts who demand precise taxonomic structures."},
-        "Observers": {"description": "System monitors focusing on empirical verification and auditing."}
-    },
-    "paradigms": {
-        "Empiricism": "Focus on sensory experience and experimental data.",
-        "Rationalism": "Reliance on deductive logic and a priori reason.",
-        "Constructivism": "Reality as a socially and cognitively constructed synthesis.",
-        "Positivism": "Strict adherence to factual, observable verification.",
-        "Pragmatism": "Evaluation of truth based on practical utility and results."
-    },
-    "knowledge_models": {
-        "Causal Connections": "Mechanisms of action and reaction.",
-        "Principles & Relations": "Fundamental governing laws.",
-        "Episodes & Sequences": "Temporal flow and chronological ordering.",
-        "Facts & Characteristics": "Descriptive metadata and raw attributes.",
-        "Generalizations": "High-level abstractions and thematic frameworks.",
-        "Glossary": "Precise semantic definitions.",
-        "Concepts": "Atomic abstract constructs."
-    },
+    "mental_approaches": ["Perspective shifting", "Induction", "Deduction", "Hierarchy", "Mini-max", "Whole and part", "Addition and composition", "Balance", "Abstraction and elimination", "Openness and closedness", "Bipolarity and dialectics", "Framework and foundation", "Pleasure and displeasure", "Similarity and difference", "Core (Attraction & Repulsion)", "Condensation", "Constant", "Associativity"],
+    "profiles": {"Adventurers": {"description": "Explorers of hidden patterns."}, "Applicators": {"description": "Efficiency focused."}, "Know-it-alls": {"description": "Systemic clarity."}, "Observers": {"description": "System monitors."}},
+    "paradigms": {"Empiricism": "Sensory experience.", "Rationalism": "Deductive logic.", "Constructivism": "Social build.", "Positivism": "Strict facts.", "Pragmatism": "Practical utility."},
+    "knowledge_models": {"Causal Connections": "Causality.", "Principles & Relations": "Fundamental laws.", "Episodes & Sequences": "Time-flow.", "Facts & Characteristics": "Raw data.", "Generalizations": "Frameworks.", "Glossary": "Definitions.", "Concepts": "Abstract constructs."},
     "subject_details": {
         "Physics": {"cat": "Natural", "methods": ["Modeling", "Simulation", "Calculus"], "tools": ["Accelerator", "Spectrometer", "Interferometer"], "facets": ["Quantum", "Relativity", "Thermodynamics"]},
         "Chemistry": {"cat": "Natural", "methods": ["Synthesis", "Spectroscopy", "Titration"], "tools": ["NMR", "Chromatography", "Mass Spec"], "facets": ["Organic", "Molecular", "Inorganic"]},
@@ -334,7 +306,7 @@ KNOWLEDGE_BASE = {
 }
 
 # =========================================================
-# 3. STREAMLIT INTERFACE KONSTRUKCIJA
+# 2. STREAMLIT INTERFACE KONSTRUKCIJA - ORIGINAL
 # =========================================================
 
 if 'expertise_val' not in st.session_state: st.session_state.expertise_val = "Expert"
@@ -357,21 +329,24 @@ with st.sidebar:
     if st.session_state.show_user_guide:
         st.info("""
         1. **API Key**: Enter your key to connect the AI engine. It is NOT stored on the server.
-        2. **9 Dimensions**: All parameters will be used in the interdisciplinary dissertation.
-        3. **Authors**: Provide author names to fetch ORCID metadata. Logic shifts Root to Authors.
-        4. **Export PNG**: Use the 💾 button to save the 3D graph to your local disk.
+        2. **Minimal Config**: Physics, CS, and Linguistics are pre-selected.
+        3. **Authors**: Provide author names to fetch ORCID metadata.
+        4. **Inquiry**: Submit a complex query for an exhaustive dissertation.
+        5. **Semantic Graph**: Explore colorful nodes interconnected via TT, BT, NT logic.
+        6. **Shapes & 3D**: Request triangles, rectangles or 3D bodies in your inquiry.
+        7. **Export PNG**: Use the 💾 button to save the graph to your local disk.
         """)
         if st.button("Close Guide ✖️"): st.session_state.show_user_guide = False; st.rerun()
 
     st.divider()
-    st.markdown('<div class="sidebar-header">📚 Ontological Explorer</div>', unsafe_allow_html=True)
+    st.subheader("📚 Knowledge Explorer")
     with st.expander("👤 User Profiles"):
-        for p, d in KNOWLEDGE_BASE["profiles"].items(): st.write(f"**{p}**: {d}")
-    with st.expander("🧠 Mental Approaches (18)"):
+        for p, d in KNOWLEDGE_BASE["profiles"].items(): st.write(f"**{p}**: {d['description']}")
+    with st.expander("🧠 Mental Approaches"):
         for a in KNOWLEDGE_BASE["mental_approaches"]: st.write(f"• {a}")
     with st.expander("🌍 Scientific Paradigms"):
         for p, d in KNOWLEDGE_BASE["paradigms"].items(): st.write(f"**{p}**: {d}")
-    with st.expander("🔬 Science Fields (18)"):
+    with st.expander("🔬 Science Fields"):
         for s in sorted(KNOWLEDGE_BASE["subject_details"].keys()): st.write(f"• **{s}**")
     with st.expander("🏗️ Structural Models"):
         for m, d in KNOWLEDGE_BASE["knowledge_models"].items(): st.write(f"**{m}**: {d}")
@@ -389,52 +364,62 @@ with st.sidebar:
     st.link_button("🎓 Google Scholar", "https://scholar.google.com/", use_container_width=True)
 
 st.title("🧱 SIS Universal Knowledge Synthesizer")
-st.markdown("Advanced Multi-dimensional synthesis based on **Geometrical Interdisciplinary Architecture**.")
+st.markdown("Advanced Multi-dimensional synthesis with **Geometrical Exportable Interdisciplinary Architecture**.")
 
 st.markdown("### 🛠️ Configure Your Multi-Dimensional Cognitive Build")
 
 # ROW 1: AUTHORS
 r1_c1, r1_c2, r1_c3 = st.columns([1, 2, 1])
 with r1_c2:
-    target_authors = st.text_input("👤 1. Authors:", placeholder="Karl Petrič, Samo Kralj, Teodor Petrič", key="target_authors_key")
-    st.caption("Active bibliographic analysis via ORCID/Scholar. Authors become the Root Node if specified.")
+    target_authors = st.text_input("👤 Research Authors:", placeholder="Karl Petrič, Samo Kralj, Teodor Petrič", key="target_authors_key")
+    st.caption("Active bibliographic analysis via ORCID (includes publication years). Authors become the Root Node if specified.")
 
-# ROW 2: CORE CONFIG
+# ROW 2: CORE CONFIG (Minimal settings, specific fields)
 r2_c1, r2_c2, r2_c3 = st.columns(3)
 with r2_c1:
-    sel_profiles = st.multiselect("👥 2. User Profiles:", list(KNOWLEDGE_BASE["profiles"].keys()), default=["Adventurers"])
+    sel_profiles = st.multiselect("1. User Profiles:", list(KNOWLEDGE_BASE["profiles"].keys()), default=["Adventurers"])
 with r2_c2:
     all_sciences = sorted(list(KNOWLEDGE_BASE["subject_details"].keys()))
-    sel_sciences = st.multiselect("🔬 3. Science Fields:", all_sciences, default=["Physics", "Computer Science", "Linguistics"])
+    # PRIVZETO: Physics, Computer science in Linguistics
+    sel_sciences = st.multiselect("2. Science Fields:", all_sciences, default=["Physics", "Computer Science", "Linguistics"])
 with r2_c3:
-    expertise = st.select_slider("🎓 4. Expertise Level:", options=["Novice", "Intermediate", "Expert"], value=st.session_state.expertise_val)
+    expertise = st.select_slider("3. Expertise Level:", options=["Novice", "Intermediate", "Expert"], value=st.session_state.expertise_val)
 
-# ROW 3: MODELS & PARADIGMS
+# ROW 3: PARADIGMS & MODELS (Minimal settings)
 r3_c1, r3_c2, r3_c3 = st.columns(3)
 with r3_c1:
-    sel_models = st.multiselect("🏗️ 5. Structural Models:", list(KNOWLEDGE_BASE["knowledge_models"].keys()), default=["Concepts"])
+    sel_models = st.multiselect("4. Structural Models:", list(KNOWLEDGE_BASE["knowledge_models"].keys()), default=["Concepts"])
 with r3_c2:
-    sel_paradigms = st.multiselect("🌍 6. Scientific Paradigms:", list(KNOWLEDGE_BASE["paradigms"].keys()), default=["Rationalism"])
+    sel_paradigms = st.multiselect("5. Scientific Paradigms:", list(KNOWLEDGE_BASE["paradigms"].keys()), default=["Rationalism"])
 with r3_c3:
-    goal_context = st.selectbox("🎯 7. Context / Goal:", ["Scientific Research", "Problem Solving", "Strategic Vision", "Universal Synthesis"])
+    goal_context = st.selectbox("6. Context / Goal:", ["Scientific Research", "Problem Solving", "Strategic Vision", "Universal Synthesis"])
 
-# ROW 4: APPROACHES & TOOLS
-r4_c1, r4_c2 = st.columns(2)
+# ROW 4: APPROACHES, METHODS, TOOLS (RESTORED - Minimal settings)
+r4_c1, r4_c2, r4_c3 = st.columns(3)
 with r4_c1:
-    sel_approaches = st.multiselect("🧠 8. mental approaches:", KNOWLEDGE_BASE["mental_approaches"], default=["Perspective shifting", "Induction"])
+    sel_approaches = st.multiselect("7. Mental Approaches:", KNOWLEDGE_BASE["mental_approaches"], default=["Perspective shifting"])
+
+agg_meth, agg_tool = [], []
+for s in sel_sciences:
+    if s in KNOWLEDGE_BASE["subject_details"]:
+        agg_meth.extend(KNOWLEDGE_BASE["subject_details"][s]["methods"])
+        agg_tool.extend(KNOWLEDGE_BASE["subject_details"][s]["tools"])
+
 with r4_c2:
-    sel_tools = st.text_input("🛠️ 9. methodologies in specific tools:", "LLM Graph Transformation, 3D Geometrical Mapping, Meta-Synthesis Analysis")
+    sel_methods = st.multiselect("8. Methodologies:", sorted(list(set(agg_meth))), default=[])
+with r4_c3:
+    sel_tools = st.text_input("9. Specific Tools/Methods:", "LLM Graph Transformation, 3D Geometrical Mapping, Meta-Synthesis Analysis")
 
 st.divider()
-user_query = st.text_area("❓ Synthesis Inquiry:", 
+user_query = st.text_area("❓ Your Synthesis Inquiry:", 
                          placeholder="Create a synergy for global problems using the 3D relief architecture defined in the reference model.",
                          height=150, key="user_query_key")
 
 # =========================================================
-# 3. JEDRO SINTEZE: OPENAI / GROQ + PARSANJE
+# 3. JEDRO SINTEZE: OPENAI / GROQ + INTEGRIRAN MASTER PROMPT
 # =========================================================
-if st.button("🚀 Execute 18D Synthesis", use_container_width=True):
-    if not api_key: st.error("Missing API Key. Please provide it in the sidebar.")
+if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=True):
+    if not api_key: st.error("Missing Groq API Key. Please provide your own key in the sidebar.")
     elif not user_query: st.warning("Please provide an inquiry.")
     else:
         try:
@@ -442,12 +427,12 @@ if st.button("🚀 Execute 18D Synthesis", use_container_width=True):
             biblio = fetch_author_bibliographies(target_authors) if target_authors else ""
             client = OpenAI(api_key=api_key, base_url="https://api.groq.com/openai/v1")
             
-            with st.spinner('Performing massive interdisciplinary synthesis (20–40s)...'):
+            with st.spinner('Performing massive ontological synthesis (20–40s)...'):
                 response = client.chat.completions.create(
                     model="llama-3.3-70b-versatile",
                     messages=[
                         {"role": "system", "content": get_master_instruction(has_auth)}, 
-                        {"role": "user", "content": f"Inquiry: {user_query}\nContext Authors: {target_authors}\nBiblio: {biblio}\nExpertise: {expertise}\nFields: {sel_sciences}\nModels: {sel_models}\nParadigms: {sel_paradigms}\nApproaches: {sel_approaches}"}
+                        {"role": "user", "content": f"Inquiry: {user_query}\nContext Authors: {target_authors}\nBiblio: {biblio}\nSelected Fields: {sel_sciences}\nExpertise: {expertise}\nModels: {sel_models}\nParadigms: {sel_paradigms}\nApproaches: {sel_approaches}"}
                     ],
                     temperature=0.4, max_tokens=6000
                 )
@@ -456,7 +441,7 @@ if st.button("🚀 Execute 18D Synthesis", use_container_width=True):
                 parts = output_text.split("### SEMANTIC_GRAPH_JSON")
                 main_markdown = parts[0]
                 
-                # --- PROCESIRANJE BESEDILA (Google Search povezave) ---
+                # --- PROCESIRANJE BESEDILA (Google Search + Authors) ---
                 for field in sel_sciences:
                     pattern = re.compile(re.escape(field), re.IGNORECASE)
                     g_url = urllib.parse.quote(field)
@@ -465,7 +450,7 @@ if st.button("🚀 Execute 18D Synthesis", use_container_width=True):
                 st.subheader("📊 Synthesis Output")
                 st.markdown(main_markdown, unsafe_allow_html=True)
 
-                # --- VIZUALIZACIJA (3D Hierarhično-Asociativni Graf) ---
+                # --- VIZUALIZACIJA (Interconnected Graph) ---
                 if len(parts) > 1:
                     try:
                         json_match = re.search(r'\{.*\}', parts[1], re.DOTALL)
@@ -473,17 +458,15 @@ if st.button("🚀 Execute 18D Synthesis", use_container_width=True):
                             g_json = json.loads(json_match.group())
                             st.divider()
                             st.subheader("🕸️ 3D Hierarchical-Associative Knowledge Architecture")
-                            st.caption("Interaktivni graf s strogo TT/BT/NT logiko iz slike input_file_5.jpeg. Klikni na vozlišča.")
+                            st.caption("Interaktivni graf s strogo TT/BT/NT logiko iz slike input_file_5.jpeg.")
                             
                             elements = []
-                            for n in g_json.get("nodes", []):
-                                elements.append({"data": n})
-                            for e in g_json.get("edges", []):
-                                elements.append({"data": e})
+                            for n in g_json.get("nodes", []): elements.append({"data": n})
+                            for e in g_json.get("edges", []): elements.append({"data": e})
                             
                             render_cytoscape_network(elements)
                     except Exception as e_json:
-                        st.warning(f"Grafični podatki so bili generirani, vendar jih ni mogoče parsat: {e_json}")
+                        st.warning(f"Graph parsing failed: {e_json}")
 
                 if biblio:
                     with st.expander("📚 metadata context fetched"):
@@ -494,6 +477,7 @@ if st.button("🚀 Execute 18D Synthesis", use_container_width=True):
 
 st.divider()
 st.caption("SIS Universal Knowledge Synthesizer | v18.9.2 Build 2026 | Full Ontological 18D Integration")
+
 
 
 
