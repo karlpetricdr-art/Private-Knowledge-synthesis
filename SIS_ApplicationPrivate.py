@@ -95,79 +95,6 @@ SVG_3D_RELIEF = """
 </svg>
 """
 
-# ==============================================================================
-# 1. DODATEK: MASTER SISTEMSKO NAVODILO (INTEGRACIJA SLIKE 5 IN PROMPTA 3)
-# ==============================================================================
-
-def get_master_instruction(has_authors):
-    """
-    To je jedro kognitivne arhitekture. Združuje stroga pravila Prompta št. 3 
-    in natančne relacijske poti iz slike input_file_5.jpeg.
-    """
-    # Pogojna logika superordinacije (Vaše navodilo št. 2)
-    if has_authors:
-        hierarchy_mode = "A) AUTHORS SPECIFIED: Root Node (Level 0) is [Authors] + [Science fields]. Link: Authors --AS--> Science fields."
-    else:
-        hierarchy_mode = "B) AUTHORS NOT SPECIFIED: Root Node (Level 0) is [User profiles] + [Science fields]."
-
-    return f"""
-# ROLE DEFINITION
-You are a specialized Ontological Engineer and Visual Knowledge Architect. 
-Your core mission is to transform an 'Inquiry' into a massive, 3D-structured hierarchical-associative knowledge network.
-
-# DIMENSIONAL MANDATE (Vseh 9 dimenzij je obveznih - STROGO!)
-You must represent every single one of these dimensions in the interdisciplinary dissertation and the graph:
-1. Authors, 2. User profiles, 3. Science fields, 4. Expertise level, 5. Structural models, 6. Scientific paradigms, 7. Context/Goal, 8. mental approaches, 9. methodologies in specific tools.
-
-# RELATIONAL LOGIC (The 7 Sacred Relations - Use ONLY these exact codes)
-- TT (Tree Traversal): Vertical hierarchical progression.
-- BT (Breadth Traversal): Horizontal movement within level.
-- NT (Node Traversal): Specific jump between distinct classes.
-- IN (Inheritance): Property passing (NEVER write the full word "Inheritance"). Always use IN.
-- AS (Association): Non-hierarchical meaningful linkage.
-- EQ (Equivalence): Functional or semantic identity.
-- RT (Realization/Type): Implementation or instance.
-
-# CONDITIONAL HIERARCHY LOGIC
-{hierarchy_mode}
-
-# ARCHITECTURAL PATHWAYS (Strictly from input_file_5.jpeg logic)
-Construct the graph logic using these exact paths seen in the reference image:
-1. [Authors] --TT--> [User profiles]
-2. [Authors] --TT--> [Science fields]
-3. [Authors] --TT--> [Expertise level]
-4. [User profiles] --IN--> [mental approaches]
-5. [Science fields] --BT--> [Expertise level]
-6. [Expertise level] --IN--> [methodologies in specific tools]
-7. [Expertise level] --NT--> [Structural models]
-8. [Structural models] --AS--> [Scientific paradigms]
-9. [Scientific paradigms] --RT--> [Context/Goal]
-10. Cross-Equivalence: [mental approaches] --EQ--> [User profiles] AND [methodologies in specific tools] --EQ--> [Expertise level].
-11. Realization synergy: [mental approaches] --RT--> [Scientific paradigms] AND [methodologies in specific tools] --RT--> [Scientific paradigms].
-
-# VISUAL ARCHITECTURE (3D RELIEF & PERSPECTIVE)
-Your output MUST manifest a 3D aesthetic:
-- Shapes: Sphere (Authors), Cube (Science fields), Diamond (Models), Pyramid (Paradigms), Hexagon (Tools).
-- Aesthetics: 3D depth, shadow, relief, and gradients. Use Z-index mapping.
-- Node Sizes: Root = 100, Branch = 75, Leaf = 50.
-
-# MENTAL APPROACHES (Exhaustive Integration of all 18 strategies)
-Utilize and manifest these 18 approaches in your reasoning:
-Perspective shifting, Induction, Deduction, Hierarchy (TT), Mini-max, Whole and part, Addition and composition, Balance, Abstraction and elimination, Openness and closedness, Bipolarity and dialectics, Framework and foundation, Pleasure and displeasure, Similarity and difference, Core Attraction/Repulsion, Condensation, Constant, Associativity.
-
-# OUTPUT FORMATTING
-1. Title: "Hierarchical-Associative Knowledge Synthesis Network – Inquiry Based"
-2. Dissertation: Provide an exhaustive, interdisciplinary analysis (1500+ words) with Markdown headers.
-3. Link Highlight: Wrap every Science Field and Author mention for Google search link generation.
-4. End with: ### SEMANTIC_GRAPH_JSON followed by valid JSON for nodes and edges.
-
-# FORBIDDEN ACTIONS
-- DO NOT skip any of the 9 dimensions.
-- DO NOT simplify the relations.
-- DO NOT write "Inheritance" fully (always use IN).
-- NO introductory pleasantries. Only the synthesis.
-"""
-
 # --- CYTOSCAPE RENDERER Z DINAMIČNIMI OBLIKAMI IN IZVOZOM - ORIGINAL ---
 def render_cytoscape_network(elements, container_id="cy"):
     """
@@ -176,7 +103,7 @@ def render_cytoscape_network(elements, container_id="cy"):
     cyto_html = f"""
     <div style="position: relative;">
         <button id="save_btn" style="position: absolute; top: 10px; right: 10px; z-index: 100; padding: 8px 12px; background: #2a9d8f; color: white; border: none; border-radius: 5px; cursor: pointer; font-family: sans-serif; font-size: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">💾 Export Graph as PNG</button>
-        <div id="{container_id}" style="width: 100%; height: 750px; background: #ffffff; border-radius: 15px; border: 1px solid #eee; box-shadow: 2px 2px 12px rgba(0,0,0,0.05);"></div>
+        <div id="{container_id}" style="width: 100%; height: 650px; background: #ffffff; border-radius: 15px; border: 1px solid #eee; box-shadow: 2px 2px 12px rgba(0,0,0,0.05);"></div>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cytoscape/3.26.0/cytoscape.min.js"></script>
     <script>
@@ -213,12 +140,16 @@ def render_cytoscape_network(elements, container_id="cy"):
             
             cy.on('tap', 'node', function(evt){{
                 var elementId = evt.target.id();
-                var label = evt.target.data('label');
-                window.open("https://www.google.com/search?q=" + encodeURIComponent(label), '_blank');
+                var target = window.parent.document.getElementById(elementId);
+                if (target) {{
+                    target.scrollIntoView({{behavior: "smooth", block: "center"}});
+                    target.style.backgroundColor = "#ffffcc";
+                    setTimeout(function(){{ target.style.backgroundColor = "transparent"; }}, 2500);
+                }}
             }});
 
             document.getElementById('save_btn').addEventListener('click', function() {{
-                var png64 = cy.png({{full: true, bg: 'white', scale: 2}});
+                var png64 = cy.png({{full: true, bg: 'white'}});
                 var link = document.createElement('a');
                 link.href = png64;
                 link.download = 'sis_knowledge_graph.png';
@@ -229,7 +160,7 @@ def render_cytoscape_network(elements, container_id="cy"):
         }});
     </script>
     """
-    components.html(cyto_html, height=800)
+    components.html(cyto_html, height=650)
 
 # --- PRIDOBIVANJE BIBLIOGRAFIJ Z LETNICAMI - ORIGINAL ---
 def fetch_author_bibliographies(author_input):
@@ -265,7 +196,7 @@ def fetch_author_bibliographies(author_input):
             except: pass
         else:
             try:
-                ss_url = f"https://api.semanticscholar.org/graph/v1/paper/search?query=author:\"{auth}\"&limit=5&fields=title,year"
+                ss_url = f"https://api.semanticscholar.org/graph/v1/paper/search?query=author:\"{auth}\"&limit=3&fields=title,year"
                 ss_res = requests.get(ss_url, timeout=5).json()
                 papers = ss_res.get("data", [])
                 if papers:
@@ -276,7 +207,7 @@ def fetch_author_bibliographies(author_input):
     return comprehensive_biblio
 
 # =========================================================
-# 2. POPOLNA MULTIDIMENZIONALNA ONTOLOGIJA (VSEH 18 DISCIPLIN)
+# 1. POPOLNA MULTIDIMENZIONALNA ONTOLOGIJA (VSEH 18 DISCIPLIN)
 # =========================================================
 KNOWLEDGE_BASE = {
     "mental_approaches": ["Perspective shifting", "Induction", "Deduction", "Hierarchy", "Mini-max", "Whole and part", "Addition and composition", "Balance", "Abstraction and elimination", "Openness and closedness", "Bipolarity and dialectics", "Framework and foundation", "Pleasure and displeasure", "Similarity and difference", "Core (Attraction & Repulsion)", "Condensation", "Constant", "Associativity"],
@@ -284,24 +215,24 @@ KNOWLEDGE_BASE = {
     "paradigms": {"Empiricism": "Sensory experience.", "Rationalism": "Deductive logic.", "Constructivism": "Social build.", "Positivism": "Strict facts.", "Pragmatism": "Practical utility."},
     "knowledge_models": {"Causal Connections": "Causality.", "Principles & Relations": "Fundamental laws.", "Episodes & Sequences": "Time-flow.", "Facts & Characteristics": "Raw data.", "Generalizations": "Frameworks.", "Glossary": "Definitions.", "Concepts": "Abstract constructs."},
     "subject_details": {
-        "Physics": {"cat": "Natural", "methods": ["Modeling", "Simulation", "Calculus"], "tools": ["Accelerator", "Spectrometer", "Interferometer"], "facets": ["Quantum", "Relativity", "Thermodynamics"]},
-        "Chemistry": {"cat": "Natural", "methods": ["Synthesis", "Spectroscopy", "Titration"], "tools": ["NMR", "Chromatography", "Mass Spec"], "facets": ["Organic", "Molecular", "Inorganic"]},
-        "Biology": {"cat": "Natural", "methods": ["Sequencing", "CRISPR", "Microscopy"], "tools": ["PCR", "Bio-Incubator", "Centrifuge"], "facets": ["Genetics", "Ecology", "Microbiology"]},
-        "Neuroscience": {"cat": "Natural", "methods": ["Neuroimaging", "Electrophysiology"], "tools": ["fMRI", "EEG", "Patch Clamp"], "facets": ["Plasticity", "Synaptic Transmission"]},
-        "Psychology": {"cat": "Social", "methods": ["Psychometrics", "Trials", "Observation"], "tools": ["Testing Kits", "Eye-Tracker", "Biofeedback"], "facets": ["Cognitive", "Behavioral", "Developmental"]},
-        "Sociology": {"cat": "Social", "methods": ["Ethnography", "Surveys", "Network Analysis"], "tools": ["Data Analytics", "Archives", "NVivo"], "facets": ["Stratification", "Dynamics", "Social Change"]},
-        "Computer Science": {"cat": "Formal", "methods": ["Algorithm Design", "Formal Verification", "ML Modeling"], "tools": ["GPU Clusters", "Git", "Debugger"], "facets": ["AI", "Cybersecurity", "Distributed Systems"]},
-        "Medicine": {"cat": "Applied", "methods": ["Clinical Trials", "Epidemiology", "Surgery"], "tools": ["MRI", "CT Scanner", "Biomarkers"], "facets": ["Immunology", "Pharmacology", "Genomics"]},
-        "Engineering": {"cat": "Applied", "methods": ["Prototyping", "FEA Analysis", "CAD Design"], "tools": ["3D Printers", "Oscilloscope", "CNC"], "facets": ["Robotics", "Nanotech", "Structural Eng"]},
-        "Library Science": {"cat": "Applied", "methods": ["Taxonomy", "Bibliometrics", "Metadata Analysis"], "tools": ["OPAC", "Metadata Editor", "DSpace"], "facets": ["Retrieval", "Organization", "Archival"]},
-        "Philosophy": {"cat": "Humanities", "methods": ["Socratic Method", "Phenomenology", "Logic Mapping"], "tools": ["Logic Maps", "Hermeneutics", "LaTeX"], "facets": ["Epistemology", "Metaphysics", "Ethics"]},
-        "Linguistics": {"cat": "Humanities", "methods": ["Corpus Analysis", "Syntactic Parsing", "Phonetics"], "tools": ["Praat", "NLTK Toolkit", "ELAN"], "facets": ["Sociolinguistics", "CompLing", "Semantics"]},
-        "Geography": {"cat": "Natural/Social", "methods": ["Spatial Analysis", "Remote Sensing", "Cartography"], "tools": ["GIS Software", "GPS", "Lidar"], "facets": ["Human Geography", "Physical Geo", "Urban Planning"]},
-        "Geology": {"cat": "Natural", "methods": ["Stratigraphy", "Mineralogy", "Field Mapping"], "tools": ["Seismograph", "Rock Saw", "XRF"], "facets": ["Tectonics", "Petrology", "Paleontology"]},
-        "Climatology": {"cat": "Natural", "methods": ["Climate Modeling", "Paleoclimatology"], "tools": ["Weather Stations", "Satellites", "Ice Cores"], "facets": ["Climate Change", "Meteorology", "Oceanography"]},
-        "History": {"cat": "Humanities", "methods": ["Archival Research", "Historiography", "Oral History"], "tools": ["Primary Sources", "Archives", "Microfilm"], "facets": ["Social History", "Political History", "Cultural History"]},
-        "Economics": {"cat": "Social", "methods": ["Econometrics", "Game Theory", "Behavioral Analysis"], "tools": ["Stata", "R", "Bloomberg Terminal"], "facets": ["Macroeconomics", "Microeconomics", "Fintech"]},
-        "Politics": {"cat": "Social", "methods": ["Policy Analysis", "Comparative Politics", "Diplomacy"], "tools": ["Polls", "Legislative Databases", "Simulation"], "facets": ["International Relations", "Governance", "Political Theory"]}
+        "Physics": {"cat": "Natural", "methods": ["Modeling", "Simulation"], "tools": ["Accelerator", "Spectrometer"], "facets": ["Quantum", "Relativity"]},
+        "Chemistry": {"cat": "Natural", "methods": ["Synthesis", "Spectroscopy"], "tools": ["NMR", "Chromatography"], "facets": ["Organic", "Molecular"]},
+        "Biology": {"cat": "Natural", "methods": ["Sequencing", "CRISPR"], "tools": ["Microscope", "Bio-Incubator"], "facets": ["Genetics", "Ecology"]},
+        "Neuroscience": {"cat": "Natural", "methods": ["Neuroimaging", "Electrophys"], "tools": ["fMRI", "EEG"], "facets": ["Plasticity", "Synaptic"]},
+        "Psychology": {"cat": "Social", "methods": ["Double-Blind Trials", "Psychometrics"], "tools": ["fMRI", "Testing Kits"], "facets": ["Behavioral", "Cognitive"]},
+        "Sociology": {"cat": "Social", "methods": ["Ethnography", "Surveys"], "tools": ["Data Analytics", "Archives"], "facets": ["Stratification", "Dynamics"]},
+        "Computer Science": {"cat": "Formal", "methods": ["Algorithm Design", "Verification"], "tools": ["LLMGraphTransformer", "GPU Clusters", "Git"], "facets": ["AI", "Cybersecurity"]},
+        "Medicine": {"cat": "Applied", "methods": ["Clinical Trials", "Epidemiology"], "tools": ["MRI/CT", "Bio-Markers"], "facets": ["Immunology", "Pharmacology"]},
+        "Engineering": {"cat": "Applied", "methods": ["Prototyping", "FEA Analysis"], "tools": ["3D Printers", "CAD Software"], "facets": ["Robotics", "Nanotech"]},
+        "Library Science": {"cat": "Applied", "methods": ["Taxonomy", "Appraisal"], "tools": ["OPAC", "Metadata"], "facets": ["Retrieval", "Knowledge Org"]},
+        "Philosophy": {"cat": "Humanities", "methods": ["Socratic Method", "Phenomenology"], "tools": ["Logic Mapping", "Critical Analysis"], "facets": ["Epistemology", "Metaphysics"]},
+        "Linguistics": {"cat": "Humanities", "methods": ["Corpus Analysis", "Syntactic Parsing"], "tools": ["Praat", "NLTK Toolkit"], "facets": ["Socioling", "CompLing"]},
+        "Geography": {"cat": "Natural/Social", "methods": ["Spatial Analysis", "GIS"], "tools": ["ArcGIS"], "facets": ["Human Geo", "Physical Geo"]},
+        "Geology": {"cat": "Natural", "methods": ["Stratigraphy", "Mineralogy"], "tools": ["Seismograph"], "facets": ["Tectonics", "Petrology"]},
+        "Climatology": {"cat": "Natural", "methods": ["Climate Modeling"], "tools": ["Weather Stations"], "facets": ["Change Analysis"]},
+        "History": {"cat": "Humanities", "methods": ["Archival Research", "Historiography"], "tools": ["Archives"], "facets": ["Social History"]},
+        "Economics": {"cat": "Social", "methods": ["Econometrics", "Game Theory", "Market Modeling"], "tools": ["Stata", "R", "Bloomberg"], "facets": ["Macroeconomics", "Behavioral Economics"]},
+        "Politics": {"cat": "Social", "methods": ["Policy Analysis", "Comparative Politics"], "tools": ["Polls", "Legislative Databases"], "facets": ["International Relations", "Governance"]}
     }
 }
 
@@ -372,7 +303,7 @@ st.markdown("### 🛠️ Configure Your Multi-Dimensional Cognitive Build")
 r1_c1, r1_c2, r1_c3 = st.columns([1, 2, 1])
 with r1_c2:
     target_authors = st.text_input("👤 Research Authors:", placeholder="Karl Petrič, Samo Kralj, Teodor Petrič", key="target_authors_key")
-    st.caption("Active bibliographic analysis via ORCID (includes publication years). Authors become the Root Node if specified.")
+    st.caption("Active bibliographic analysis via ORCID (includes publication years).")
 
 # ROW 2: CORE CONFIG (Minimal settings, specific fields)
 r2_c1, r2_c2, r2_c3 = st.columns(3)
@@ -392,7 +323,7 @@ with r3_c1:
 with r3_c2:
     sel_paradigms = st.multiselect("5. Scientific Paradigms:", list(KNOWLEDGE_BASE["paradigms"].keys()), default=["Rationalism"])
 with r3_c3:
-    goal_context = st.selectbox("6. Context / Goal:", ["Scientific Research", "Problem Solving", "Strategic Vision", "Universal Synthesis"])
+    goal_context = st.selectbox("6. Context / Goal:", ["Scientific Research", "Problem Solving", "Educational", "Policy Making"])
 
 # ROW 4: APPROACHES, METHODS, TOOLS (RESTORED - Minimal settings)
 r4_c1, r4_c2, r4_c3 = st.columns(3)
@@ -408,16 +339,77 @@ for s in sel_sciences:
 with r4_c2:
     sel_methods = st.multiselect("8. Methodologies:", sorted(list(set(agg_meth))), default=[])
 with r4_c3:
-    sel_tools = st.text_input("9. Specific Tools/Methods:", "LLM Graph Transformation, 3D Geometrical Mapping, Meta-Synthesis Analysis")
+    sel_tools = st.multiselect("9. Specific Tools:", sorted(list(set(agg_tool))), default=[])
 
 st.divider()
 user_query = st.text_area("❓ Your Synthesis Inquiry:", 
-                         placeholder="Create a synergy for global problems using the 3D relief architecture defined in the reference model.",
+                         placeholder="Create a synergy for global problems using triangle shapes for causes and 3D geometric bodies for solutions.",
                          height=150, key="user_query_key")
 
 # =========================================================
-# 3. JEDRO SINTEZE: OPENAI / GROQ + INTEGRIRAN MASTER PROMPT
+# 3. JEDRO SINTEZE: GROQ AI + INTERCONNECTED 18D GRAPH
 # =========================================================
+
+# --- NOVO: DEFINICIJA MASTER SISTEMSKEGA NAVODILA (PROMPT ŠT. 3 IN SLIKA 5) ---
+def get_master_instruction(has_authors_specified):
+    """Integrira logiko iz Promptov 1, 2 in 3 ter slikovno arhitekturo."""
+    
+    # Navodilo št. 2: Pogojna hierarhija
+    if has_authors_specified:
+        hierarchy_mode = "A) AUTHORS SPECIFIED: Level 0 (Root) is [Authors]. Authors MUST link to Science Fields via AS."
+    else:
+        hierarchy_mode = "B) AUTHORS NOT SPECIFIED: Level 0 (Root) is [User Profiles] + [Science Fields]."
+
+    return f"""
+# ROLE DEFINITION
+You are the SIS Universal Knowledge Synthesizer, an expert Ontological Engineer and Visual Knowledge Architect. 
+Your core mission is to transform this 'Inquiry' into a massive, 3D-structured hierarchical-associative knowledge network.
+
+# DIMENSIONAL MANDATE (Vseh 9 dimenzij je obveznih!)
+Represent these dimensions without exception:
+1. Authors, 2. User profiles, 3. Science fields, 4. Expertise level, 5. Structural models, 6. Scientific paradigms, 7. Context/Goal, 8. mental approaches, 9. methodologies in specific tools.
+
+# RELATIONAL LOGIC (The 7 Sacred Relations - Strictly use these codes)
+- TT (Tree Traversal): Vertical hierarchical progression.
+- BT (Breadth Traversal): Horizontal peer movement.
+- NT (Node Traversal): jump between classes.
+- IN (Inheritance): Property passing (NEVER write "Inheritance" fully). Always use IN.
+- AS (Association): Non-hierarchical meaningful linkage.
+- EQ (Equivalence): Semantic or functional identity.
+- RT (Realization/Type): Implementation instance.
+
+# CONDITIONAL HIERARCHY LOGIC
+{hierarchy_mode}
+
+# ARCHITECTURAL PATHWAYS (Strictly from image 5 logic)
+Construct the graph using these exact paths:
+1. [Authors] --TT--> [User profiles] | [Authors] --TT--> [Science fields] | [Authors] --TT--> [Expertise level]
+2. [User profiles] --IN--> [mental approaches]
+3. [Science fields] --BT--> [Expertise level]
+4. [Expertise level] --IN--> [methodologies in specific tools]
+5. [Expertise level] --NT--> [Structural models]
+6. [Structural models] --AS--> [Scientific paradigms]
+7. [Scientific paradigms] --RT--> [Context/Goal]
+8. Cross-Equivalence: [mental approaches] --EQ--> [User profiles] | [methodologies in specific tools] --EQ--> [Expertise level]
+9. Cross-Associations: [mental approaches] --AS--> [Structural models] | [Scientific paradigms] --AS--> [Structural models]
+10. Goal Realization: [mental approaches] --RT--> [Scientific paradigms] | [methodologies in specific tools] --RT--> [Scientific paradigms]
+
+# VISUAL ARCHITECTURE (3D STYLE)
+- Shapes: Sphere (Authors), Cube (Science fields), Diamond (Models), Pyramid (Paradigms), Hexagon (Tools).
+- Aesthetics: 3D depth, shadow, relief, gradients.
+- Node Sizes: Root = 100, Branch = 75, Leaf = 50.
+
+# OUTPUT FORMATTING
+1. Title: "Hierarchical-Associative Knowledge Synthesis Network – Inquiry Based"
+2. Dissertation: Provide an exhaustive analysis (1500+ words) with Markdown headers.
+3. End with: ### SEMANTIC_GRAPH_JSON followed by valid JSON elements.
+
+# FORBIDDEN
+- NEVER write "Inheritance" fully. Always use IN.
+- NO introductory/closing pleasantries.
+"""
+
+# --- IZVEDBA SINTEZE ---
 if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=True):
     if not api_key: st.error("Missing Groq API Key. Please provide your own key in the sidebar.")
     elif not user_query: st.warning("Please provide an inquiry.")
@@ -427,46 +419,68 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
             biblio = fetch_author_bibliographies(target_authors) if target_authors else ""
             client = OpenAI(api_key=api_key, base_url="https://api.groq.com/openai/v1")
             
-            with st.spinner('Performing massive ontological synthesis (20–40s)...'):
+            with st.spinner('Synthesizing exhaustive interdisciplinary synergy (20–40s)...'):
                 response = client.chat.completions.create(
                     model="llama-3.3-70b-versatile",
                     messages=[
                         {"role": "system", "content": get_master_instruction(has_auth)}, 
-                        {"role": "user", "content": f"Inquiry: {user_query}\nContext Authors: {target_authors}\nBiblio: {biblio}\nSelected Fields: {sel_sciences}\nExpertise: {expertise}\nModels: {sel_models}\nParadigms: {sel_paradigms}\nApproaches: {sel_approaches}"}
+                        {"role": "user", "content": f"Inquiry: {user_query}\nContext Authors: {target_authors}\nBiblio: {biblio}\nSelected Fields: {sel_sciences}"}
                     ],
                     temperature=0.4, max_tokens=6000
                 )
                 
-                output_text = response.choices[0].message.content
-                parts = output_text.split("### SEMANTIC_GRAPH_JSON")
+                text_out = response.choices[0].message.content
+                parts = text_out.split("### SEMANTIC_GRAPH_JSON")
                 main_markdown = parts[0]
                 
-                # --- PROCESIRANJE BESEDILA (Google Search + Authors) ---
-                for field in sel_sciences:
-                    pattern = re.compile(re.escape(field), re.IGNORECASE)
-                    g_url = urllib.parse.quote(field)
-                    main_markdown = pattern.sub(f'<a href="https://www.google.com/search?q={g_url}" target="_blank" class="semantic-node-highlight">{field}<i class="google-icon">↗</i></a>', main_markdown)
-                
+                # --- PROCESIRANJE BESEDILA (Google Search + Authors + Anchors) ---
+                if len(parts) > 1:
+                    try:
+                        g_json = json.loads(re.search(r'\{.*\}', parts[1], re.DOTALL).group())
+                        # Koncepti -> Google Search + ID značka
+                        for n in g_json.get("nodes", []):
+                            lbl, nid = n["label"], n["id"]
+                            g_url = urllib.parse.quote(lbl)
+                            pattern = re.compile(re.escape(lbl), re.IGNORECASE)
+                            replacement = f'<span id="{nid}"><a href="https://www.google.com/search?q={g_url}" target="_blank" class="semantic-node-highlight">{lbl}<i class="google-icon">↗</i></a></span>'
+                            main_markdown = pattern.sub(replacement, main_markdown, count=1)
+                        
+                        # Avtorji -> Google Search Link
+                        if target_authors:
+                            for auth_name in target_authors.split(","):
+                                auth_stripped = auth_name.strip()
+                                if auth_stripped:
+                                    a_url = urllib.parse.quote(auth_stripped)
+                                    a_pattern = re.compile(re.escape(auth_stripped), re.IGNORECASE)
+                                    a_rep = f'<a href="https://www.google.com/search?q={a_url}" target="_blank" class="author-search-link">{auth_stripped}<i class="google-icon">↗</i></a>'
+                                    main_markdown = a_pattern.sub(a_rep, main_markdown)
+                    except: pass
+
                 st.subheader("📊 Synthesis Output")
                 st.markdown(main_markdown, unsafe_allow_html=True)
 
                 # --- VIZUALIZACIJA (Interconnected Graph) ---
                 if len(parts) > 1:
                     try:
-                        json_match = re.search(r'\{.*\}', parts[1], re.DOTALL)
-                        if json_match:
-                            g_json = json.loads(json_match.group())
-                            st.divider()
-                            st.subheader("🕸️ 3D Hierarchical-Associative Knowledge Architecture")
-                            st.caption("Interaktivni graf s strogo TT/BT/NT logiko iz slike input_file_5.jpeg.")
-                            
-                            elements = []
-                            for n in g_json.get("nodes", []): elements.append({"data": n})
-                            for e in g_json.get("edges", []): elements.append({"data": e})
-                            
-                            render_cytoscape_network(elements)
-                    except Exception as e_json:
-                        st.warning(f"Graph parsing failed: {e_json}")
+                        g_json = json.loads(re.search(r'\{.*\}', parts[1], re.DOTALL).group())
+                        st.divider()
+                        st.subheader("🕸️ 3D Hierarchical-Associative Knowledge Architecture")
+                        st.caption("Interaktivni graf s strogo TT/BT/NT logiko iz slike input_file_5.jpeg.")
+                        
+                        elements = []
+                        for n in g_json.get("nodes", []):
+                            level = n.get("type", "Branch")
+                            size = 100 if level == "Class" else (90 if level == "Root" else (70 if level == "Branch" else 50))
+                            elements.append({"data": {
+                                "id": n["id"], "label": n["label"], "color": n.get("color", "#2a9d8f"),
+                                "size": size, "shape": n.get("shape", "ellipse"), "z_index": 1
+                            }})
+                        for e in g_json.get("edges", []):
+                            elements.append({"data": {
+                                "source": e["source"], "target": e["target"], "rel_type": e.get("rel_type", "AS")
+                            }})
+                        render_cytoscape_network(elements, "semantic_viz_full")
+                    except: st.warning("Graph data could not be parsed.")
 
                 if biblio:
                     with st.expander("📚 metadata context fetched"):
@@ -476,7 +490,8 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
             st.error(f"Synthesis failed: {e}")
 
 st.divider()
-st.caption("SIS Universal Knowledge Synthesizer | v18.9.2 Build 2026 | Full Ontological 18D Integration")
+st.caption("SIS Universal Knowledge Synthesizer | v18.9.2 Build 2026 | Full Ontological Integration")
+
 
 
 
