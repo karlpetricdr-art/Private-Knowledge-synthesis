@@ -230,14 +230,14 @@ def fetch_author_bibliographies(author_input):
     return comprehensive_biblio
 
 # =========================================================
-# 1. POPOLNA MULTIDIMENZIONALNA ONTOLOGIJA (VSEH 18 DISCIPLIN)
+# 1. POPOLNA MULTIDIMENZIONALNA ONTOLOGIJA (IMAGE LOGIC)
 # =========================================================
 KNOWLEDGE_BASE = {
-    "mental_approaches": ["Perspective shifting", "Induction", "Deduction", "Hierarchy", "Mini-max", "Whole and part", "Addition and composition", "Balance", "Abstraction and elimination", "Openness and closedness", "Bipolarity and dialectics", "Framework and foundation", "Pleasure and displeasure", "Similarity and difference", "Core (Attraction & Repulsion)", "Condensation", "Constant", "Associativity"],
-    "profiles": {"Adventurers": {"description": "Explorers of hidden patterns."}, "Applicators": {"description": "Efficiency focused."}, "Know-it-alls": {"description": "Systemic clarity."}, "Observers": {"description": "System monitors."}},
-    "paradigms": {"Empiricism": "Sensory experience.", "Rationalism": "Deductive logic.", "Constructivism": "Social build.", "Positivism": "Strict facts.", "Pragmatism": "Practical utility."},
-    "knowledge_models": {"Causal Connections": "Causality.", "Principles & Relations": "Fundamental laws.", "Episodes & Sequences": "Time-flow.", "Facts & Characteristics": "Raw data.", "Generalizations": "Frameworks.", "Glossary": "Definitions.", "Concepts": "Abstract constructs."},
-    "subject_details": {
+    "mental approaches": ["Perspective shifting", "Induction", "Deduction", "Hierarchy", "Mini-max", "Whole and part", "Addition and composition", "Balance", "Abstraction and elimination", "Openness and closedness", "Bipolarity and dialectics", "Framework and foundation", "Pleasure and displeasure", "Similarity and difference", "Core (Attraction & Repulsion)", "Condensation", "Constant", "Associativity"],
+    "User profiles": {"Adventurers": {"description": "Explorers of hidden patterns."}, "Applicators": {"description": "Efficiency focused."}, "Know-it-alls": {"description": "Systemic clarity."}, "Observers": {"description": "System monitors."}},
+    "Scientific paradigms": {"Empiricism": "Sensory experience.", "Rationalism": "Deductive logic.", "Constructivism": "Social build.", "Positivism": "Strict facts.", "Pragmatism": "Practical utility."},
+    "Structural models": {"Causal Connections": "Causality.", "Principles & Relations": "Fundamental laws.", "Episodes & Sequences": "Time-flow.", "Facts & Characteristics": "Raw data.", "Generalizations": "Frameworks.", "Glossary": "Definitions.", "Concepts": "Abstract constructs."},
+    "Science fields": {
         "Physics": {"cat": "Natural", "methods": ["Modeling", "Simulation"], "tools": ["Accelerator", "Spectrometer"], "facets": ["Quantum", "Relativity"]},
         "Chemistry": {"cat": "Natural", "methods": ["Synthesis", "Spectroscopy"], "tools": ["NMR", "Chromatography"], "facets": ["Organic", "Molecular"]},
         "Biology": {"cat": "Natural", "methods": ["Sequencing", "CRISPR"], "tools": ["Microscope", "Bio-Incubator"], "facets": ["Genetics", "Ecology"]},
@@ -295,15 +295,15 @@ with st.sidebar:
     st.divider()
     st.subheader("📚 Knowledge Explorer")
     with st.expander("👤 User Profiles"):
-        for p, d in KNOWLEDGE_BASE["profiles"].items(): st.write(f"**{p}**: {d['description']}")
-    with st.expander("🧠 Mental Approaches"):
-        for a in KNOWLEDGE_BASE["mental_approaches"]: st.write(f"• {a}")
-    with st.expander("🌍 Scientific Paradigms"):
-        for p, d in KNOWLEDGE_BASE["paradigms"].items(): st.write(f"**{p}**: {d}")
-    with st.expander("🔬 Science Fields"):
-        for s in sorted(KNOWLEDGE_BASE["subject_details"].keys()): st.write(f"• **{s}**")
-    with st.expander("🏗️ Structural Models"):
-        for m, d in KNOWLEDGE_BASE["knowledge_models"].items(): st.write(f"**{m}**: {d}")
+        for p, d in KNOWLEDGE_BASE["User profiles"].items(): st.write(f"**{p}**: {d['description']}")
+    with st.expander("🧠 mental approaches"):
+        for a in KNOWLEDGE_BASE["mental approaches"]: st.write(f"• {a}")
+    with st.expander("🌍 Scientific paradigms"):
+        for p, d in KNOWLEDGE_BASE["Scientific paradigms"].items(): st.write(f"**{p}**: {d}")
+    with st.expander("🔬 Science fields"):
+        for s in sorted(KNOWLEDGE_BASE["Science fields"].keys()): st.write(f"• **{s}**")
+    with st.expander("🏗️ Structural models"):
+        for m, d in KNOWLEDGE_BASE["Structural models"].items(): st.write(f"**{m}**: {d}")
     
     st.divider()
     if st.button("♻️ Reset Session", use_container_width=True):
@@ -331,9 +331,9 @@ with r1_c2:
 # ROW 2: CORE CONFIG (Minimal settings, specific fields)
 r2_c1, r2_c2, r2_c3 = st.columns(3)
 with r2_c1:
-    sel_profiles = st.multiselect("1. User Profiles:", list(KNOWLEDGE_BASE["profiles"].keys()), default=["Adventurers"])
+    sel_profiles = st.multiselect("1. User Profiles:", list(KNOWLEDGE_BASE["User profiles"].keys()), default=["Adventurers"])
 with r2_c2:
-    all_sciences = sorted(list(KNOWLEDGE_BASE["subject_details"].keys()))
+    all_sciences = sorted(list(KNOWLEDGE_BASE["Science fields"].keys()))
     # PRIVZETO: Physics, Computer science in Linguistics
     sel_sciences = st.multiselect("2. Science Fields:", all_sciences, default=["Physics", "Computer Science", "Linguistics"])
 with r2_c3:
@@ -342,22 +342,22 @@ with r2_c3:
 # ROW 3: PARADIGMS & MODELS (Minimal settings)
 r3_c1, r3_c2, r3_c3 = st.columns(3)
 with r3_c1:
-    sel_models = st.multiselect("4. Structural Models:", list(KNOWLEDGE_BASE["knowledge_models"].keys()), default=["Concepts"])
+    sel_models = st.multiselect("4. Structural Models:", list(KNOWLEDGE_BASE["Structural models"].keys()), default=["Concepts"])
 with r3_c2:
-    sel_paradigms = st.multiselect("5. Scientific Paradigms:", list(KNOWLEDGE_BASE["paradigms"].keys()), default=["Rationalism"])
+    sel_paradigms = st.multiselect("5. Scientific Paradigms:", list(KNOWLEDGE_BASE["Scientific paradigms"].keys()), default=["Rationalism"])
 with r3_c3:
     goal_context = st.selectbox("6. Context / Goal:", ["Scientific Research", "Problem Solving", "Educational", "Policy Making"])
 
 # ROW 4: APPROACHES, METHODS, TOOLS (RESTORED - Minimal settings)
 r4_c1, r4_c2, r4_c3 = st.columns(3)
 with r4_c1:
-    sel_approaches = st.multiselect("7. Mental Approaches:", KNOWLEDGE_BASE["mental_approaches"], default=["Perspective shifting"])
+    sel_approaches = st.multiselect("7. mental approaches:", KNOWLEDGE_BASE["mental approaches"], default=["Perspective shifting"])
 
 agg_meth, agg_tool = [], []
 for s in sel_sciences:
-    if s in KNOWLEDGE_BASE["subject_details"]:
-        agg_meth.extend(KNOWLEDGE_BASE["subject_details"][s]["methods"])
-        agg_tool.extend(KNOWLEDGE_BASE["subject_details"][s]["tools"])
+    if s in KNOWLEDGE_BASE["Science fields"]:
+        agg_meth.extend(KNOWLEDGE_BASE["Science fields"][s]["methods"])
+        agg_tool.extend(KNOWLEDGE_BASE["Science fields"][s]["tools"])
 
 with r4_c2:
     sel_methods = st.multiselect("8. Methodologies:", sorted(list(set(agg_meth))), default=[])
@@ -380,9 +380,17 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
             biblio = fetch_author_bibliographies(target_authors) if target_authors else ""
             client = OpenAI(api_key=api_key, base_url="https://api.groq.com/openai/v1")
             
-            # SISTEMSKO NAVODILO
+            # SISTEMSKO NAVODILO (IMAGE LOGIC INTEGRATED)
             sys_prompt = f"""
             You are the SIS Synthesizer. Perform an exhaustive dissertation (1500+ words).
+            STRUCTURE (MANDATORY IMAGE LOGIC): 
+            1. Root: Authors --TT--> User profiles, Science fields, Expertise level.
+            2. Science fields --BT--> Expertise level --NT--> Structural models.
+            3. Structural models --AS--> Scientific paradigms.
+            4. Scientific paradigms --RT--> mental approaches, methodologies in specific tools.
+            5. Scientific paradigms --AS--> Context/Goal.
+            6. Use EQ (Equivalent) and Inheritance IN (Class logic) as per the architectural image logic.
+            
             FIELDS: {", ".join(sel_sciences)}. CONTEXT AUTHORS: {biblio}.
             
             THESAURUS ALGORITHM (TT, BT, NT, AS, RT, EQ) & UML LOGIC.
@@ -393,8 +401,7 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
             
             STRICT FORMATTING & SPACE ALLOCATION:
             - Focus 100% of the textual content on deep research, causal analysis, and innovative problem-solving synergy.
-            - ABSOLUTELY PROHIBITED: Do not list nodes, edges, properties, shapes, or colors in text (e.g. 'Node 1: ...', 'Edge 1: ...').
-            - DO NOT write "Root Node: ...", "Branch Node: ..." or any structural map metadata in markdown.
+            - ABSOLUTELY PROHIBITED: Do not list nodes, edges, properties, shapes, or colors in text.
             - DO NOT explain the visualization or JSON schema in the text.
             - End with '### SEMANTIC_GRAPH_JSON' followed by valid JSON only.
             - JSON schema: {{"nodes": [{{"id": "n1", "label": "Text", "type": "Root|Branch|Leaf|Class", "color": "#hex", "shape": "triangle|rectangle|ellipse|diamond"}}], "edges": [{{"source": "n1", "target": "n2", "rel_type": "BT|NT|AS|Inheritance|..."}}]}}
@@ -470,6 +477,7 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
 
 st.divider()
 st.caption("SIS Universal Knowledge Synthesizer | v18.0 Comprehensive 18D Geometrical Export Edition | 2026")
+
 
 
 
