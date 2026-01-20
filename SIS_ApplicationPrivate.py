@@ -381,12 +381,27 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
             client = OpenAI(api_key=api_key, base_url="https://api.groq.com/openai/v1")
             
             # --- DINAMIČNA LOGIKA (IMAGE INTEGRATION) ---
-            # Preveri, če so avtorji podani in če se Inquiry nanaša na relacije.
+            # Preveri pogoje za aktivacijo določene sheme.
             is_explicit_rel = any(kw in user_query.lower() for kw in ["relacij", "odnos", "povez", "link", "connect", "hierarchy"])
+            # Nova logika za "Step/Linear" shemo (Image 2)
+            is_step_logic = any(kw in user_query.lower() for kw in ["linearno", "zapored", "step", "flow", "vertical", "vertikalno", "shema"])
             
-            if target_authors and is_explicit_rel:
+            if is_step_logic:
                 structure_logic = """
-                MANDATORY ARCHITECTURAL LOGIC (FROM IMAGE):
+                MANDATORY ARCHITECTURAL LOGIC (LINEAR CHAIN FROM IMAGE):
+                1. Start: User profiles --TT--> Expertise level.
+                2. Expertise level --BT--> Authors.
+                3. Authors --NT--> Science fields.
+                4. Science fields --NT--> Structural models.
+                5. Structural models --NT--> Mental approaches.
+                6. Mental approaches --NT--> Scientific paradigms.
+                7. Scientific paradigms --NT--> Methodologies/tools.
+                8. Methodologies/tools --NT--> Context/Goal.
+                Maintain this strict vertical sequence for the synthesis and graph generation.
+                """
+            elif target_authors and is_explicit_rel:
+                structure_logic = """
+                MANDATORY ARCHITECTURAL LOGIC (FROM IMAGE 1):
                 1. Root: Authors --RT--> Science fields.
                 2. Science fields --AS--> User profiles.
                 3. Science fields --EQ--> Expertise level.
@@ -499,6 +514,7 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
 
 st.divider()
 st.caption("SIS Universal Knowledge Synthesizer | v18.0 Comprehensive 18D Geometrical Export Edition | 2026")
+
 
 
 
