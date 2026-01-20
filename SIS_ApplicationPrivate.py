@@ -380,16 +380,38 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
             biblio = fetch_author_bibliographies(target_authors) if target_authors else ""
             client = OpenAI(api_key=api_key, base_url="https://api.groq.com/openai/v1")
             
-            # SISTEMSKO NAVODILO (IMAGE LOGIC INTEGRATED)
+            # --- DINAMIČNA LOGIKA (IMAGE INTEGRATION) ---
+            # Preveri, če so avtorji podani in če se Inquiry nanaša na relacije.
+            is_explicit_rel = any(kw in user_query.lower() for kw in ["relacij", "odnos", "povez", "link", "connect", "hierarchy"])
+            
+            if target_authors and is_explicit_rel:
+                structure_logic = """
+                MANDATORY ARCHITECTURAL LOGIC (FROM IMAGE):
+                1. Root: Authors --RT--> Science fields.
+                2. Science fields --AS--> User profiles.
+                3. Science fields --EQ--> Expertise level.
+                4. Science fields --EQ--> Structural models.
+                5. Science fields --(Direct Arrow)--> Context/Goal in Methodologies/specific tools.
+                6. Structural models --AS--> Scientific paradigms.
+                7. Structural models --IN--> Mental approaches.
+                """
+            else:
+                structure_logic = """
+                MANDATORY ARCHITECTURAL LOGIC (DEFAULT):
+                1. Root: Authors (Super-unit).
+                2. Authors --TT--> User profiles, Science fields, Expertise level.
+                3. Science fields --BT--> Expertise level --NT--> Structural models.
+                4. Structural models --AS--> Scientific paradigms.
+                5. Scientific paradigms --RT--> mental approaches, methodologies in specific tools.
+                6. Scientific paradigms --AS--> Context/Goal.
+                7. Use EQ (Equivalent) and Inheritance IN (Class logic).
+                """
+
+            # SISTEMSKO NAVODILO
             sys_prompt = f"""
             You are the SIS Synthesizer. Perform an exhaustive dissertation (1500+ words).
-            STRUCTURE (MANDATORY IMAGE LOGIC): 
-            1. Root: Authors --TT--> User profiles, Science fields, Expertise level.
-            2. Science fields --BT--> Expertise level --NT--> Structural models.
-            3. Structural models --AS--> Scientific paradigms.
-            4. Scientific paradigms --RT--> mental approaches, methodologies in specific tools.
-            5. Scientific paradigms --AS--> Context/Goal.
-            6. Use EQ (Equivalent) and Inheritance IN (Class logic) as per the architectural image logic.
+            
+            {structure_logic}
             
             FIELDS: {", ".join(sel_sciences)}. CONTEXT AUTHORS: {biblio}.
             
@@ -477,6 +499,7 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
 
 st.divider()
 st.caption("SIS Universal Knowledge Synthesizer | v18.0 Comprehensive 18D Geometrical Export Edition | 2026")
+
 
 
 
