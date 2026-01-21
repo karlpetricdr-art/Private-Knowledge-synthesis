@@ -388,13 +388,13 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
             is_relational_only = "relacijska logika" in q_lower
 
             if is_strict_hier:
-                logic_type = "STRIKTNA HIERARHIČNA LOGIKA"
+                logic_type = "Strict hierarchical logic"
                 logic_desc = "Uporabi IZKLJUČNO hierarhične relacije: TT (Top Term), BT (Broader Term), NT (Narrower Term). Fokus na vertikalni taksonomiji."
             elif is_relational_only:
-                logic_type = "RELACIJSKA LOGIKA"
+                logic_type = "Relational logic"
                 logic_desc = "Uporabi IZKLJUČNO lateralne relacije: AS (Associative), EQ (Equivalent), IN (Inheritance/Class). Fokus na mrežni povezanosti."
             else:
-                logic_type = "HIERARHIČNA ASOCIATIVNA LOGIKA (Default)"
+                logic_type = "Hierarchical associative logic"
                 logic_desc = "Integriraj CELOTEN nabor relacij: Hierarhične (TT, BT, NT) za strukturo in asociativne (AS, EQ, IN) za lateralne povezave."
 
             # SISTEMSKO NAVODILO (Z INTEGRIRANO LOGIKO IN POVEČANIM ŠTEVILOM VOZLIŠČ)
@@ -475,7 +475,7 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
                     try:
                         g_json = json.loads(re.search(r'\{.*\}', parts[1], re.DOTALL).group())
                         st.subheader("🕸️ LLMGraphTransformer: Unified Interdisciplinary Network")
-                        st.caption(f"Logic: {logic_type}. Network density: ~30 nodes. Click nodes to scroll.")
+                        st.caption(f"{logic_type}")
                         
                         elements = []
                         for n in g_json.get("nodes", []):
@@ -503,6 +503,7 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
 
 st.divider()
 st.caption("SIS Universal Knowledge Synthesizer | v18.0 Comprehensive 18D Geometrical Export Edition | 2026")
+
 
 
 
