@@ -255,7 +255,8 @@ KNOWLEDGE_BASE = {
         "Climatology": {"cat": "Natural", "methods": ["Climate Modeling"], "tools": ["Weather Stations"], "facets": ["Change Analysis"]},
         "History": {"cat": "Humanities", "methods": ["Archives"], "tools": ["Archives"], "facets": ["Social History"]},
         "Economics": {"cat": "Social", "methods": ["Econometrics", "Game Theory", "Market Modeling"], "tools": ["Stata", "R", "Bloomberg"], "facets": ["Macroeconomics", "Behavioral Economics"]},
-        "Politics": {"cat": "Social", "methods": ["Policy Analysis", "Comparative Politics"], "tools": ["Polls", "Legislative Databases"], "facets": ["International Relations", "Governance"]}
+        "Politics": {"cat": "Social", "methods": ["Policy Analysis", "Comparative Politics"], "tools": ["Polls", "Legislative Databases"], "facets": ["International Relations", "Governance"]},
+        "Criminology and Forensic sciences": {"cat": "Applied/Social", "methods": ["DNA Profiling", "Ballistic Analysis", "Behavioral Profiling"], "tools": ["Luminol", "AFIS", "Mass Spectrometry"], "facets": ["Criminalistics", "Victimology", "Cyber-forensics"]}
     }
 }
 
@@ -477,6 +478,7 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
 
 st.divider()
 st.caption("SIS Universal Knowledge Synthesizer | v18.0 Comprehensive 18D Geometrical Export Edition | 2026")
+
 
 
 
