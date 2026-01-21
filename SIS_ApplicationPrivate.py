@@ -185,7 +185,8 @@ def render_cytoscape_network(elements, container_id="cy"):
     """
     components.html(cyto_html, height=650)
 
-# --- PRIDOBIVANJE BIBLIOGRAFIJ Z LETNICAMI ---
+# --- PRIDOBIVANJE BIBLIOGRAFIJ Z LETNICAMI (Z OPTIMIZACIJO CACHINGA) ---
+@st.cache_data(ttl=3600)
 def fetch_author_bibliographies(author_input):
     """Zajame bibliografske podatke z letnicami preko ORCID in Scholar API baz."""
     if not author_input: return ""
@@ -277,6 +278,20 @@ with st.sidebar:
         "Groq API Key:", 
         type="password", 
         help="Security: Your key is held only in volatile RAM and is never stored on our servers."
+    )
+
+    # --- NOVO: OPTIMIZACIJA ŽETONOV ---
+    st.divider()
+    st.subheader("🪙 Token Optimization")
+    selected_model = st.selectbox(
+        "AI Engine (Model):", 
+        ["llama-3.3-70b-versatile", "llama-3.1-8b-instant"],
+        help="70b is smarter but consumes more limits. 8b is ultra-fast and light on tokens."
+    )
+    token_limit = st.slider(
+        "Synthesis Depth (Max Tokens):", 
+        500, 4000, 2000, 
+        help="Lower values save your daily quota but result in shorter text."
     )
     
     if st.button("📖 User Guide"):
@@ -382,9 +397,12 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
             biblio = fetch_author_bibliographies(target_authors) if target_authors else ""
             client = OpenAI(api_key=api_key, base_url="https://api.groq.com/openai/v1")
             
+            # Dinamično navodilo glede na izbrano globino (varčevanje žetonov)
+            word_target = "exhaustive dissertation (1500+ words)" if token_limit > 2500 else "concise but deep synthesis (500-800 words)"
+
             # SISTEMSKO NAVODILO (IMAGE LOGIC INTEGRATED)
             sys_prompt = f"""
-            You are the SIS Synthesizer. Perform an exhaustive dissertation (1500+ words).
+            You are the SIS Synthesizer. Perform a {word_target}.
             STRUCTURE (MANDATORY IMAGE LOGIC): 
             1. Root: Authors --TT--> User profiles, Science fields, Expertise level.
             2. Science fields --BT--> Expertise level --NT--> Structural models.
@@ -409,11 +427,12 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
             - JSON schema: {{"nodes": [{{"id": "n1", "label": "Text", "type": "Root|Branch|Leaf|Class", "color": "#hex", "shape": "triangle|rectangle|ellipse|diamond"}}], "edges": [{{"source": "n1", "target": "n2", "rel_type": "BT|NT|AS|Inheritance|..."}}]}}
             """
             
-            with st.spinner('Synthesizing exhaustive interdisciplinary synergy (8–40s)...'):
+            with st.spinner(f'Synthesizing using {selected_model}...'):
                 response = client.chat.completions.create(
-                    model="llama-3.3-70b-versatile",
+                    model=selected_model,
                     messages=[{"role": "system", "content": sys_prompt}, {"role": "user", "content": user_query}],
-                    temperature=0.6, max_tokens=4000
+                    temperature=0.6, 
+                    max_tokens=token_limit
                 )
                 
                 text_out = response.choices[0].message.content
@@ -479,6 +498,7 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
 
 st.divider()
 st.caption("SIS Universal Knowledge Synthesizer | v18.0 Comprehensive 18D Geometrical Export Edition | 2026")
+
 
 
 
