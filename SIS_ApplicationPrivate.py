@@ -256,7 +256,8 @@ KNOWLEDGE_BASE = {
         "History": {"cat": "Humanities", "methods": ["Archives"], "tools": ["Archives"], "facets": ["Social History"]},
         "Economics": {"cat": "Social", "methods": ["Econometrics", "Game Theory", "Market Modeling"], "tools": ["Stata", "R", "Bloomberg"], "facets": ["Macroeconomics", "Behavioral Economics"]},
         "Politics": {"cat": "Social", "methods": ["Policy Analysis", "Comparative Politics"], "tools": ["Polls", "Legislative Databases"], "facets": ["International Relations", "Governance"]},
-        "Criminology and Forensic sciences": {"cat": "Applied/Social", "methods": ["DNA Profiling", "Ballistic Analysis", "Behavioral Profiling"], "tools": ["Luminol", "AFIS", "Mass Spectrometry"], "facets": ["Criminalistics", "Victimology", "Cyber-forensics"]}
+        "Criminology": {"cat": "Social", "methods": ["Behavioral Profiling", "Statistical Analysis", "Ethnography"], "tools": ["Crime Mapping (GIS)", "Surveillance Databases"], "facets": ["Victimology", "Penology", "Deviance"]},
+        "Forensic sciences": {"cat": "Applied/Natural", "methods": ["DNA Profiling", "Ballistic Analysis", "Toxicology"], "tools": ["Mass Spectrometry", "AFIS", "Comparison Microscope"], "facets": ["Criminalistics", "Digital Forensics", "Serology"]}
     }
 }
 
@@ -478,6 +479,7 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
 
 st.divider()
 st.caption("SIS Universal Knowledge Synthesizer | v18.0 Comprehensive 18D Geometrical Export Edition | 2026")
+
 
 
 
