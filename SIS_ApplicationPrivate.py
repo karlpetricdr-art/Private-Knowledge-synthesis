@@ -256,8 +256,8 @@ KNOWLEDGE_BASE = {
         "History": {"cat": "Humanities", "methods": ["Archives"], "tools": ["Archives"], "facets": ["Social History"]},
         "Economics": {"cat": "Social", "methods": ["Econometrics", "Game Theory", "Market Modeling"], "tools": ["Stata", "R", "Bloomberg"], "facets": ["Macroeconomics", "Behavioral Economics"]},
         "Politics": {"cat": "Social", "methods": ["Policy Analysis", "Comparative Politics"], "tools": ["Polls", "Legislative Databases"], "facets": ["International Relations", "Governance"]},
-        "Criminology": {"cat": "Social", "methods": ["Case Studies", "Statistical Analysis", "Profiling"], "tools": ["NCVS", "Crime Mapping Software"], "facets": ["Victimology", "Penology", "Criminal Behavior"]},
-        "Forensic sciences": {"cat": "Applied/Natural", "methods": ["DNA Profiling", "Ballistics", "Trace Analysis"], "tools": ["Mass Spectrometer", "Luminol", "Comparison Microscope"], "facets": ["Toxicology", "Pathology", "Digital Forensics"]}
+        "Criminology": {"cat": "Social", "methods": ["Behavioral Profiling", "Statistical Analysis", "Ethnography"], "tools": ["Crime Mapping (GIS)", "Surveillance Databases"], "facets": ["Victimology", "Penology", "Deviance"]},
+        "Forensic sciences": {"cat": "Applied/Natural", "methods": ["DNA Profiling", "Ballistic Analysis", "Toxicology"], "tools": ["Mass Spectrometry", "AFIS", "Comparison Microscope"], "facets": ["Criminalistics", "Digital Forensics", "Serology"]}
     }
 }
 
@@ -382,57 +382,39 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
             biblio = fetch_author_bibliographies(target_authors) if target_authors else ""
             client = OpenAI(api_key=api_key, base_url="https://api.groq.com/openai/v1")
             
-            # --- DINAMIČNA LOGIKA (IMAGE INTEGRATION) ---
-            # Preveri pogoje za aktivacijo določene sheme.
-            is_explicit_rel = any(kw in user_query.lower() for kw in ["relacij", "odnos", "povez", "link", "connect", "hierarchy"])
-            # Nova logika za "Step/Linear" shemo (Image 2)
-            is_step_logic = any(kw in user_query.lower() for kw in ["linearno", "zapored", "step", "flow", "vertical", "vertikalno", "shema"])
-            
-            if is_step_logic:
-                structure_logic = """
-                MANDATORY ARCHITECTURAL LOGIC (LINEAR CHAIN FROM IMAGE):
-                1. Start: User profiles --TT--> Expertise level.
-                2. Expertise level --BT--> Authors.
-                3. Authors --NT--> Science fields.
-                4. Science fields --NT--> Structural models.
-                5. Structural models --NT--> Mental approaches.
-                6. Mental approaches --NT--> Scientific paradigms.
-                7. Scientific paradigms --NT--> Methodologies/tools.
-                8. Methodologies/tools --NT--> Context/Goal.
-                Maintain this strict vertical sequence for the synthesis and graph generation.
-                """
-            elif target_authors and is_explicit_rel:
-                structure_logic = """
-                MANDATORY ARCHITECTURAL LOGIC (FROM IMAGE 1):
-                1. Root: Authors --RT--> Science fields.
-                2. Science fields --AS--> User profiles.
-                3. Science fields --EQ--> Expertise level.
-                4. Science fields --EQ--> Structural models.
-                5. Science fields --(Direct Arrow)--> Context/Goal in Methodologies/specific tools.
-                6. Structural models --AS--> Scientific paradigms.
-                7. Structural models --IN--> Mental approaches.
-                """
-            else:
-                structure_logic = """
-                MANDATORY ARCHITECTURAL LOGIC (DEFAULT):
-                1. Root: Authors (Super-unit).
-                2. Authors --TT--> User profiles, Science fields, Expertise level.
-                3. Science fields --BT--> Expertise level --NT--> Structural models.
-                4. Structural models --AS--> Scientific paradigms.
-                5. Scientific paradigms --RT--> mental approaches, methodologies in specific tools.
-                6. Scientific paradigms --AS--> Context/Goal.
-                7. Use EQ (Equivalent) and Inheritance IN (Class logic).
-                """
+            # --- DODAJANJE HIERARHIČNE ASOCIATIVNE LOGIKE ---
+            q_lower = user_query.lower()
+            is_strict_hier = "striktna hierarhična logika" in q_lower
+            is_relational_only = "relacijska logika" in q_lower
 
-            # SISTEMSKO NAVODILO
+            if is_strict_hier:
+                logic_type = "STRIKTNA HIERARHIČNA LOGIKA"
+                logic_desc = "Uporabi IZKLJUČNO hierarhične relacije: TT (Top Term), BT (Broader Term), NT (Narrower Term). Fokus na vertikalni taksonomiji."
+            elif is_relational_only:
+                logic_type = "RELACIJSKA LOGIKA"
+                logic_desc = "Uporabi IZKLJUČNO lateralne relacije: AS (Associative), EQ (Equivalent), IN (Inheritance/Class). Fokus na mrežni povezanosti."
+            else:
+                logic_type = "HIERARHIČNA ASOCIATIVNA LOGIKA (Default)"
+                logic_desc = "Integriraj CELOTEN nabor relacij: Hierarhične (TT, BT, NT) za strukturo in asociativne (AS, EQ, IN) za lateralne povezave."
+
+            # SISTEMSKO NAVODILO (Z INTEGRIRANO LOGIKO)
             sys_prompt = f"""
             You are the SIS Synthesizer. Perform an exhaustive dissertation (1500+ words).
             
-            {structure_logic}
+            MANDATORY ARCHITECTURAL LOGIC: {logic_type}
+            {logic_desc}
+
+            STRUCTURE (MANDATORY IMAGE LOGIC): 
+            1. Root: Authors --TT--> User profiles, Science fields, Expertise level.
+            2. Science fields --BT--> Expertise level --NT--> Structural models.
+            3. Structural models --AS--> Scientific paradigms.
+            4. Scientific paradigms --RT--> mental approaches, methodologies in specific tools.
+            5. Scientific paradigms --AS--> Context/Goal.
+            6. In all graph edges, use the correct tags: TT, BT, NT, AS, EQ, IN.
             
             FIELDS: {", ".join(sel_sciences)}. CONTEXT AUTHORS: {biblio}.
             
-            THESAURUS ALGORITHM (TT, BT, NT, AS, RT, EQ) & UML LOGIC.
+            THESAURUS ALGORITHM & UML LOGIC.
 
             GEOMETRICAL VISUALIZATION TASK:
             - Analyze user inquiry for shape preferences (triangle, rectangle, hexagon, 3D/diamond).
@@ -443,7 +425,7 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
             - ABSOLUTELY PROHIBITED: Do not list nodes, edges, properties, shapes, or colors in text.
             - DO NOT explain the visualization or JSON schema in the text.
             - End with '### SEMANTIC_GRAPH_JSON' followed by valid JSON only.
-            - JSON schema: {{"nodes": [{{"id": "n1", "label": "Text", "type": "Root|Branch|Leaf|Class", "color": "#hex", "shape": "triangle|rectangle|ellipse|diamond"}}], "edges": [{{"source": "n1", "target": "n2", "rel_type": "BT|NT|AS|Inheritance|..."}}]}}
+            - JSON schema: {{"nodes": [{{"id": "n1", "label": "Text", "type": "Root|Branch|Leaf|Class", "color": "#hex", "shape": "triangle|rectangle|ellipse|diamond"}}], "edges": [{{"source": "n1", "target": "n2", "rel_type": "BT|NT|AS|Inheritance|EQ|TT|IN"}}]}}
             """
             
             with st.spinner('Synthesizing exhaustive interdisciplinary synergy (8–40s)...'):
@@ -488,7 +470,7 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
                     try:
                         g_json = json.loads(re.search(r'\{.*\}', parts[1], re.DOTALL).group())
                         st.subheader("🕸️ LLMGraphTransformer: Unified Interdisciplinary Network")
-                        st.caption("Colorful nodes represent hierarchical concepts. Dimensions are associatively connected. Click nodes to scroll.")
+                        st.caption(f"Logic: {logic_type}. Dimensions are associatively connected. Click nodes to scroll.")
                         
                         elements = []
                         for n in g_json.get("nodes", []):
@@ -516,6 +498,7 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
 
 st.divider()
 st.caption("SIS Universal Knowledge Synthesizer | v18.0 Comprehensive 18D Geometrical Export Edition | 2026")
+
 
 
 
