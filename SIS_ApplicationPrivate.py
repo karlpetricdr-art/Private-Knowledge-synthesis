@@ -256,8 +256,8 @@ KNOWLEDGE_BASE = {
         "History": {"cat": "Humanities", "methods": ["Archives"], "tools": ["Archives"], "facets": ["Social History"]},
         "Economics": {"cat": "Social", "methods": ["Econometrics", "Game Theory", "Market Modeling"], "tools": ["Stata", "R", "Bloomberg"], "facets": ["Macroeconomics", "Behavioral Economics"]},
         "Politics": {"cat": "Social", "methods": ["Policy Analysis", "Comparative Politics"], "tools": ["Polls", "Legislative Databases"], "facets": ["International Relations", "Governance"]},
-        "Criminology": {"cat": "Social", "methods": ["Behavioral Profiling", "Statistical Analysis", "Ethnography"], "tools": ["Crime Mapping (GIS)", "Surveillance Databases"], "facets": ["Victimology", "Penology", "Deviance"]},
-        "Forensic sciences": {"cat": "Applied/Natural", "methods": ["DNA Profiling", "Ballistic Analysis", "Toxicology"], "tools": ["Mass Spectrometry", "AFIS", "Comparison Microscope"], "facets": ["Criminalistics", "Digital Forensics", "Serology"]}
+        "Criminology": {"cat": "Social", "methods": ["Case Studies", "Statistical Analysis", "Profiling"], "tools": ["NCVS", "Crime Mapping Software"], "facets": ["Victimology", "Penology", "Criminal Behavior"]},
+        "Forensic sciences": {"cat": "Applied/Natural", "methods": ["DNA Profiling", "Ballistics", "Trace Analysis"], "tools": ["Mass Spectrometer", "Luminol", "Comparison Microscope"], "facets": ["Toxicology", "Pathology", "Digital Forensics"]}
     }
 }
 
@@ -397,7 +397,7 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
                 logic_type = "HIERARHIČNA ASOCIATIVNA LOGIKA (Default)"
                 logic_desc = "Integriraj CELOTEN nabor relacij: Hierarhične (TT, BT, NT) za strukturo in asociativne (AS, EQ, IN) za lateralne povezave."
 
-            # SISTEMSKO NAVODILO (Z INTEGRIRANO LOGIKO)
+            # SISTEMSKO NAVODILO (Z INTEGRIRANO LOGIKO IN POVEČANIM ŠTEVILOM VOZLIŠČ)
             sys_prompt = f"""
             You are the SIS Synthesizer. Perform an exhaustive dissertation (1500+ words).
             
@@ -425,7 +425,12 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
             - ABSOLUTELY PROHIBITED: Do not list nodes, edges, properties, shapes, or colors in text.
             - DO NOT explain the visualization or JSON schema in the text.
             - End with '### SEMANTIC_GRAPH_JSON' followed by valid JSON only.
-            - JSON schema: {{"nodes": [{{"id": "n1", "label": "Text", "type": "Root|Branch|Leaf|Class", "color": "#hex", "shape": "triangle|rectangle|ellipse|diamond"}}], "edges": [{{"source": "n1", "target": "n2", "rel_type": "BT|NT|AS|Inheritance|EQ|TT|IN"}}]}}
+            
+            GRAPH DENSITY REQUIREMENT:
+            - GENERATE A DENSE SEMANTIC NETWORK WITH APPROXIMATELY 30 INTERCONNECTED NODES.
+            - Ensure every scientific field and structural model is represented by multiple specific leaf nodes.
+            
+            JSON schema: {{"nodes": [{{"id": "n1", "label": "Text", "type": "Root|Branch|Leaf|Class", "color": "#hex", "shape": "triangle|rectangle|ellipse|diamond"}}], "edges": [{{"source": "n1", "target": "n2", "rel_type": "BT|NT|AS|Inheritance|EQ|TT|IN"}}]}}
             """
             
             with st.spinner('Synthesizing exhaustive interdisciplinary synergy (8–40s)...'):
@@ -470,7 +475,7 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
                     try:
                         g_json = json.loads(re.search(r'\{.*\}', parts[1], re.DOTALL).group())
                         st.subheader("🕸️ LLMGraphTransformer: Unified Interdisciplinary Network")
-                        st.caption(f"Logic: {logic_type}. Dimensions are associatively connected. Click nodes to scroll.")
+                        st.caption(f"Logic: {logic_type}. Network density: ~30 nodes. Click nodes to scroll.")
                         
                         elements = []
                         for n in g_json.get("nodes", []):
@@ -498,6 +503,7 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
 
 st.divider()
 st.caption("SIS Universal Knowledge Synthesizer | v18.0 Comprehensive 18D Geometrical Export Edition | 2026")
+
 
 
 
