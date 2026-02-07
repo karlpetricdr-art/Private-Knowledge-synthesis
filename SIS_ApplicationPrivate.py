@@ -241,9 +241,11 @@ KNOWLEDGE_BASE = {
         "Physics": {"cat": "Natural", "methods": ["Modeling", "Simulation"], "tools": ["Accelerator", "Spectrometer"], "facets": ["Quantum", "Relativity"]},
         "Chemistry": {"cat": "Natural", "methods": ["Synthesis", "Spectroscopy"], "tools": ["NMR", "Chromatography"], "facets": ["Organic", "Molecular"]},
         "Biology": {"cat": "Natural", "methods": ["Sequencing", "CRISPR"], "tools": ["Microscope", "Bio-Incubator"], "facets": ["Genetics", "Ecology"]},
+        "Ecology": {"cat": "Natural", "methods": ["Ecosystem Modeling", "Field Sampling", "Biodiversity Assessment"], "tools": ["GIS", "Satellite Imagery", "Environmental Sensors"], "facets": ["Conservation", "Sustainability", "Ecosystem Services"]},
         "Neuroscience": {"cat": "Natural", "methods": ["Neuroimaging", "Electrophys"], "tools": ["fMRI", "EEG"], "facets": ["Plasticity", "Synaptic"]},
         "Psychology": {"cat": "Social", "methods": ["Double-Blind Trials", "Psychometrics"], "tools": ["fMRI", "Testing Kits"], "facets": ["Behavioral", "Cognitive"]},
         "Sociology": {"cat": "Social", "methods": ["Ethnography", "Surveys"], "tools": ["Data Analytics", "Archives"], "facets": ["Stratification", "Dynamics"]},
+        "Legal science": {"cat": "Social", "methods": ["Legal Research", "Normative Analysis", "Comparative Law"], "tools": ["Legal Databases", "Case Archives", "Constitutional Texts"], "facets": ["Jurisprudence", "Human Rights", "Policy Analysis"]},
         "Computer Science": {"cat": "Formal", "methods": ["Algorithm Design", "Verification"], "tools": ["LLMGraphTransformer", "GPU Clusters", "Git"], "facets": ["AI", "Cybersecurity"]},
         "Medicine": {"cat": "Applied", "methods": ["Clinical Trials", "Epidemiology"], "tools": ["MRI/CT", "Bio-Markers"], "facets": ["Immunology", "Pharmacology"]},
         "Engineering": {"cat": "Applied", "methods": ["Prototyping", "FEA Analysis"], "tools": ["3D Printers", "CAD Software"], "facets": ["Robotics", "Nanotech"]},
@@ -368,7 +370,7 @@ with r4_c3:
 
 st.divider()
 
-# ROW 5: INQUIRY & UPLOAD (Added Column Logic)
+# ROW 5: INQUIRY & UPLOAD (.TXT Support)
 r5_c1, r5_c2 = st.columns([3, 1])
 with r5_c1:
     user_query = st.text_area("❓ Your Synthesis Inquiry:", 
@@ -392,7 +394,7 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
     elif not user_query: st.warning("Please provide an inquiry.")
     else:
         try:
-            # Integrate file content with user query if present
+            # Merge text content if present
             final_query = user_query
             if txt_content:
                 final_query += f"\n\n--- ADDITIONAL CONTEXT FROM UPLOADED FILE ---\n{txt_content}"
@@ -521,6 +523,7 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
 
 st.divider()
 st.caption("SIS Universal Knowledge Synthesizer | v18.0 Comprehensive 18D Geometrical Export Edition | 2026")
+
 
 
 
