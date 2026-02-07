@@ -367,9 +367,22 @@ with r4_c3:
     sel_tools = st.multiselect("9. Specific Tools:", sorted(list(set(agg_tool))), default=[])
 
 st.divider()
-user_query = st.text_area("❓ Your Synthesis Inquiry:", 
-                         placeholder="Create a synergy for global problems using triangle shapes for causes and 3D geometric bodies for solutions.",
-                         height=150, key="user_query_key")
+
+# ROW 5: INQUIRY & UPLOAD (Added Column Logic)
+r5_c1, r5_c2 = st.columns([3, 1])
+with r5_c1:
+    user_query = st.text_area("❓ Your Synthesis Inquiry:", 
+                             placeholder="Create a synergy for global problems using triangle shapes for causes and 3D geometric bodies for solutions.",
+                             height=150, key="user_query_key")
+with r5_c2:
+    uploaded_txt = st.file_uploader("📂 Attach .TXT Context", type=["txt"], help="Upload additional context (Limit: 200 KB).")
+    txt_content = ""
+    if uploaded_txt is not None:
+        if uploaded_txt.size > 200 * 1024:
+            st.error("File size exceeds 200 KB limit.")
+        else:
+            txt_content = uploaded_txt.getvalue().decode("utf-8")
+            st.success("File context attached.")
 
 # =========================================================
 # 3. JEDRO SINTEZE: GROQ AI + INTERCONNECTED 18D GRAPH
@@ -379,11 +392,16 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
     elif not user_query: st.warning("Please provide an inquiry.")
     else:
         try:
+            # Integrate file content with user query if present
+            final_query = user_query
+            if txt_content:
+                final_query += f"\n\n--- ADDITIONAL CONTEXT FROM UPLOADED FILE ---\n{txt_content}"
+                
             biblio = fetch_author_bibliographies(target_authors) if target_authors else ""
             client = OpenAI(api_key=api_key, base_url="https://api.groq.com/openai/v1")
             
             # --- DODAJANJE HIERARHIČNE ASOCIATIVNE LOGIKE ---
-            q_lower = user_query.lower()
+            q_lower = final_query.lower()
             is_strict_hier = "striktna hierarhična logika" in q_lower
             is_relational_only = "relacijska logika" in q_lower
 
@@ -436,7 +454,7 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
             with st.spinner('Synthesizing exhaustive interdisciplinary synergy (8–40s)...'):
                 response = client.chat.completions.create(
                     model="llama-3.3-70b-versatile",
-                    messages=[{"role": "system", "content": sys_prompt}, {"role": "user", "content": user_query}],
+                    messages=[{"role": "system", "content": sys_prompt}, {"role": "user", "content": final_query}],
                     temperature=0.6, max_tokens=4000
                 )
                 
@@ -503,6 +521,7 @@ if st.button("🚀 Execute Multi-Dimensional Synthesis", use_container_width=Tru
 
 st.divider()
 st.caption("SIS Universal Knowledge Synthesizer | v18.0 Comprehensive 18D Geometrical Export Edition | 2026")
+
 
 
 
